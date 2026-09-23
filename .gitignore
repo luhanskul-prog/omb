@@ -229,3 +229,5 @@ templates/accounts/parent_dashboard.html.parent_features_backup
 **/*_permissions_step*
 **/*_repair_*
 **/*_damaged_*
+
+deployment_data/
