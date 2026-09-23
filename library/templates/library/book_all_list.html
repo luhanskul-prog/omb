@@ -1,0 +1,470 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .books-page {
+        padding: 20px;
+    }
+
+    .books-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .print-header {
+        display: none;
+    }
+
+    .book-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+        background: #fff;
+    }
+
+    .book-table th,
+    .book-table td {
+        border: 1px solid #d5d9df;
+        padding: 7px 6px;
+        vertical-align: middle;
+    }
+
+    .book-table th {
+        background: #0b3d91;
+        color: white;
+        font-weight: 700;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .book-table tr:nth-child(even) {
+        background: #f7f9fc;
+    }
+
+    .status-available {
+        color: #147a3d;
+        font-weight: 700;
+    }
+
+    .status-unavailable {
+        color: #b42318;
+        font-weight: 700;
+    }
+
+    .print-btn {
+        border: 0;
+        background: #0b3d91;
+        color: white;
+        padding: 9px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .back-btn {
+        display: inline-block;
+        padding: 9px 16px;
+        margin-left: 6px;
+        background: #6b7280;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+
+    @media print {
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+        }
+
+        body * {
+            visibility: hidden;
+        }
+
+        .print-area,
+        .print-area * {
+            visibility: visible;
+        }
+
+        .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+
+        .books-page {
+            padding: 0 !important;
+        }
+
+        .books-toolbar {
+            display: none !important;
+        }
+
+        .print-header {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 8px;
+            padding-bottom: 7px;
+            border-bottom: 2px solid #0b3d91;
+        }
+
+        .print-logo {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 58px;
+            height: 58px;
+            object-fit: contain;
+        }
+
+        .school-heading {
+            text-align: center;
+            width: 100%;
+            line-height: 1.2;
+        }
+
+        .school-name {
+            font-size: 19px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #0b3d91;
+        }
+
+        .school-motto {
+            font-size: 10px;
+            font-style: italic;
+            margin-top: 2px;
+        }
+
+        .school-contact {
+            font-size: 8.5px;
+            margin-top: 3px;
+        }
+
+        .register-title {
+            font-size: 14px;
+            font-weight: 800;
+            margin-top: 6px;
+            letter-spacing: .4px;
+        }
+
+        .register-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 8.5px;
+            margin: 5px 0 7px;
+        }
+
+        .book-table {
+            font-size: 7.5px;
+            width: 100%;
+            table-layout: fixed;
+        }
+
+        .book-table th,
+        .book-table td {
+            padding: 3px 3px;
+            border: 0.5px solid #777;
+            line-height: 1.15;
+        }
+
+        .book-table th {
+            background: #0b3d91 !important;
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .book-table tr:nth-child(even) {
+            background: #f4f6f8 !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .book-table th:nth-child(1),
+        .book-table td:nth-child(1) {
+            width: 3%;
+            text-align: center;
+        }
+
+        .book-table th:nth-child(2),
+        .book-table td:nth-child(2) {
+            width: 17%;
+        }
+
+        .book-table th:nth-child(3),
+        .book-table td:nth-child(3) {
+            width: 11%;
+        }
+
+        .book-table th:nth-child(4),
+        .book-table td:nth-child(4) {
+            width: 12%;
+        }
+
+        .book-table th:nth-child(5),
+        .book-table td:nth-child(5) {
+            width: 10%;
+        }
+
+        .book-table th:nth-child(6),
+        .book-table td:nth-child(6) {
+            width: 7%;
+            text-align: center;
+        }
+
+        .book-table th:nth-child(7),
+        .book-table td:nth-child(7) {
+            width: 7%;
+            text-align: center;
+        }
+
+        .book-table th:nth-child(8),
+        .book-table td:nth-child(8) {
+            width: 8%;
+        }
+
+        .book-table th:nth-child(9),
+        .book-table td:nth-child(9) {
+            width: 7%;
+            text-align: center;
+        }
+
+        .book-table th:nth-child(10),
+        .book-table td:nth-child(10) {
+            width: 8%;
+            text-align: center;
+        }
+
+        .book-table th:nth-child(11),
+        .book-table td:nth-child(11) {
+            width: 10%;
+        }
+
+        .book-table th:nth-child(12),
+        .book-table td:nth-child(12) {
+            width: 13%;
+        }
+
+        .print-footer {
+            display: none;
+        }
+
+        .description-cell {
+            max-width: 150px;
+            word-wrap: break-word;
+        }
+
+        .status-available,
+        .status-unavailable {
+            color: black !important;
+            font-weight: 700;
+        }
+
+        .print-footer {
+            display: flex !important;
+            justify-content: space-between;
+            margin-top: 6px;
+            padding-top: 4px;
+            border-top: 1px solid #999;
+            font-size: 7.5px;
+        }
+    }
+</style>
+
+<div class="books-page print-area">
+
+    <div class="books-toolbar">
+        <div>
+            <h2>📚 All Books</h2>
+        </div>
+
+        <div>
+            <button onclick="window.print()" class="print-btn">
+                🖨️ PRINT BOOK REGISTER
+            </button>
+
+            <a href="{% url 'library_books' %}" class="back-btn">
+                ← Back
+            </a>
+        </div>
+    </div>
+
+    <div class="print-header">
+
+        {% if school_branding.logo %}
+            <img
+                src="{{ school_branding.logo.url }}"
+                class="print-logo"
+                alt="School Logo"
+            >
+        {% endif %}
+
+        <div class="school-heading">
+
+            <div class="school-name">
+                {{ school_branding.school_name|default:"Luhan School" }}
+            </div>
+
+            {% if school_branding.motto %}
+                <div class="school-motto">
+                    {{ school_branding.motto }}
+                </div>
+            {% endif %}
+
+            <div class="school-contact">
+                {% if school_branding.phone %}
+                    {{ school_branding.phone }}
+                {% endif %}
+
+                {% if school_branding.alternative_phone %}
+                    &nbsp; | &nbsp; {{ school_branding.alternative_phone }}
+                {% endif %}
+
+                {% if school_branding.email %}
+                    &nbsp; | &nbsp; {{ school_branding.email }}
+                {% endif %}
+
+                {% if school_branding.website %}
+                    &nbsp; | &nbsp; {{ school_branding.website }}
+                {% endif %}
+
+                {% if school_branding.physical_address %}
+                    <br>{{ school_branding.physical_address }}
+                {% endif %}
+            </div>
+
+            <div class="register-title">
+                LIBRARY BOOK REGISTER
+            </div>
+
+        </div>
+    </div>
+
+    <div class="register-meta">
+        <span>
+            <strong>Total Books:</strong> {{ books|length }}
+        </span>
+
+        <span>
+            <strong>Printed:</strong>
+            {% now "d M Y, H:i" %}
+        </span>
+    </div>
+
+    <table class="book-table">
+
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Book Title</th>
+                <th>ISBN</th>
+                <th>Author</th>
+                <th>Category</th>
+                <th>Total</th>
+                <th>Available</th>
+                <th>Shelf</th>
+                <th>Status</th>
+                <th>Date Added</th>
+                <th>Publisher</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for book in books %}
+            <tr>
+
+                <td>{{ forloop.counter }}</td>
+
+                <td>
+                    <strong>{{ book.title }}</strong>
+                </td>
+
+                <td>
+                    {{ book.isbn|default:"—" }}
+                </td>
+
+                <td>
+                    {{ book.author|default:"—" }}
+                </td>
+
+                <td>
+                    {{ book.category.name|default:"—" }}
+                </td>
+
+                <td>
+                    {{ book.total_copies }}
+                </td>
+
+                <td>
+                    {{ book.available_copies }}
+                </td>
+
+                <td>
+                    {{ book.shelf_number|default:"—" }}
+                </td>
+
+                <td>
+                    {% if book.status == "available" %}
+                        <span class="status-available">Available</span>
+                    {% else %}
+                        <span class="status-unavailable">Unavailable</span>
+                    {% endif %}
+                </td>
+
+                <td>
+                    {{ book.date_added|date:"d/m/Y" }}
+                </td>
+
+                <td>
+                    {{ book.publisher|default:"—" }}
+                </td>
+
+                <td class="description-cell">
+                    {{ book.description|default:"—" }}
+                </td>
+
+            </tr>
+
+            {% empty %}
+            <tr>
+                <td colspan="12" style="text-align:center;">
+                    No books found.
+                </td>
+            </tr>
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="print-footer">
+        <span>
+            Library Book Register
+        </span>
+
+        <span>
+            {{ school_branding.school_name|default:"Luhan School" }}
+        </span>
+
+        <span>
+            Page <span class="page-number"></span>
+        </span>
+    </div>
+
+</div>
+{% endblock %}

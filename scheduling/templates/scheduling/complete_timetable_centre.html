@@ -1,0 +1,559 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.timetable-wrap {
+    max-width: 1400px;
+    margin: 25px auto;
+    padding: 0 18px;
+}
+
+.timetable-header {
+    background: linear-gradient(135deg,#0f3d75,#1769aa);
+    color: white;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+}
+
+.timetable-header h1 {
+    margin: 0;
+    font-size: 30px;
+}
+
+.timetable-header p {
+    margin: 8px 0 0;
+    opacity: .9;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit,minmax(280px,1fr));
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 14px rgba(0,0,0,.08);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #123f73;
+}
+
+.metric {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.ok {
+    color: #16803c;
+}
+
+.bad {
+    color: #c62828;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+button,
+.action-link {
+    border: 0;
+    border-radius: 8px;
+    padding: 11px 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.primary {
+    background: #1769aa;
+    color: white;
+}
+
+.success {
+    background: #16803c;
+    color: white;
+}
+
+.warning {
+    background: #d88900;
+    color: white;
+}
+
+.danger {
+    background: #c62828;
+    color: white;
+}
+
+.neutral {
+    background: #e9eef5;
+    color: #16324f;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid #e4e8ee;
+    text-align: left;
+}
+
+th {
+    background: #f3f6fa;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit,minmax(180px,1fr));
+    gap: 12px;
+}
+
+input,
+select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccd5df;
+    border-radius: 7px;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.problem {
+    padding: 10px;
+    background: #fff3f3;
+    border-left: 4px solid #c62828;
+    margin-bottom: 7px;
+}
+</style>
+
+<div class="timetable-wrap">
+
+    <div class="timetable-header">
+        <h1>Timetable Management Centre</h1>
+        <p>
+            Assign â†’ Check â†’ Generate Draft â†’ Review â†’ Publish
+        </p>
+    </div>
+
+    <div class="card-grid">
+
+        <div class="card">
+            <h2>Required Lessons</h2>
+            <div class="metric">
+                {{ validation.required_lessons }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Scheduled</h2>
+            <div class="metric">
+                {{ validation.scheduled_lessons }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Problems</h2>
+            <div class="metric {% if validation.total_problems %}bad{% else %}ok{% endif %}">
+                {{ validation.total_problems }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Draft</h2>
+            <div>
+                {% if draft %}
+                    Version {{ draft.id }}
+                    â€” {{ draft.status }}
+                {% else %}
+                    No draft
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Timetable Workflow</h2>
+
+        <div class="actions">
+
+            {% if erp_permission.add_teacherteachingassignment %}
+            <a
+                class="action-link primary"
+                href="{% url 'scheduling:timetable_assignment_add' %}"
+            >
+                Assign Lessons
+            </a>
+            {% endif %}
+
+            {% if erp_permission.view_timetableentry %}
+            <a
+                class="action-link neutral"
+                href="{% url 'scheduling:timetable_check_complete' %}"
+            >
+                CHECK TIMETABLE
+            </a>
+            {% endif %}
+
+            {% if erp_permission.add_timetableentry %}
+            <form method="post">
+                {% csrf_token %}
+                <input
+                    type="hidden"
+                    name="action"
+                    value="generate"
+                >
+                <button class="warning">
+                    Generate Draft
+                </button>
+            </form>
+            {% endif %}
+
+            {% if validation.ready and draft %}
+                {% if erp_permission.change_timetableentry %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="publish"
+                    >
+                    <button class="success">
+                        Publish Timetable
+                    </button>
+                </form>
+                {% endif %}
+            {% endif %}
+
+            {% if published %}
+                {% if erp_permission.change_timetableentry %}
+                <form method="post">
+                    {% csrf_token %}
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="unpublish"
+                    >
+                    <button class="danger">
+                        Unpublish
+                    </button>
+                </form>
+                {% endif %}
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% if erp_permission.change_timetableslotrule %}
+    <div class="card">
+
+        <h2>Period / Slot Configuration</h2>
+
+        <form
+            method="post"
+            action="{% url 'scheduling:timetable_slot_rule_save' %}"
+        >
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div>
+                    <label>Day</label>
+                    <select name="day" required>
+                        {% for day in days %}
+                            <option value="{{ day.id }}">
+                                {{ day }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label>Period</label>
+                    <select name="period" required>
+                        {% for period in periods %}
+                            <option value="{{ period.id }}">
+                                {{ period.name }}
+                                {{ period.start_time }}
+                                -
+                                {{ period.end_time }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label>Period Type</label>
+                    <select name="slot_type" required>
+                        <option value="LESSON">Lesson</option>
+                        <option value="BREAK">Break</option>
+                        <option value="LUNCH">Lunch</option>
+                        <option value="GAMES">Games</option>
+                        <option value="ACTIVITY">Activity</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label>Notes</label>
+                    <input
+                        type="text"
+                        name="notes"
+                        placeholder="Optional"
+                    >
+                </div>
+
+            </div>
+
+            <br>
+
+            <button class="primary">
+                Save Period Rule
+            </button>
+
+        </form>
+
+        <br>
+
+        <div class="table-wrap">
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Day</th>
+                        <th>Period</th>
+                        <th>Type</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for rule in slot_rules %}
+
+                        <tr>
+                            <td>{{ rule.day }}</td>
+                            <td>{{ rule.period }}</td>
+                            <td>{{ rule.get_slot_type_display }}</td>
+                            <td>{{ rule.notes }}</td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="4">
+                                No custom slot rules configured.
+                                Existing break periods remain respected.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+    {% endif %}
+    <div class="card">
+
+        <h2>Teaching Assignments</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Teacher</th>
+                        <th>Subject</th>
+                        <th>Class</th>
+                        <th>Stream</th>
+                        <th>Lessons / Week</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for item in assignments %}
+
+                        <tr>
+                            <td>{{ item.teacher }}</td>
+                            <td>{{ item.subject }}</td>
+                            <td>{{ item.class_name }}</td>
+                            <td>{{ item.stream }}</td>
+                            <td>{{ item.lessons_per_week }}</td>
+                            <td>
+
+                                {% if erp_permission.delete_teacherteachingassignment %}
+                                <form
+                                    method="post"
+                                    action="{% url 'scheduling:timetable_assignment_delete' item.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button class="danger">
+                                        Remove
+                                    </button>
+
+                                </form>
+                                {% endif %}
+
+                            </td>
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="6">
+                                No active teaching assignments.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Validation Problems</h2>
+
+        {% if validation.problems %}
+
+            {% for problem in validation.problems %}
+
+                <div class="problem">
+
+                    <strong>
+                        {{ problem.category }}
+                    </strong>
+
+                    <br>
+
+                    {{ problem.message }}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p class="ok">
+                âœ“ No timetable validation problems detected.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+    {% if erp_permission.view_timetableentry %}
+    <div class="card">
+
+        <h2>Printing</h2>
+
+        <div class="actions">
+
+            <a
+                class="action-link primary"
+                href="{% url 'scheduling:timetable_print_school' %}"
+            >
+                Whole School
+            </a>
+
+            <a
+                class="action-link neutral"
+                href="{% url 'scheduling:timetable_review' %}"
+            >
+                Review Draft
+            </a>
+
+            <a
+                class="action-link neutral"
+                href="{% url 'scheduling:published_timetable' %}"
+            >
+                Published Timetable
+            </a>
+
+        </div>
+
+    </div>
+    {% endif %}
+
+    <div class="card">
+
+        <h2>Timetable Versions</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Version</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Published</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for version in versions %}
+
+                        <tr>
+                            <td>{{ version.name }}</td>
+                            <td>{{ version.status }}</td>
+                            <td>{{ version.created_at }}</td>
+                            <td>{{ version.published_at|default:"-" }}</td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,73 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+    .confirm-box {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 35px;
+        background: #fff;
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.08);
+        text-align: center;
+    }
+
+    .actions {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 25px;
+    }
+
+    .btn {
+        border: 0;
+        border-radius: 8px;
+        padding: 11px 18px;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: 700;
+    }
+
+    .danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+</style>
+
+<div class="confirm-box">
+
+    <h2>{{ title }}</h2>
+
+    <p>
+        Are you sure you want to delete
+        <strong>{{ object }}</strong>?
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="actions">
+
+            <button type="submit"
+                    class="btn danger">
+                Yes, Delete
+            </button>
+
+            <a href="{% url cancel_url %}"
+               class="btn secondary">
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

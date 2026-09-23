@@ -1,0 +1,166 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                <i class="bi bi-megaphone me-2"></i>
+                Notice Board
+            </h2>
+
+            {% if is_notice_staff %}
+                <p class="text-muted mb-0">
+                    School notices for staff
+                </p>
+            {% else %}
+                <p class="text-muted mb-0">
+                    School notices
+                </p>
+            {% endif %}
+        </div>
+
+        {% if is_notice_staff and not is_notice_admin %}
+            <span class="badge bg-secondary px-3 py-2">
+                <i class="bi bi-eye me-1"></i>
+                View Only
+            </span>
+        {% endif %}
+
+    </div>
+
+
+    {% if is_notice_staff and not is_notice_admin %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>
+            You can view published staff notices only.
+            Notice creation and management is restricted to administrators.
+        </div>
+    {% endif %}
+
+
+    {% if notices %}
+
+        <div class="row g-4">
+
+            {% for notice in notices %}
+
+                <div class="col-12">
+
+                    <div class="card shadow-sm border-0">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between
+                                        align-items-start flex-wrap gap-2">
+
+                                <div>
+
+                                    <h4 class="mb-2">
+                                        {{ notice.title }}
+                                    </h4>
+
+                                    <div class="text-muted small">
+
+                                        <i class="bi bi-calendar3 me-1"></i>
+
+                                        {{ notice.publish_date|date:"d M Y, H:i" }}
+
+                                        {% if notice.created_by %}
+                                            <span class="ms-3">
+                                                <i class="bi bi-person me-1"></i>
+                                                {{ notice.created_by.get_full_name|default:notice.created_by.username }}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="d-flex gap-2">
+
+                                    {% if notice.priority == "urgent" %}
+
+                                        <span class="badge bg-danger">
+                                            Urgent
+                                        </span>
+
+                                    {% elif notice.priority == "important" %}
+
+                                        <span class="badge bg-warning text-dark">
+                                            Important
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge bg-secondary">
+                                            Normal
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+
+                            <hr>
+
+
+                            <div class="notice-content">
+                                {{ notice.content|linebreaks }}
+                            </div>
+
+
+                            {% if notice.expiry_date %}
+
+                                <div class="mt-3 text-muted small">
+
+                                    <i class="bi bi-clock me-1"></i>
+
+                                    Notice expires:
+                                    {{ notice.expiry_date|date:"d M Y, H:i" }}
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body text-center py-5">
+
+                <i class="bi bi-megaphone display-4 text-muted"></i>
+
+                <h4 class="mt-3">
+                    No Notices Available
+                </h4>
+
+                <p class="text-muted mb-0">
+                    There are currently no published notices for staff.
+                </p>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,804 @@
+```html
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}HR & Payroll{% endblock %}
+        | LUHAN ERP
+    </title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* =====================================================
+           LAYOUT
+           ===================================================== */
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #111827;
+            color: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .main-wrapper {
+            margin-left: 260px;
+            width: calc(100% - 260px);
+            min-height: 100vh;
+        }
+
+        /* =====================================================
+           SIDEBAR
+           ===================================================== */
+
+        .brand {
+            padding: 22px 20px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .brand h2 {
+            font-size: 21px;
+            font-weight: 700;
+        }
+
+        .brand p {
+            color: #9ca3af;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .nav-section {
+            padding: 18px 12px 5px;
+            color: #6b7280;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 16px;
+            margin: 2px 10px;
+            border-radius: 7px;
+            color: #d1d5db;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover {
+            background: #1f2937;
+            color: white;
+        }
+
+        .nav-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .nav-icon {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* =====================================================
+           TOPBAR
+           ===================================================== */
+
+        .topbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+        }
+
+        .topbar-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+        }
+
+        .user-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* =====================================================
+           CONTENT
+           ===================================================== */
+
+        .content {
+            padding: 28px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            gap: 15px;
+        }
+
+        .page-header h1 {
+            font-size: 25px;
+            color: #111827;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           BUTTONS
+           ===================================================== */
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 15px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #d97706;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-light {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        /* =====================================================
+           CARDS
+           ===================================================== */
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .card-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        /* =====================================================
+           STAT CARDS
+           ===================================================== */
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .stat-icon {
+            float: right;
+            font-size: 25px;
+        }
+
+        /* =====================================================
+           TABLES
+           ===================================================== */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f9fafb;
+            color: #374151;
+            font-size: 12px;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: #fafafa;
+        }
+
+        /* =====================================================
+           BADGES
+           ===================================================== */
+
+        .badge {
+            display: inline-block;
+            padding: 4px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        /* =====================================================
+           FORMS
+           ===================================================== */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 3px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            background: white;
+            color: #111827;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        /* =====================================================
+           ALERTS
+           ===================================================== */
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 7px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fde68a;
+        }
+
+        .alert-info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+        }
+
+        /* =====================================================
+           ACTIONS
+           ===================================================== */
+
+        .actions {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 11px;
+        }
+
+        /* =====================================================
+           EMPTY STATE
+           ===================================================== */
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .empty-state h3 {
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        /* =====================================================
+           FOOTER
+           ===================================================== */
+
+        .footer {
+            padding: 20px 28px;
+            color: #6b7280;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+           ===================================================== */
+
+        @media (max-width: 1100px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                width: 220px;
+            }
+
+            .main-wrapper {
+                margin-left: 220px;
+                width: calc(100% - 220px);
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .app-container {
+                display: block;
+            }
+
+            .main-wrapper {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app-container">
+
+    <!-- =====================================================
+         SIDEBAR
+         ===================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            <h2>LUHAN ERP</h2>
+            <p>HR & Payroll Management</p>
+        </div>
+
+        <div class="nav-section">
+            Main
+        </div>
+
+        {% if erp_permission.view_employee %}
+        <a href="{% url 'hr_payroll:dashboard' %}" class="nav-link">
+            <span class="nav-icon">&#8962;</span>
+            Dashboard
+        </a>
+        {% endif %}
+
+        <div class="nav-section">
+            Human Resources
+        </div>
+
+        {% if erp_permission.view_employee %}
+        <a href="{% url 'hr_payroll:employee_list' %}" class="nav-link">
+            <span class="nav-icon">&#128101;</span>
+            Employees
+        </a>
+        {% endif %}
+
+        <a href="#" class="nav-link">
+            <span class="nav-icon">&#9636;</span>
+            Departments
+        </a>
+
+        {% if erp_permission.view_jobposition %}
+        <a href="{% url 'hr_payroll:position_list' %}" class="nav-link">
+            <span class="nav-icon">&#8226;</span>
+            Job Positions
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_attendance %}
+        <a href="{% url 'hr_payroll:attendance_list' %}" class="nav-link">
+            <span class="nav-icon">&#10003;</span>
+            Attendance
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_leaveapplication %}
+        <a href="{% url 'hr_payroll:leave_list' %}" class="nav-link">
+            <span class="nav-icon">&#128197;</span>
+            Leave
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_performanceappraisal %}
+        <a href="{% url 'hr_payroll:appraisal_list' %}" class="nav-link">
+            <span class="nav-icon">&#8226;</span>
+            Performance
+        </a>
+        {% endif %}
+
+        <div class="nav-section">
+            Payroll
+        </div>
+
+        {% if erp_permission.view_payrollperiod %}
+        <a href="{% url 'hr_payroll:payroll_list' %}" class="nav-link">
+            <span class="nav-icon">&#128188;</span>
+            Payroll
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_payslip %}
+        <a href="{% url 'hr_payroll:payslip_list' %}" class="nav-link">
+            <span class="nav-icon">&#8226;</span>
+            Payslips
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_staffloan %}
+        <a href="{% url 'hr_payroll:loan_list' %}" class="nav-link">
+            <span class="nav-icon">&#128101;</span>
+            Staff Loans
+        </a>
+        {% endif %}
+
+        <div class="nav-section">
+            Payroll Setup
+        </div>
+
+        {% if erp_permission.view_employeeallowance %}
+        <a href="{% url 'hr_payroll:allowance_list' %}" class="nav-link">
+            <span class="nav-icon">&#8226;</span>
+            Allowances
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_employeededuction %}
+        <a href="{% url 'hr_payroll:deduction_list' %}" class="nav-link">
+            <span class="nav-icon">&#8226;</span>
+            Deductions
+        </a>
+        {% endif %}
+
+        <a href="{% url 'hr_payroll:allowance_list' %}" class="nav-link">
+            <span class="nav-icon">&#128101;</span>
+            Employee Allowances
+        </a>
+
+        <a href="{% url 'hr_payroll:deduction_list' %}" class="nav-link">
+            <span class="nav-icon">&#128101;</span>
+            Employee Deductions
+        </a>
+
+        <a href="{% url 'hr_payroll:payroll_list' %}" class="nav-link">
+            <span class="nav-icon">&#128188;</span>
+            Payroll Periods
+        </a>
+
+        <div class="nav-section">
+            Administration
+        </div>
+
+        {% if erp_permission.view_employeedocument %}
+        <a href="{% url 'hr_payroll:document_list' %}" class="nav-link">
+            <span class="nav-icon">&#128101;</span>
+            Employee Documents
+        </a>
+        {% endif %}
+
+        {% if erp_permission.view_employeeexit %}
+        <a href="{% url 'hr_payroll:employee_exit_list' %}" class="nav-link">
+            <span class="nav-icon">&#128101;</span>
+            Employee Exits
+        </a>
+        {% endif %}
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+         ===================================================== -->
+
+    <div class="main-wrapper">
+
+        <header class="topbar">
+
+            <div class="topbar-title">
+                {% block header_title %}
+                    HR & Payroll
+                {% endblock %}
+            </div>
+
+            <div class="user-info">
+
+                {% if request.user.is_authenticated %}
+
+                    <div>
+                        {{ request.user.get_full_name|default:request.user.username }}
+                    </div>
+
+                    <div class="user-avatar">
+                        {{ request.user.username|first|upper }}
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </header>
+
+
+        <main class="content">
+
+            <!-- =================================================
+                 MESSAGES
+                 ================================================= -->
+
+            {% if messages %}
+                <div class="messages">
+
+                    {% for message in messages %}
+
+                        <div class="alert
+                            {% if message.tags == 'success' %}
+                                alert-success
+                            {% elif message.tags == 'error' %}
+                                alert-error
+                            {% elif message.tags == 'warning' %}
+                                alert-warning
+                            {% else %}
+                                alert-info
+                            {% endif %}
+                        ">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+
+
+            <!-- =================================================
+                 PAGE CONTENT
+                 ================================================= -->
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+
+        <footer class="footer">
+            LUHAN ERP &copy; {% now "Y" %}
+            HR & Payroll Management System
+        </footer>
+
+    </div>
+
+</div>
+
+</body>
+</html>

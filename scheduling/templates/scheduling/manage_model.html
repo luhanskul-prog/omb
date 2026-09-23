@@ -1,0 +1,225 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>{{ title }} | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f4f6f9;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(
+                135deg,
+                #0d6efd,
+                #084298
+            );
+
+            color: white;
+            padding: 20px;
+        }
+
+        .card-box {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.05);
+        }
+
+        .object-row {
+            border-bottom: 1px solid #eee;
+            padding: 12px 5px;
+        }
+
+        .object-row:last-child {
+            border-bottom: none;
+        }
+
+        .object-name {
+            font-weight: 600;
+        }
+
+        .btn {
+            border-radius: 7px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <div class="container-fluid">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <div>
+
+                <h3 class="mb-1">
+                    {{ title }}
+                </h3>
+
+                <small>
+                    Luhan School ERP Â· Scheduling Management
+                </small>
+
+            </div>
+
+            <div class="d-flex gap-2">
+
+                <a
+                    href="{% url 'scheduling:scheduling_dashboard' %}"
+                    class="btn btn-light"
+                >
+                    â† Dashboard
+                </a>
+
+                {% if model_name == "Teacher" and erp_permission.add_teacher or model_name == "Subject" and erp_permission.add_subject or model_name == "Room" and erp_permission.add_room or model_name == "ExamSchedule" and erp_permission.add_examschedule or model_name == "TeacherSubstitution" and erp_permission.add_teachersubstitution or model_name == "Period" and erp_permission.add_period or model_name == "Day" and erp_permission.add_day %}
+                    <a
+                        href="{% if model_name == 'Teacher' %}{% url 'scheduling:add_teacher' %}{% elif model_name == 'Subject' %}{% url 'scheduling:add_subject' %}{% elif model_name == 'Room' %}{% url 'scheduling:add_room' %}{% elif model_name == 'ExamSchedule' %}{% url 'scheduling:add_exam' %}{% elif model_name == 'TeacherSubstitution' %}{% url 'scheduling:add_substitution' %}{% elif model_name == 'Period' %}{% url 'scheduling:add_period' %}{% elif model_name == 'Day' %}{% url 'scheduling:add_day' %}{% endif %}"
+                        class="btn btn-success"
+                    >
+                        + Add {{ singular }}
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container-fluid px-3 px-lg-4">
+
+
+    {% if messages %}
+
+        <div class="mt-3">
+
+            {% for message in messages %}
+
+                <div class="alert alert-{{ message.tags|default:'info' }}">
+
+                    {{ message }}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="card-box">
+
+        {% if objects %}
+
+            {% for object in objects %}
+
+                <div class="object-row">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                        <div>
+
+                            <div class="object-name">
+
+                                {{ object }}
+
+                            </div>
+
+                            <small class="text-muted">
+
+                                ID: {{ object.pk }}
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="d-flex gap-2">
+
+                            {% if model_name == "Teacher" and erp_permission.change_teacher or model_name == "Subject" and erp_permission.change_subject or model_name == "Room" and erp_permission.change_room or model_name == "ExamSchedule" and erp_permission.change_examschedule or model_name == "TeacherSubstitution" and erp_permission.change_teachersubstitution or model_name == "Period" and erp_permission.change_period or model_name == "Day" and erp_permission.change_day %}
+                                <a
+                                    href="{% if model_name == 'Teacher' %}{% url 'scheduling:edit_teacher' object.pk %}{% elif model_name == 'Subject' %}{% url 'scheduling:edit_subject' object.pk %}{% elif model_name == 'Room' %}{% url 'scheduling:edit_room' object.pk %}{% elif model_name == 'ExamSchedule' %}{% url 'scheduling:edit_exam' object.pk %}{% elif model_name == 'TeacherSubstitution' %}{% url 'scheduling:edit_substitution' object.pk %}{% elif model_name == 'Period' %}{% url 'scheduling:edit_period' object.pk %}{% elif model_name == 'Day' %}{% url 'scheduling:edit_day' object.pk %}{% endif %}"
+                                    class="btn btn-sm btn-outline-primary"
+                                >
+                                    Edit
+                                </a>
+                            {% endif %}
+
+
+                            {% if model_name == "Teacher" and erp_permission.delete_teacher or model_name == "Subject" and erp_permission.delete_subject or model_name == "Room" and erp_permission.delete_room or model_name == "ExamSchedule" and erp_permission.delete_examschedule or model_name == "TeacherSubstitution" and erp_permission.delete_teachersubstitution or model_name == "Period" and erp_permission.delete_period or model_name == "Day" and erp_permission.delete_day %}
+                                <a
+                                    href="{% if model_name == 'Teacher' %}{% url 'scheduling:delete_teacher' object.pk %}{% elif model_name == 'Subject' %}{% url 'scheduling:delete_subject' object.pk %}{% elif model_name == 'Room' %}{% url 'scheduling:delete_room' object.pk %}{% elif model_name == 'ExamSchedule' %}{% url 'scheduling:delete_exam' object.pk %}{% elif model_name == 'TeacherSubstitution' %}{% url 'scheduling:delete_substitution' object.pk %}{% elif model_name == 'Period' %}{% url 'scheduling:delete_period' object.pk %}{% elif model_name == 'Day' %}{% url 'scheduling:delete_day' object.pk %}{% endif %}"
+                                    class="btn btn-sm btn-outline-danger"
+                                    onclick="return confirm('Are you sure you want to remove this item?');"
+                                >
+                                    Remove
+                                </a>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <div style="font-size: 45px;">
+                    ðŸ“‹
+                </div>
+
+                <h5 class="mt-3">
+                    No {{ singular|lower }} records found
+                </h5>
+
+                <p class="text-muted">
+                    Add your first {{ singular|lower }} to begin.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

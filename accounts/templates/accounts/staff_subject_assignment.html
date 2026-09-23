@@ -1,0 +1,189 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Subjects | Luhan School</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #0f4c81;
+        }
+
+        .staff-summary {
+            background: #eff6ff;
+            border-left: 5px solid #2563eb;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .subjects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .subject {
+            border: 1px solid #cbd5e1;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8fafc;
+            cursor: pointer;
+        }
+
+        .subject:hover {
+            background: #eff6ff;
+        }
+
+        .subject input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        button, .back {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        button {
+            background: #0f4c81;
+            color: white;
+        }
+
+        .back {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .message {
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <h1>Assign Subjects</h1>
+
+        <div class="staff-summary">
+            <strong>
+                {{ data.first_name }} {{ data.last_name }}
+            </strong>
+            <br>
+            Role:
+            <strong>{{ data.custom_role_name|default:"Not assigned" }}</strong>
+            <br>
+            Employee:
+            <strong>{{ data.username }}</strong>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <h3>Select the subjects this teacher will handle</h3>
+
+            <div class="subjects">
+
+                {% for subject in subjects %}
+
+                    <label class="subject">
+                        <input
+                            type="checkbox"
+                            name="subjects"
+                            value="{{ subject.id }}"
+                        >
+
+                        <strong>{{ subject.name }}</strong>
+
+                        {% if subject.code %}
+                            <br>
+                            <small>{{ subject.code }}</small>
+                        {% endif %}
+                    </label>
+
+                {% empty %}
+
+                    <p>
+                        No active subjects are currently available.
+                    </p>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="actions">
+
+                <a
+                    href="{% url 'accounts:staff_role_assignment' %}"
+                    class="back"
+                >
+                    ← Back to Role
+                </a>
+
+                <button type="submit">
+                    Save & Create Account
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

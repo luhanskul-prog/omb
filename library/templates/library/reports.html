@@ -1,0 +1,130 @@
+﻿{% extends "library/base.html" %}
+{% load library_extras %}
+
+{% block page_title %}
+Library Reports
+{% endblock %}
+
+{% block content %}
+
+<div class="cards">
+
+<div class="card">
+<div class="muted">Books</div>
+<div class="stat">{{ total_books }}</div>
+</div>
+
+<div class="card">
+<div class="muted">Categories</div>
+<div class="stat">{{ total_categories }}</div>
+</div>
+
+<div class="card">
+<div class="muted">Members</div>
+<div class="stat">{{ total_members }}</div>
+</div>
+
+<div class="card">
+<div class="muted">Issue Records</div>
+<div class="stat">{{ total_issues }}</div>
+</div>
+
+</div>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+
+<th colspan="5">
+Currently Issued Books
+</th>
+
+</tr>
+</thead>
+
+<tbody>
+
+{% for issue in active_issues %}
+
+<tr>
+
+{% for field in issue_fields %}
+
+<td>
+{{ issue|getattr:field.name }}
+</td>
+
+{% endfor %}
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td>No active issues.</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<br>
+
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+
+<th colspan="5">
+Overdue Books
+</th>
+
+</tr>
+</thead>
+
+<tbody>
+
+{% for issue in overdue %}
+
+<tr>
+
+{% for field in issue_fields %}
+
+<td>
+{{ issue|getattr:field.name }}
+</td>
+
+{% endfor %}
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td>No overdue books.</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+{% endblock %}
+
+
+

@@ -1,0 +1,269 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                🏦 Bank Transactions & Reconciliation
+            </h2>
+
+            <div class="text-muted">
+                Automatic verification, matching and receipt posting.
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <form method="post"
+                  action="{% url 'fees:bank_sync_now' %}">
+                {% csrf_token %}
+                <button class="btn btn-primary fw-bold">
+                    🔄 SYNC BANK NOW
+                </button>
+            </form>
+
+            <a
+                href="{% url 'fees:automatic_payment_settings' %}"
+                class="btn btn-outline-primary"
+            >
+                ⚙ Bank Settings
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <div class="d-flex justify-content-between">
+
+                <strong>Transactions</strong>
+
+                <div>
+                    <a
+                        href="{% url 'fees:bank_transactions' %}"
+                        class="btn btn-sm btn-outline-secondary"
+                    >
+                        All
+                    </a>
+
+                    <a
+                        href="?status=VERIFIED"
+                        class="btn btn-sm btn-outline-success"
+                    >
+                        Verified
+                    </a>
+
+                    <a
+                        href="?status=UNMATCHED"
+                        class="btn btn-sm btn-outline-warning"
+                    >
+                        Unmatched
+                    </a>
+
+                    <a
+                        href="?status=REJECTED"
+                        class="btn btn-sm btn-outline-danger"
+                    >
+                        Rejected
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Date</th>
+                        <th>Transaction</th>
+                        <th>Payer</th>
+                        <th>Reference</th>
+                        <th>Amount</th>
+                        <th>Student</th>
+                        <th>Status</th>
+                        <th>Receipt</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for tx in transactions %}
+
+                    <tr>
+
+                        <td>
+                            {{ tx.transaction_time|default:tx.created_at }}
+                        </td>
+
+                        <td>
+                            <strong>{{ tx.transaction_id }}</strong>
+                        </td>
+
+                        <td>
+                            {{ tx.payer_name|default:"—" }}
+                        </td>
+
+                        <td>
+                            {{ tx.reference|default:"—" }}
+                        </td>
+
+                        <td class="fw-bold">
+                            {{ tx.amount }}
+                            {{ tx.currency }}
+                        </td>
+
+                        <td>
+
+                            {% if tx.student %}
+
+                                <strong>
+                                    {{ tx.student.admission_no }}
+                                </strong>
+
+                                <br>
+
+                                <small>
+                                    {{ tx.student.first_name }}
+                                    {{ tx.student.last_name }}
+                                </small>
+
+                            {% else %}
+
+                                <span class="text-danger">
+                                    Not matched
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if tx.status == "VERIFIED" %}
+                                <span class="badge bg-success">
+                                    VERIFIED
+                                </span>
+                            {% elif tx.status == "UNMATCHED" %}
+                                <span class="badge bg-warning text-dark">
+                                    UNMATCHED
+                                </span>
+                            {% elif tx.status == "REJECTED" %}
+                                <span class="badge bg-danger">
+                                    REJECTED
+                                </span>
+                            {% elif tx.status == "DUPLICATE" %}
+                                <span class="badge bg-secondary">
+                                    DUPLICATE
+                                </span>
+                            {% else %}
+                                <span class="badge bg-primary">
+                                    {{ tx.status }}
+                                </span>
+                            {% endif %}
+
+                            <br>
+
+                            <small class="text-muted">
+                                {{ tx.verification_message }}
+                            </small>
+
+                        </td>
+
+                        <td>
+
+                            {% if tx.fee_payment %}
+                                <strong>
+                                    {{ tx.fee_payment.receipt_number }}
+                                </strong>
+                            {% else %}
+                                —
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if tx.status != "VERIFIED" %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'fees:bank_transaction_verify' tx.id %}"
+                                    class="mb-2"
+                                >
+                                    {% csrf_token %}
+                                    <button class="btn btn-sm btn-primary">
+                                        Verify
+                                    </button>
+                                </form>
+
+                                <form
+                                    method="post"
+                                    action="{% url 'fees:bank_transaction_assign' tx.id %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <input
+                                        name="admission_no"
+                                        class="form-control form-control-sm mb-1"
+                                        placeholder="Admission No."
+                                        required
+                                    >
+
+                                    <button class="btn btn-sm btn-outline-success">
+                                        Assign Student
+                                    </button>
+
+                                </form>
+
+                            {% else %}
+
+                                <span class="text-success fw-bold">
+                                    Posted
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="9"
+                            class="text-center py-5 text-muted">
+                            No bank transactions found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

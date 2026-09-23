@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Employee Details | HR & Payroll | Luhan School
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f4f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .top-header {
+            background: linear-gradient(
+                135deg,
+                #198754,
+                #157347
+            );
+
+            color: white;
+
+            padding: 22px 0;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 4px 15px rgba(25, 135, 84, 0.20);
+        }
+
+        .page-title {
+            font-weight: 700;
+        }
+
+        .welcome-text {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .back-btn {
+            border: 1px solid rgba(255, 255, 255, 0.75);
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #198754;
+        }
+
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .detail-card {
+            background: white;
+
+            border: 1px solid #e1e6ed;
+
+            border-radius: 12px;
+
+            padding: 24px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.04);
+
+            margin-bottom: 24px;
+        }
+
+
+        /* =====================================================
+           EMPLOYEE HEADER
+        ===================================================== */
+
+        .employee-header {
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+        }
+
+        .employee-avatar {
+            width: 70px;
+            height: 70px;
+
+            border-radius: 50%;
+
+            background: #198754;
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 28px;
+
+            font-weight: 700;
+        }
+
+        .employee-name {
+            font-size: 25px;
+
+            font-weight: 700;
+
+            color: #263238;
+        }
+
+        .employee-number {
+            color: #6c757d;
+
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           INFORMATION
+        ===================================================== */
+
+        .section-title {
+            font-size: 18px;
+
+            font-weight: 700;
+
+            color: #263238;
+
+            margin-bottom: 20px;
+        }
+
+        .info-item {
+            padding: 14px 0;
+
+            border-bottom: 1px solid #edf0f2;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 13px;
+
+            color: #6c757d;
+
+            margin-bottom: 4px;
+        }
+
+        .info-value {
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color: #263238;
+        }
+
+        .not-available {
+            color: #adb5bd;
+
+            font-weight: normal;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status-active {
+            background: #d1e7dd;
+
+            color: #0f5132;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+
+            color: #842029;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer-text {
+            text-align: center;
+
+            color: #6c757d;
+
+            font-size: 13px;
+
+            margin-top: 30px;
+
+            padding-bottom: 20px;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 768px) {
+
+            .top-header .d-flex {
+                flex-direction: column;
+
+                align-items: flex-start !important;
+            }
+
+            .employee-header {
+                flex-direction: column;
+
+                align-items: flex-start;
+            }
+
+            .employee-name {
+                font-size: 21px;
+            }
+
+            .detail-card {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="top-header">
+
+    <div class="container">
+
+        <div
+            class="d-flex
+                   justify-content-between
+                   align-items-center
+                   gap-3"
+        >
+
+            <div>
+
+                <h2 class="page-title mb-1">
+
+                    Employee Details
+
+                </h2>
+
+                <div class="welcome-text">
+
+                    HR & Payroll
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <a
+                    href="{% url 'hr_payroll:employee_list' %}"
+                    class="btn back-btn"
+                >
+
+                    ← Employees
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container pb-5">
+
+
+    <!-- =====================================================
+         EMPLOYEE SUMMARY
+    ====================================================== -->
+
+    <div class="detail-card">
+
+        <div class="employee-header">
+
+
+            <!-- AVATAR -->
+
+            <div class="employee-avatar">
+
+                {% if employee.user.first_name %}
+
+                    {{ employee.user.first_name|first|upper }}
+
+                {% else %}
+
+                    {{ employee.user.username|first|upper }}
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- NAME -->
+
+            <div>
+
+                <div class="employee-name">
+
+                    {% if employee.user.get_full_name %}
+
+                        {{ employee.user.get_full_name }}
+
+                    {% else %}
+
+                        {{ employee.user.username }}
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="employee-number">
+
+                    Employee No:
+
+                    {% if employee.employee_number %}
+
+                        {{ employee.employee_number }}
+
+                    {% else %}
+
+                        Not assigned
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PERSONAL / ACCOUNT INFORMATION
+    ====================================================== -->
+
+    <div class="detail-card">
+
+        <div class="section-title">
+
+            Personal & Account Information
+
+        </div>
+
+
+        <div class="row">
+
+
+            <!-- FULL NAME -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Full Name
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.user.get_full_name %}
+
+                            {{ employee.user.get_full_name }}
+
+                        {% else %}
+
+                            {{ employee.user.username }}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- USERNAME -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Username
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {{ employee.user.username }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- EMAIL -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Email Address
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.user.email %}
+
+                            {{ employee.user.email }}
+
+                        {% else %}
+
+                            <span class="not-available">
+                                Not provided
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Phone Number
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.phone %}
+
+                            {{ employee.phone }}
+
+                        {% else %}
+
+                            <span class="not-available">
+                                Not provided
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         EMPLOYMENT INFORMATION
+    ====================================================== -->
+
+    <div class="detail-card">
+
+        <div class="section-title">
+
+            Employment Information
+
+        </div>
+
+
+        <div class="row">
+
+
+            <!-- EMPLOYEE NUMBER -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Employee Number
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.employee_number %}
+
+                            {{ employee.employee_number }}
+
+                        {% else %}
+
+                            <span class="not-available">
+                                Not assigned
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- DEPARTMENT -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Department
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.department %}
+
+                            {{ employee.department.name }}
+
+                        {% else %}
+
+                            <span class="not-available">
+                                Not assigned
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- JOB TITLE -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Job Title
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.job_title %}
+
+                            {{ employee.job_title }}
+
+                        {% else %}
+
+                            <span class="not-available">
+                                Not assigned
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOM ROLE -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Custom Role
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.custom_role %}
+
+                            {{ employee.custom_role.name }}
+
+                        {% else %}
+
+                            <span class="not-available">
+                                No custom role
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACCOUNT ROLE -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Account Type
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.role == "ADMIN" %}
+
+                            Administrator
+
+                        {% elif employee.role == "STAFF" %}
+
+                            Staff
+
+                        {% else %}
+
+                            {{ employee.get_role_display }}
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-md-6">
+
+                <div class="info-item">
+
+                    <div class="info-label">
+
+                        Account Status
+
+                    </div>
+
+                    <div class="info-value">
+
+                        {% if employee.is_active and employee.user.is_active %}
+
+                            <span class="status-active">
+
+                                Active
+
+                            </span>
+
+                        {% else %}
+
+                            <span class="status-inactive">
+
+                                Inactive
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ACTIONS
+    ====================================================== -->
+
+    <div class="detail-card">
+
+        <div
+            class="d-flex
+                   justify-content-between
+                   align-items-center
+                   flex-wrap
+                   gap-2"
+        >
+
+            <div>
+
+                <strong>
+                    Employee Record
+                </strong>
+
+                <div class="text-muted small">
+
+                    This information is sourced from
+                    Accounts → Staff Management.
+
+                </div>
+
+            </div>
+
+
+            <div class="d-flex gap-2">
+
+                <a
+                    href="{% url 'hr_payroll:employee_list' %}"
+                    class="btn btn-outline-secondary"
+                >
+
+                    ← Back to Employees
+
+                </a>
+
+                <a
+                    href="{% url 'hr_payroll:dashboard' %}"
+                    class="btn btn-success"
+                >
+
+                    HR & Payroll
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="footer-text">
+
+        Luhan School Management System
+
+        <br>
+
+        HR & Payroll
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     BOOTSTRAP JAVASCRIPT
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+</body>
+
+</html>

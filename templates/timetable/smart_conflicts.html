@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-shield-check"></i>
+                Timetable Conflict Intelligence
+            </h3>
+
+            <p class="text-muted mb-0">
+                Automatic validation of the generated timetable.
+            </p>
+        </div>
+
+        <div class="timetable-nav-compact d-flex gap-1">
+
+            <a href="{% url 'timetable:generation_control' %}"
+               class="btn btn-primary">
+                <i class="bi bi-cpu"></i>
+                Generation Control
+            </a>
+
+            <a href="{% url 'timetable:workspace' %}"
+               class="btn btn-success">
+                <i class="bi bi-calendar3"></i>
+                Master Timetable
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- TERM -->
+
+    <div class="alert alert-primary border-0 shadow-sm">
+
+        <strong>
+            <i class="bi bi-calendar-event"></i>
+            Selected Term:
+        </strong>
+
+        {% if term %}
+            {{ term.academic_year }} - {{ term.term_name }}
+        {% else %}
+            No term selected
+        {% endif %}
+
+    </div>
+
+
+    <!-- STATISTICS -->
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        TOTAL LESSONS
+                    </div>
+
+                    <div class="display-6 fw-bold">
+                        {{ lessons_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        LOCKED
+                    </div>
+
+                    <div class="display-6 fw-bold text-success">
+                        {{ locked_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        HARD CONFLICTS
+                    </div>
+
+                    <div class="display-6 fw-bold text-danger">
+                        {{ danger_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body text-center">
+
+                    <div class="text-muted">
+                        WARNINGS
+                    </div>
+
+                    <div class="display-6 fw-bold text-warning">
+                        {{ warning_count }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if conflicts %}
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-danger text-white">
+
+            <div class="d-flex justify-content-between">
+
+                <strong>
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Issues Detected
+                </strong>
+
+                <span class="badge bg-light text-danger">
+                    {{ conflict_count }}
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+
+                    <tr>
+                        <th>Type</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Teacher</th>
+                        <th>Room</th>
+                        <th>Day</th>
+                        <th>Period</th>
+                        <th>Reason</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in conflicts %}
+
+                    <tr>
+
+                        <td>
+
+                            {% if item.severity == "danger" %}
+
+                            <span class="badge bg-danger">
+                                {{ item.type }}
+                            </span>
+
+                            {% else %}
+
+                            <span class="badge bg-warning text-dark">
+                                {{ item.type }}
+                            </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>{{ item.class }}</td>
+
+                        <td>{{ item.subject }}</td>
+
+                        <td>{{ item.teacher }}</td>
+
+                        <td>{{ item.room }}</td>
+
+                        <td>{{ item.day }}</td>
+
+                        <td>{{ item.period }}</td>
+
+                        <td>
+                            {{ item.reason }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body text-center py-5">
+
+            <div class="display-1 text-success">
+                <i class="bi bi-check-circle"></i>
+            </div>
+
+            <h3 class="fw-bold mt-3">
+                No timetable conflicts detected
+            </h3>
+
+            <p class="text-muted">
+                The current timetable passed all available conflict checks.
+            </p>
+
+            <a href="{% url 'timetable:workspace' %}"
+               class="btn btn-success">
+
+                <i class="bi bi-calendar3"></i>
+                View Master Timetable
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

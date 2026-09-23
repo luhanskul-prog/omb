@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>School Branding</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+        }
+
+        .header p {
+            margin: 0;
+            opacity: 0.85;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 0 0 12px 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .logo-preview {
+            margin-top: 12px;
+        }
+
+        .logo-preview img {
+            max-width: 150px;
+            max-height: 150px;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            padding: 8px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .checkbox input {
+            width: auto;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            gap: 12px;
+        }
+
+        button,
+        .back-button {
+            border: none;
+            padding: 13px 22px;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .save-button {
+            background: #2563eb;
+            color: white;
+        }
+
+        .save-button:hover {
+            background: #1d4ed8;
+        }
+
+        .back-button {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+        .message {
+            padding: 12px;
+            margin-bottom: 15px;
+            background: #dcfce7;
+            color: #166534;
+            border-radius: 7px;
+        }
+
+        @media (max-width: 700px) {
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .container {
+                margin: 15px auto;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+
+        <h1>School Branding</h1>
+
+        <p>
+            Configure the school identity used throughout the ERP
+            and official reports.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            {% csrf_token %}
+
+
+            <!-- =================================================
+                 SCHOOL IDENTITY
+                 ================================================= -->
+
+            <div class="section-title">
+                School Identity
+            </div>
+
+            <div class="grid">
+
+                <div class="field full">
+
+                    <label>
+                        School Name *
+                    </label>
+
+                    <input
+                        type="text"
+                        name="school_name"
+                        value="{{ branding.school_name }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="field full">
+
+                    <label>
+                        School Motto
+                    </label>
+
+                    <input
+                        type="text"
+                        name="motto"
+                        value="{{ branding.motto }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        School Code
+                    </label>
+
+                    <input
+                        type="text"
+                        name="school_code"
+                        value="{{ branding.school_code }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Website
+                    </label>
+
+                    <input
+                        type="text"
+                        name="website"
+                        value="{{ branding.website }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 LOGO
+                 ================================================= -->
+
+            <div class="section-title">
+                School Logo
+            </div>
+
+            <div class="field">
+
+                <label>
+                    Upload School Logo
+                </label>
+
+                <input
+                    type="file"
+                    name="logo"
+                    accept="image/*"
+                >
+
+                {% if branding.logo %}
+
+                    <div class="logo-preview">
+
+                        <p>
+                            Current Logo:
+                        </p>
+
+                        <img
+                            src="{{ branding.logo.url }}"
+                            alt="School Logo"
+                        >
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =================================================
+                 CONTACT INFORMATION
+                 ================================================= -->
+
+            <div class="section-title">
+                Contact Information
+            </div>
+
+            <div class="grid">
+
+                <div class="field">
+
+                    <label>
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="phone"
+                        value="{{ branding.phone }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Alternative Phone
+                    </label>
+
+                    <input
+                        type="text"
+                        name="alternative_phone"
+                        value="{{ branding.alternative_phone }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Email
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ branding.email }}"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Postal Address
+                    </label>
+
+                    <input
+                        type="text"
+                        name="postal_address"
+                        value="{{ branding.postal_address }}"
+                    >
+
+                </div>
+
+
+                <div class="field full">
+
+                    <label>
+                        Physical Address
+                    </label>
+
+                    <input
+                        type="text"
+                        name="physical_address"
+                        value="{{ branding.physical_address }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 ADDITIONAL INFORMATION
+                 ================================================= -->
+
+            <div class="section-title">
+                Additional Information
+            </div>
+
+            <div class="field">
+
+                <label>
+                    Additional Information
+                </label>
+
+                <textarea
+                    name="additional_information"
+                >{{ branding.additional_information }}</textarea>
+
+            </div>
+
+
+            <!-- =================================================
+                 STATUS
+                 ================================================= -->
+
+            <div class="checkbox">
+
+                <input
+                    type="checkbox"
+                    name="is_active"
+                    id="is_active"
+                    {% if branding.is_active %}checked{% endif %}
+                >
+
+                <label for="is_active">
+                    Use this branding throughout the ERP
+                </label>
+
+            </div>
+
+
+            <!-- =================================================
+                 BUTTONS
+                 ================================================= -->
+
+            <div class="buttons">
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    SAVE BRANDING
+                </button>
+
+                <a
+                    href="{% url 'accounts:admin_dashboard' %}"
+                    class="back-button"
+                >
+                    BACK TO DASHBOARD
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

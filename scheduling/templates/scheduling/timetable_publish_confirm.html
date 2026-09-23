@@ -1,0 +1,44 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="mb-3">Publish Timetable</h2>
+
+            <p>
+                Publishing will make the current generated timetable
+                visible to authorised portal users.
+            </p>
+
+            <div class="alert alert-info">
+                <strong>{{ draft_count }}</strong>
+                draft lessons are ready for publication.
+            </div>
+
+            {% if published_count %}
+            <div class="alert alert-warning">
+                There are currently
+                <strong>{{ published_count }}</strong>
+                published lessons. Publishing will replace their portal
+                visibility with the current draft.
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {% if erp_permission.change_timetableentry %}
+                <button type="submit" class="btn btn-success">
+                    Publish Timetable
+                </button>
+                {% endif %}
+
+                <a href="{% url 'scheduling:timetable_review' %}"
+                   class="btn btn-secondary">
+                    Return to Review
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

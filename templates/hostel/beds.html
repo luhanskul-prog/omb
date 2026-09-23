@@ -1,0 +1,174 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Beds{% endblock %}
+{% block heading %}Beds{% endblock %}
+{% block subheading %}Track bed availability and occupancy{% endblock %}
+
+{% block content %}
+
+<div class="card-box">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Bed Management</h2>
+            <div class="card-sub">Available, occupied, reserved and maintenance beds</div>
+        </div>
+
+        {% if erp_permission.add_bed %}
+        <a href="{% url 'hostel:bed_create' %}" class="btn-main">
+            + Add Bed
+        </a>
+        {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="search-box">
+
+            <div class="row g-2">
+
+                <div class="col-md-4">
+                    <input
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search bed, room or hostel..."
+                    >
+                </div>
+
+                <div class="col-md-3">
+
+                    <select name="hostel" class="form-select">
+
+                        <option value="">All Hostels</option>
+
+                        {% for hostel in hostels %}
+
+                        <option value="{{ hostel.id }}"
+                            {% if hostel_id == hostel.id|stringformat:"s" %}selected{% endif %}>
+                            {{ hostel.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select name="status" class="form-select">
+
+                        <option value="">All Statuses</option>
+
+                        {% for value,label in status_choices %}
+
+                        <option value="{{ value }}"
+                            {% if status == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn-main w-100">
+                        Filter
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                <tr>
+                    <th>Hostel</th>
+                    <th>Room</th>
+                    <th>Bed</th>
+                    <th>Status</th>
+                    <th>Student</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for bed in beds %}
+
+                <tr>
+
+                    <td>{{ bed.room.hostel.name }}</td>
+
+                    <td>{{ bed.room.room_number }}</td>
+
+                    <td><strong>{{ bed.bed_number }}</strong></td>
+
+                    <td>
+
+                        {% if bed.status == "available" %}
+                            <span class="badge-soft green">Available</span>
+                        {% elif bed.status == "occupied" %}
+                            <span class="badge-soft red">Occupied</span>
+                        {% elif bed.status == "reserved" %}
+                            <span class="badge-soft orange">Reserved</span>
+                        {% else %}
+                            <span class="badge-soft purple">Maintenance</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% for allocation in bed.student_allocations.all %}
+
+                            {% if allocation.status == "active" %}
+                                {{ allocation.student }}
+                            {% endif %}
+
+                        {% empty %}
+                            —
+                        {% endfor %}
+
+                    </td>
+
+                    <td>
+                        {% if erp_permission.change_bed %}
+                        <a href="{% url 'hostel:bed_edit' bed.pk %}" class="btn-lightx">
+                            Edit
+                        </a>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="6" class="text-center text-muted p-5">
+                        No beds found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

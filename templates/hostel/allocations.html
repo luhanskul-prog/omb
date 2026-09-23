@@ -1,0 +1,169 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Student Allocations{% endblock %}
+{% block heading %}Student Allocations{% endblock %}
+{% block subheading %}Allocate, transfer and vacate boarding learners{% endblock %}
+
+{% block content %}
+
+<div class="card-box">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Boarding Allocations</h2>
+            <div class="card-sub">Current and historical hostel placements</div>
+        </div>
+
+        {% if erp_permission.add_studenthostelallocation %}
+        <a href="{% url 'hostel:allocation_create' %}" class="btn-main">
+            + Allocate Student
+        </a>
+        {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="search-box">
+
+            <div class="row g-2">
+
+                <div class="col-md-8">
+
+                    <input
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search learner, admission number, hostel or room..."
+                    >
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <select name="status" class="form-select">
+
+                        <option value="">All</option>
+                        <option value="active" {% if status == "active" %}selected{% endif %}>Active</option>
+                        <option value="ended" {% if status == "ended" %}selected{% endif %}>Ended</option>
+                        <option value="transferred" {% if status == "transferred" %}selected{% endif %}>Transferred</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn-main w-100">
+                        Filter
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Hostel</th>
+                    <th>Room</th>
+                    <th>Bed</th>
+                    <th>Admission</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for item in allocations %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ item.student }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            {{ item.student.admission_no|default:"No admission no." }}
+                        </small>
+                    </td>
+
+                    <td>{{ item.hostel.name }}</td>
+
+                    <td>{{ item.room.room_number }}</td>
+
+                    <td>{{ item.bed.bed_number|default:"—" }}</td>
+
+                    <td>{{ item.admission_date }}</td>
+
+                    <td>
+
+                        {% if item.status == "active" %}
+                            <span class="badge-soft green">Active</span>
+                        {% elif item.status == "ended" %}
+                            <span class="badge-soft red">Ended</span>
+                        {% else %}
+                            <span class="badge-soft orange">Transferred</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if erp_permission.change_studenthostelallocation %}
+                        <a href="{% url 'hostel:allocation_edit' item.pk %}" class="btn-lightx">
+                            Edit
+                        </a>
+                        {% endif %}
+
+                        {% if item.status == "active" %}
+
+                        {% if erp_permission.change_studenthostelallocation %}
+                        <form method="post"
+                              action="{% url 'hostel:allocation_end' item.pk %}"
+                              class="d-inline"
+                              onsubmit="return confirm('End this student hostel allocation?');">
+
+                            {% csrf_token %}
+
+                            <button class="btn-dangerx">
+                                Vacate
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    {% endif %}</td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="text-center text-muted p-5">
+                        No hostel allocations found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,766 @@
+﻿{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        Fees |
+        {{ branding.school_name|default:"Luhan School" }}
+    </title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f4f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .page-header {
+            background: linear-gradient(
+                135deg,
+                #0b4f8a,
+                #1976b9
+            );
+            color: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            border: 0;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.06);
+        }
+
+        .stat-card {
+            border-radius: 14px;
+        }
+
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .section-title {
+            font-weight: bold;
+        }
+
+        .table th {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .print-link {
+            white-space: nowrap;
+        }
+
+        @media print {
+
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container py-4">
+
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <div class="page-header">
+
+        <div class="d-flex justify-content-between
+                    align-items-center">
+
+            <div>
+
+                <h2 class="mb-1">
+                    Student Fees
+                </h2>
+
+                <div>
+                    {{ branding.school_name|default:"Luhan School" }}
+                </div>
+
+                <div class="small opacity-75">
+                    {{ student.get_full_name }}
+                    â€”
+                    {{ student.admission_no }}
+                </div>
+
+            </div>
+
+            <a
+                href="{% url 'accounts:student_dashboard' %}"
+                class="btn btn-light no-print"
+            >
+                â† Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FEE FILTER
+    ====================================================== -->
+
+    <div class="card mb-4 no-print">
+
+        <div class="card-body">
+
+            <h5 class="section-title mb-3">
+                Load Fee Statement
+            </h5>
+
+            <form method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Academic Year
+                        </label>
+
+                        <select
+                            name="academic_year"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Academic Year
+                            </option>
+
+                            {% for year in academic_years %}
+
+                                <option
+                                    value="{{ year.id }}"
+                                    {% if selected_year and selected_year.id == year.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ year.year }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Term
+                        </label>
+
+                        <select
+                            name="term"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Whole Year
+                            </option>
+
+                            {% for term in terms %}
+
+                                <option
+                                    value="{{ term.id }}"
+                                    {% if selected_term and selected_term.id == term.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ term.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100"
+                        >
+                            Load Fees
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {% if selected_year %}
+
+
+    <!-- =====================================================
+         SELECTION INFORMATION
+    ====================================================== -->
+
+    <div class="alert alert-info">
+
+        Showing fees for:
+
+        <strong>
+            {{ selected_year.year }}
+        </strong>
+
+        {% if selected_term %}
+            â€”
+            <strong>
+                {{ selected_term.name }}
+            </strong>
+        {% else %}
+            â€”
+            <strong>Whole Year</strong>
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card stat-card">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Total Charged
+                    </small>
+
+                    <div class="stat-value">
+                        KSh {{ total_charged|floatformat:2 }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card stat-card">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Total Paid
+                    </small>
+
+                    <div class="stat-value text-success">
+                        KSh {{ total_paid|floatformat:2 }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <div class="card stat-card">
+
+                <div class="card-body">
+
+                    <small class="text-muted">
+                        Outstanding Balance
+                    </small>
+
+                    <div class="stat-value text-danger">
+                        KSh {{ total_balance|floatformat:2 }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FEE RECORDS
+    ====================================================== -->
+
+    <div class="card mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between
+                        align-items-center mb-3">
+
+                <h5 class="section-title mb-0">
+                    Fee Records
+                </h5>
+
+                {% if fee_records %}
+
+                    <a
+                        href="{% url 'fees:print_statement' student.id %}?academic_year={{ selected_year.id }}{% if selected_term %}&term={{ selected_term.id }}{% endif %}"
+                        target="_self"
+                        class="btn btn-outline-primary no-print"
+                    >
+                        ðŸ–¨ Print Fee Statement
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Year</th>
+                            <th>Term</th>
+                            <th>Opening</th>
+                            <th>Charged</th>
+                            <th>Paid</th>
+                            <th>Balance</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for record in fee_records %}
+
+                        <tr>
+
+                            <td>
+                                {{ record.academic_year.year }}
+                            </td>
+
+                            <td>
+                                {{ record.term.name }}
+                            </td>
+
+                            <td>
+                                KSh {{ record.opening_balance|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                KSh {{ record.amount_charged|floatformat:2 }}
+                            </td>
+
+                            <td class="text-success">
+                                KSh {{ record.amount_paid|floatformat:2 }}
+                            </td>
+
+                            <td class="text-danger fw-bold">
+                                KSh {{ record.balance|floatformat:2 }}
+                            </td>
+
+                            <td class="no-print">
+
+                                {% if record.balance > 0 %}
+
+                                    <a
+                                        href="{% url 'fees:online_payment' %}?student_id={{ student.id }}&fee_record_id={{ record.id }}"
+                                        class="btn btn-success btn-sm"
+                                    >
+                                        <i class="bi bi-credit-card"></i>
+                                        Pay Online
+                                    </a>
+
+                                    <a
+                                        href="{% url 'fees:alternate_payment_gateway' %}?admission_no={{ student.admission_no }}"
+                                        class="btn btn-danger btn-sm d-block mt-2"
+                                        style="font-weight:700;"
+                                    >
+                                        <i class="bi bi-wallet2"></i>
+                                        ALTERNATE PAYMENT
+                                    </a>
+
+<a
+    href="{% url 'fees:alternate_payment_track' %}"
+    class="btn btn-success btn-sm d-block mt-2"
+    style="font-weight:700;"
+>
+    <i class="bi bi-search"></i>
+    TRACK PREVIOUS REQUEST
+</a>
+
+
+                                {% else %}
+
+                                    <span class="badge bg-success">
+                                        Fully Paid
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center text-muted py-5"
+                            >
+                                No fee records found for the
+                                selected period.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECEIPTS FILTER
+    ====================================================== -->
+
+    <div class="card mb-4 no-print">
+
+        <div class="card-body">
+
+            <h5 class="section-title mb-3">
+                Fee Receipts
+            </h5>
+
+            <p class="text-muted">
+                Select an academic year and term to load
+                payment receipts.
+            </p>
+
+            <form method="get">
+
+                <input
+                    type="hidden"
+                    name="load_receipts"
+                    value="1"
+                >
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Academic Year
+                        </label>
+
+                        <select
+                            name="academic_year"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Academic Year
+                            </option>
+
+                            {% for year in academic_years %}
+
+                                <option
+                                    value="{{ year.id }}"
+                                    {% if selected_year and selected_year.id == year.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ year.year }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Term
+                        </label>
+
+                        <select
+                            name="term"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Term
+                            </option>
+
+                            {% for term in terms %}
+
+                                <option
+                                    value="{{ term.id }}"
+                                    {% if selected_term and selected_term.id == term.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ term.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100"
+                        >
+                            Load Receipts
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         RECEIPTS
+    ====================================================== -->
+
+    {% if load_receipts %}
+
+    <div class="card">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between
+                        align-items-center mb-3">
+
+                <div>
+
+                    <h5 class="section-title mb-1">
+                        Payment Receipts
+                    </h5>
+
+                    <small class="text-muted">
+
+                        {{ selected_year.year }}
+                        â€”
+                        {{ selected_term.name }}
+
+                    </small>
+
+                </div>
+
+                <span class="badge bg-success">
+                    Total:
+                    KSh {{ receipt_total|floatformat:2 }}
+                </span>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Receipt No.</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Payment Method</th>
+                            <th>Reference</th>
+                            <th class="no-print">Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for receipt in receipts %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ receipt.receipt_number }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ receipt.payment_date|date:"d M Y" }}
+                            </td>
+
+                            <td class="text-success fw-bold">
+                                KSh {{ receipt.amount|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ receipt.payment_method|default:"-" }}
+                            </td>
+
+                            <td>
+                                {{ receipt.reference|default:"-" }}
+                            </td>
+
+                            <td class="no-print">
+
+    <a
+        href="{% url 'accounts:student_print_receipt' receipt.id %}?academic_year={{ selected_year.id }}{% if selected_term %}&term={{ selected_term.id }}{% endif %}"
+        class="btn btn-sm btn-outline-primary"
+    >
+        View Receipt
+    </a>
+
+</td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="text-center text-muted py-5"
+                            >
+                                No receipts found for the
+                                selected year and term.
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    {% else %}
+
+
+    <!-- =====================================================
+         INITIAL STATE
+    ====================================================== -->
+
+    <div class="card">
+
+        <div class="card-body text-center py-5">
+
+            <h5>
+                Load Your Fee Information
+            </h5>
+
+            <p class="text-muted mb-0">
+                Select an academic year and optionally a term,
+                then click <strong>Load Fees</strong>.
+                Select a specific year and term below to load
+                your payment receipts.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% endif %}
+
+
+</div>
+
+</body>
+
+</html>
+

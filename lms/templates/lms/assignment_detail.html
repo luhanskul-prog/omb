@@ -1,0 +1,350 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ assignment.title }} | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .topbar {
+            background: #111827;
+            color: white;
+            padding: 18px 25px;
+        }
+
+        .content {
+            padding: 30px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .card-box {
+            background: white;
+            border: 1px solid #d9e1ec;
+            border-radius: 12px;
+            padding: 28px;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .assignment-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .description {
+            color: #667085;
+            margin-top: 8px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #667085;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: #111827;
+            margin-top: 3px;
+        }
+
+        .content-text {
+            white-space: pre-wrap;
+            line-height: 1.7;
+            color: #344054;
+        }
+
+        .badge-published {
+            background: #dcfce7;
+            color: #166534;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-draft {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-primary-custom {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-primary-custom:hover {
+            background: #1d4ed8;
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: #e5e7eb;
+            color: #111827;
+            padding: 10px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-danger-custom {
+            background: #dc2626;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .btn-danger-custom:hover {
+            background: #b91c1c;
+            color: white;
+        }
+
+        .attachment-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+    <strong>📝 Luhan ERP — Assignment Details</strong>
+</header>
+
+<main class="content">
+
+    <div class="card-box">
+
+        <div class="d-flex justify-content-between align-items-start gap-3">
+
+            <div>
+                <div class="assignment-title">
+                    {{ assignment.title }}
+                </div>
+
+                {% if assignment.description %}
+                    <div class="description">
+                        {{ assignment.description }}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div>
+                {% if assignment.is_published %}
+                    <span class="badge-published">
+                        PUBLISHED
+                    </span>
+                {% else %}
+                    <span class="badge-draft">
+                        DRAFT
+                    </span>
+                {% endif %}
+            </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="row g-4">
+
+            {% if assignment.subject %}
+                <div class="col-md-4">
+                    <div class="info-label">Subject</div>
+                    <div class="info-value">
+                        {{ assignment.subject }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if assignment.class_name %}
+                <div class="col-md-4">
+                    <div class="info-label">Class</div>
+                    <div class="info-value">
+                        {{ assignment.class_name }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if assignment.total_marks %}
+                <div class="col-md-4">
+                    <div class="info-label">Total Marks</div>
+                    <div class="info-value">
+                        {{ assignment.total_marks }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if assignment.due_date %}
+                <div class="col-md-4">
+                    <div class="info-label">Due Date</div>
+                    <div class="info-value">
+                        {{ assignment.due_date|date:"d M Y, H:i" }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if assignment.created_by %}
+                <div class="col-md-4">
+                    <div class="info-label">Created By</div>
+                    <div class="info-value">
+                        {{ assignment.created_by }}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if assignment.created_at %}
+                <div class="col-md-4">
+                    <div class="info-label">Created</div>
+                    <div class="info-value">
+                        {{ assignment.created_at|date:"d M Y, H:i" }}
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    {% if assignment.instructions or assignment.content %}
+
+        <div class="card-box">
+
+            <h5 class="fw-bold mb-3">
+                Assignment Instructions
+            </h5>
+
+            {% if assignment.instructions %}
+                <div class="content-text">
+                    {{ assignment.instructions }}
+                </div>
+            {% elif assignment.content %}
+                <div class="content-text">
+                    {{ assignment.content }}
+                </div>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+    {% if assignment.file or assignment.attachment %}
+
+        <div class="card-box">
+
+            <h5 class="fw-bold mb-3">
+                📎 Assignment Attachment
+            </h5>
+
+            <div class="attachment-box">
+
+                {% if assignment.file %}
+
+                    <a
+                        href="{{ assignment.file.url }}"
+                        target="_blank"
+                        class="btn-primary-custom"
+                    >
+                        Open Attachment
+                    </a>
+
+                {% elif assignment.attachment %}
+
+                    <a
+                        href="{{ assignment.attachment.url }}"
+                        target="_blank"
+                        class="btn-primary-custom"
+                    >
+                        Open Attachment
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="card-box">
+
+        <div class="d-flex flex-wrap gap-2">
+
+            <a
+                href="{% url 'lms:my_assignments' %}"
+                class="btn-secondary-custom"
+            >
+                ← My Assignments
+            </a>
+            {% if erp_permission.change_assignment %}
+
+            <a
+                href="{% url 'lms:assignment_edit' assignment.pk %}"
+                class="btn-primary-custom"
+            >
+                ✏ Edit Assignment
+            </a>
+            {% endif %}
+            {% if erp_permission.view_assignmentsubmission %}
+
+            <a
+                href="{% url 'lms:assignment_submissions' assignment.pk %}"
+                class="btn-primary-custom"
+            >
+                📋 View Submissions
+            </a>
+            {% endif %}
+            {% if erp_permission.delete_assignment %}
+
+            <a
+                href="{% url 'lms:assignment_delete' assignment.pk %}"
+                class="btn-danger-custom"
+            >
+                🗑 Delete Assignment
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
+```

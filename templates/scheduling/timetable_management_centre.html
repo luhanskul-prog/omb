@@ -1,0 +1,149 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.timetable-page {
+    max-width: 1400px;
+    margin: 25px auto;
+    padding: 20px;
+}
+
+.timetable-title {
+    margin-bottom: 5px;
+}
+
+.timetable-subtitle {
+    color: #666;
+    margin-bottom: 25px;
+}
+
+.timetable-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+}
+
+.timetable-card {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 22px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+
+.timetable-card h3 {
+    margin-top: 0;
+}
+
+.timetable-card p {
+    color: #666;
+}
+
+.timetable-button {
+    display: inline-block;
+    padding: 11px 16px;
+    border-radius: 7px;
+    background: #0d6efd;
+    color: white !important;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.timetable-button:hover {
+    opacity: .9;
+}
+
+.stat {
+    font-size: 30px;
+    font-weight: 700;
+}
+</style>
+
+<div class="timetable-page">
+
+    <h1 class="timetable-title">Timetable Management Centre</h1>
+
+    <p class="timetable-subtitle">
+        Configure, assign and manage school timetables.
+        Existing published timetables remain protected.
+    </p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding:12px;margin-bottom:12px;border-radius:7px;background:#eef6ff;">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="timetable-grid">
+
+        <div class="timetable-card">
+            <h3>Create a New Timetable</h3>
+            <p>
+                Select an active school year and term, configure periods
+                and then assign lessons.
+            </p>
+            <a class="timetable-button"
+               href="{% url 'scheduling:timetable_create_select' %}">
+                Create a New Timetable
+            </a>
+        </div>
+
+        <div class="timetable-card">
+            <h3>View Timetable</h3>
+            <p>
+                View the currently published timetable.
+            </p>
+            <a class="timetable-button"
+               href="{% url 'scheduling:published_timetable' %}">
+                View Timetable
+            </a>
+        </div>
+
+        <div class="timetable-card">
+            <h3>Teachers</h3>
+            <div class="stat">{{ teacher_count }}</div>
+            <p>Teachers currently available in the ERP.</p>
+            <a class="timetable-button"
+               href="{% url 'scheduling:timetable_teachers' %}">
+                Teachers
+            </a>
+        </div>
+
+        <div class="timetable-card">
+            <h3>Classes</h3>
+            <div class="stat">{{ class_count }}</div>
+            <p>Classes derived from existing ERP records.</p>
+            <a class="timetable-button"
+               href="{% url 'scheduling:timetable_classes' %}">
+                Classes
+            </a>
+        </div>
+
+        <div class="timetable-card">
+            <h3>Streams</h3>
+            <div class="stat">{{ stream_count }}</div>
+            <p>Active streams from the academic administration.</p>
+            <a class="timetable-button"
+               href="{% url 'scheduling:timetable_streams' %}">
+                Streams
+            </a>
+        </div>
+
+        <div class="timetable-card">
+            <h3>Subjects</h3>
+            <div class="stat">{{ subject_count }}</div>
+            <p>Subjects available in the ERP.</p>
+            <a class="timetable-button"
+               href="{% url 'scheduling:timetable_subjects' %}">
+                Subjects
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

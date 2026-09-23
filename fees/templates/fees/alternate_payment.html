@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Alternate Payment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .header {
+            background: #063b91;
+            color: white;
+            padding: 24px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            opacity: .9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 18px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 15px rgba(0,0,0,.08);
+        }
+
+        .student-select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #ccd4df;
+            border-radius: 8px;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        .methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .method {
+            border: 1px solid #dbe2ec;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .method h3 {
+            margin-top: 0;
+            color: #063b91;
+        }
+
+        .number {
+            font-size: 22px;
+            font-weight: bold;
+            margin: 12px 0;
+        }
+
+        .reference {
+            background: #eef4ff;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .note {
+            color: #596579;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .back {
+            display: inline-block;
+            margin-top: 10px;
+            text-decoration: none;
+            color: #063b91;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>{{ branding.school_name|default:"School" }}</h1>
+    <p>Alternate Fee Payment</p>
+</div>
+
+<div class="container">
+
+    <div class="card">
+        <h2>Alternate Payment</h2>
+
+        <p class="note">
+            Use this option to pay school fees through an alternative payment
+            channel. This system is independent from the existing Online Payment
+            STK Push system.
+        </p>
+
+        <label><strong>Select Learner</strong></label>
+
+        <select class="student-select"
+                onchange="if(this.value) window.location='?student='+this.value;">
+            <option value="">Select learner</option>
+
+            {% regroup records by student as students %}
+            {% for group in students %}
+                <option value="{{ group.grouper.id }}"
+                    {% if selected_record and selected_record.student_id == group.grouper.id %}selected{% endif %}>
+                    {{ group.grouper.admission_no }} -
+                    {{ group.grouper.first_name }}
+                    {{ group.grouper.middle_name }}
+                    {{ group.grouper.last_name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if selected_record %}
+
+    <div class="card">
+        <h2>Fee Account</h2>
+
+        <p>
+            <strong>Learner:</strong>
+            {{ selected_record.student.first_name }}
+            {{ selected_record.student.middle_name }}
+            {{ selected_record.student.last_name }}
+        </p>
+
+        <p>
+            <strong>Admission No:</strong>
+            {{ selected_record.student.admission_no }}
+        </p>
+
+        <p>
+            <strong>Outstanding Balance:</strong>
+            KSh {{ selected_record.balance|floatformat:2 }}
+        </p>
+
+        <div class="methods">
+
+            {% if config.paybill %}
+            <div class="method">
+                <h3> M-Pesa PayBill</h3>
+                <div>PayBill Number</div>
+                <div class="number">{{ config.paybill }}</div>
+
+                <div class="reference">
+                    <strong>Account Number</strong><br>
+                    {{ selected_record.student.admission_no }}
+                </div>
+
+                <p class="note">
+                    Use the learner's admission number as the account/reference
+                    number.
+                </p>
+            </div>
+            {% endif %}
+
+            {% if config.till %}
+            <div class="method">
+                <h3> M-Pesa Buy Goods / Till</h3>
+                <div>Till Number</div>
+                <div class="number">{{ config.till }}</div>
+
+                <p class="note">
+                    Pay through Lipa na M-Pesa ? Buy Goods and Services.
+                    Keep the M-Pesa transaction message for reconciliation.
+                </p>
+            </div>
+            {% endif %}
+
+            {% if config.bank_name %}
+            <div class="method">
+                <h3> Bank Payment</h3>
+
+                <p>
+                    <strong>Bank:</strong><br>
+                    {{ config.bank_name }}
+                </p>
+
+                {% if config.bank_branch %}
+                <p>
+                    <strong>Branch:</strong><br>
+                    {{ config.bank_branch }}
+                </p>
+                {% endif %}
+
+                <p>
+                    <strong>Account:</strong><br>
+                    {{ config.bank_account }}
+                </p>
+
+                {% if config.bank_account_name %}
+                <p>
+                    <strong>Account Name:</strong><br>
+                    {{ config.bank_account_name }}
+                </p>
+                {% endif %}
+
+                <div class="reference">
+                    <strong>Payment Reference</strong><br>
+                    {{ selected_record.student.admission_no }}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="card">
+        <h3>Select a learner</h3>
+        <p class="note">
+            Select the learner above to view the available alternate payment
+            channels and the correct payment reference.
+        </p>
+    </div>
+
+    {% endif %}
+
+    <a class="back" href="javascript:history.back()">? Back</a>
+
+</div>
+
+</body>
+</html>

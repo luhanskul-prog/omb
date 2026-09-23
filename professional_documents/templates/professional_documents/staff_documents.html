@@ -1,0 +1,180 @@
+
+{% extends "professional_documents/base.html" %}
+
+{% block professional_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Professional Documents</h2>
+        <p class="text-muted mb-0">
+            Schemes of Work, Records of Work and Lesson Plans
+        </p>
+    </div>
+
+    <a href="{% url 'professional_documents:create' %}"
+       class="btn btn-primary">
+        + New Professional Document
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+
+        <form method="get" class="row g-3">
+
+            <div class="col-md-5">
+                <label class="form-label">Document Type</label>
+                <select name="type" class="form-select">
+                    <option value="">All</option>
+                    {% for value,label in document_types %}
+                    <option value="{{ value }}"
+                        {% if request.GET.type == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-5">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All</option>
+                    {% for value,label in statuses %}
+                    <option value="{{ value }}"
+                        {% if request.GET.status == value %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-primary w-100">
+                    Filter
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Year</th>
+                        <th>Term</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Lesson</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for document in documents %}
+
+                    <tr>
+
+                        <td>
+                            {{ document.get_document_type_display }}
+                        </td>
+
+                        <td>
+                            {{ document.academic_year.year }}
+                        </td>
+
+                        <td>
+                            {{ document.term.name }}
+                        </td>
+
+                        <td>
+                            {{ document.class_name }}
+                            {% if document.stream %}
+                                / {{ document.stream }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ document.subject.name }}
+                        </td>
+
+                        <td>
+                            {% if document.lesson_date %}
+                                {{ document.lesson_date }}
+                                {% if document.start_time %}
+                                    <br>{{ document.start_time }}
+                                {% endif %}
+                                {% if document.end_time %}
+                                    - {{ document.end_time }}
+                                {% endif %}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if document.status == "APPROVED" %}
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+                            {% elif document.status == "FLAGGED" %}
+                                <span class="badge bg-danger">
+                                    Flagged
+                                </span>
+                            {% elif document.status == "SUBMITTED" %}
+                                <span class="badge bg-warning text-dark">
+                                    Submitted
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    Draft
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'professional_documents:detail' document.pk %}"
+                               class="btn btn-sm btn-primary">
+                                View
+                            </a>
+
+                            {% if document.is_editable_by_teacher %}
+                            <a href="{% url 'professional_documents:edit' document.pk %}"
+                               class="btn btn-sm btn-secondary">
+                                Edit
+                            </a>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            No professional documents found.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

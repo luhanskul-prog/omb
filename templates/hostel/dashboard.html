@@ -1,0 +1,426 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Hostel Dashboard{% endblock %}
+{% block heading %}Hostel Management{% endblock %}
+{% block subheading %}Boarding, rooms, beds, allocations and learner welfare{% endblock %}
+
+{% block content %}
+
+<div class="row g-3">
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon blue">🏠</div>
+            <div>
+                <div class="stat-number">{{ total_hostels }}</div>
+                <div class="stat-label">Active Hostels</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon purple">🚪</div>
+            <div>
+                <div class="stat-number">{{ total_rooms }}</div>
+                <div class="stat-label">Active Rooms</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon orange">🛏</div>
+            <div>
+                <div class="stat-number">{{ total_beds }}</div>
+                <div class="stat-label">Total Beds</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon green">🎓</div>
+            <div>
+                <div class="stat-number">{{ active_boarders }}</div>
+                <div class="stat-label">Active Boarders</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row g-3 mt-1">
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon green">✓</div>
+            <div>
+                <div class="stat-number">{{ available_beds }}</div>
+                <div class="stat-label">Available Beds</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon red">●</div>
+            <div>
+                <div class="stat-number">{{ occupied_beds }}</div>
+                <div class="stat-label">Occupied Beds</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon orange">!</div>
+            <div>
+                <div class="stat-number">{{ incidents_open }}</div>
+                <div class="stat-label">Open Incidents</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6">
+        <div class="stat">
+            <div class="stat-icon blue">KSh</div>
+            <div>
+                <div class="stat-number">{{ outstanding_fees|floatformat:0 }}</div>
+                <div class="stat-label">Outstanding Hostel Fees</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row g-3 mt-2">
+
+    <div class="col-lg-8">
+
+        <div class="card-box">
+
+            <div class="card-head">
+
+                <div>
+                    <h2 class="card-title">Hostel Facilities</h2>
+                    <div class="card-sub">
+                        Accommodation capacity and current occupancy
+                    </div>
+                </div>
+
+                {% if erp_permission.add_hostel %}
+                <a href="{% url 'hostel:hostel_create' %}" class="btn-main">
+                    + Add Hostel
+                </a>
+                {% endif %}
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead>
+                    <tr>
+                        <th>Hostel</th>
+                        <th>Type</th>
+                        <th>Rooms</th>
+                        <th>Beds</th>
+                        <th>Occupied</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for hostel in hostels %}
+
+                    <tr>
+                        <td><strong>{{ hostel.name }}</strong></td>
+                        <td>{{ hostel.get_hostel_type_display }}</td>
+                        <td>{{ hostel.room_count }}</td>
+                        <td>{{ hostel.bed_count }}</td>
+                        <td>
+                            <span class="badge-soft green">
+                                {{ hostel.allocation_count }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="5" class="text-center text-muted p-4">
+                            No hostels have been created yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-4">
+
+        <div class="card-box">
+
+            <div class="card-head">
+
+                <div>
+                    <h2 class="card-title">Today's Attendance</h2>
+                    <div class="card-sub">Hostel roll call</div>
+                </div>
+
+                <a href="{% url 'hostel:attendance' %}" class="btn-lightx">
+                    Open
+                </a>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge-soft green">Present</span>
+                    <strong>{{ present_today }}</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge-soft red">Absent</span>
+                    <strong>{{ absent_today }}</strong>
+                </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge-soft orange">Late</span>
+                    <strong>{{ late_today }}</strong>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <span class="badge-soft blue">Permission</span>
+                    <strong>{{ permission_today }}</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card-box mt-3">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Quick Hostel Operations</h2>
+            <div class="card-sub">
+                Frequently used hostel functions
+            </div>
+        </div>
+
+    </div>
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <div class="col-xl-2 col-md-4 col-6">
+                {% if erp_permission.add_hostel %}
+                <a href="{% url 'hostel:hostel_create' %}" class="quick">
+                    <div class="quick-icon">🏠</div>
+                    <div class="quick-name">Add Hostel</div>
+                    <div class="quick-desc">Create facility</div>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                {% if erp_permission.add_room %}
+                <a href="{% url 'hostel:room_create' %}" class="quick">
+                    <div class="quick-icon">🚪</div>
+                    <div class="quick-name">Add Room</div>
+                    <div class="quick-desc">Create room</div>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                {% if erp_permission.add_bed %}
+                <a href="{% url 'hostel:bed_create' %}" class="quick">
+                    <div class="quick-icon">🛏</div>
+                    <div class="quick-name">Add Bed</div>
+                    <div class="quick-desc">Create bed</div>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                {% if erp_permission.add_studenthostelallocation %}
+                <a href="{% url 'hostel:allocation_create' %}" class="quick">
+                    <div class="quick-icon">🎓</div>
+                    <div class="quick-name">Allocate</div>
+                    <div class="quick-desc">Place learner</div>
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                <a href="{% url 'hostel:attendance' %}" class="quick">
+                    <div class="quick-icon">✓</div>
+                    <div class="quick-name">Attendance</div>
+                    <div class="quick-desc">Daily roll call</div>
+                </a>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-6">
+                {% if erp_permission.add_hostelincident %}
+                <a href="{% url 'hostel:incident_create' %}" class="quick">
+                    <div class="quick-icon">⚠</div>
+                    <div class="quick-name">Incident</div>
+                    <div class="quick-desc">Report incident</div>
+                </a>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="row g-3 mt-1">
+
+    <div class="col-lg-7">
+
+        <div class="card-box">
+
+            <div class="card-head">
+                <div>
+                    <h2 class="card-title">Recent Allocations</h2>
+                    <div class="card-sub">Latest learner placements</div>
+                </div>
+
+                <a href="{% url 'hostel:allocations' %}" class="btn-lightx">
+                    View All
+                </a>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Hostel</th>
+                        <th>Room</th>
+                        <th>Bed</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for item in recent_allocations %}
+
+                    <tr>
+                        <td>{{ item.student }}</td>
+                        <td>{{ item.hostel.name }}</td>
+                        <td>{{ item.room.room_number }}</td>
+                        <td>{{ item.bed.bed_number|default:"—" }}</td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="4" class="text-center text-muted p-4">
+                            No allocations yet.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-lg-5">
+
+        <div class="card-box">
+
+            <div class="card-head">
+                <div>
+                    <h2 class="card-title">Open Incidents</h2>
+                    <div class="card-sub">Latest boarding incidents</div>
+                </div>
+
+                <a href="{% url 'hostel:incidents' %}" class="btn-lightx">
+                    View
+                </a>
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table">
+
+                    <tbody>
+
+                    {% for incident in recent_incidents %}
+
+                    <tr>
+                        <td>
+                            <strong>{{ incident.title }}</strong>
+                            <br>
+                            <small class="text-muted">
+                                {{ incident.hostel.name }} · {{ incident.incident_date }}
+                            </small>
+                        </td>
+
+                        <td>
+                            <span class="badge-soft {% if incident.severity == 'critical' or incident.severity == 'high' %}red{% else %}orange{% endif %}">
+                                {{ incident.get_severity_display }}
+                            </span>
+                        </td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td class="text-center text-muted p-4">
+                            No incidents recorded.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

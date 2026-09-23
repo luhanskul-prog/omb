@@ -1,0 +1,274 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block heading %}{{ title }}{% endblock %}
+{% block subheading %}{{ subtitle }}{% endblock %}
+
+{% block content %}
+
+<div class="form-card">
+
+    <div class="card-box">
+
+        <div class="card-head">
+
+            <div>
+                <h2 class="card-title">
+                    {{ title }}
+                </h2>
+
+                <div class="card-sub">
+                    {{ subtitle }}
+                </div>
+            </div>
+
+            <a href="{% url back_url %}" class="btn-lightx">
+                ← Back
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+
+                <div class="row g-3">
+
+                    {% for field in form %}
+
+                    <div class="
+                        {% if field.name == 'description' or field.name == 'remarks' or field.name == 'notes' or field.name == 'action_taken' %}
+                            col-12
+                        {% else %}
+                            col-md-6
+                        {% endif %}
+                    ">
+
+                        {% if field.name == "warden_staff" %}
+
+                            <label class="form-label">
+                                Warden / Support Staff
+                            </label>
+
+                            <div class="position-relative">
+
+                                {{ field }}
+
+                                <datalist id="support_staff_list">
+
+                                    {% for profile in form.support_staff %}
+
+                                        <option
+                                            value="{{ profile.employee_number }}"
+                                            label="{{ profile.user.get_full_name }}{% if profile.custom_role %} — {{ profile.custom_role.name }}{% endif %}{% if profile.phone %} — {{ profile.phone }}{% endif %}"
+                                        >
+                                        </option>
+
+                                        <option
+                                            value="{{ profile.user.get_full_name }}"
+                                            label="{{ profile.employee_number }}{% if profile.custom_role %} — {{ profile.custom_role.name }}{% endif %}{% if profile.phone %} — {{ profile.phone }}{% endif %}"
+                                        >
+                                        </option>
+
+                                    {% endfor %}
+
+                                </datalist>
+
+                            </div>
+
+                            <div
+                                id="warden-search-status"
+                                class="text-muted mt-1"
+                                style="font-size:10px;"
+                            >
+                                Type a staff name or employee number.
+                            </div>
+
+                        {% else %}
+
+                            <label class="form-label">
+                                {{ field.label }}
+                            </label>
+
+                            {{ field }}
+
+                        {% endif %}
+
+
+                        {% if field.help_text and field.name != "warden_staff" %}
+
+                            <div
+                                class="text-muted mt-1"
+                                style="font-size:9px;"
+                            >
+                                {{ field.help_text }}
+                            </div>
+
+                        {% endif %}
+
+
+                        {% for error in field.errors %}
+
+                            <div
+                                class="text-danger mt-1"
+                                style="font-size:9px;"
+                            >
+                                {{ error }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="d-flex justify-content-end gap-2 mt-4">
+
+                    <a href="{% url back_url %}" class="btn-lightx">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn-main">
+                        Save Record
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+(function () {
+
+    const staffInput = document.getElementById("id_warden_staff");
+    const nameInput = document.getElementById("id_warden_name");
+    const phoneInput = document.getElementById("id_warden_phone");
+    const status = document.getElementById("warden-search-status");
+
+    if (!staffInput || !nameInput || !phoneInput) {
+        return;
+    }
+
+    const staff = [
+        {% for profile in form.support_staff %}
+        {
+            employee: "{{ profile.employee_number|escapejs }}",
+            name: "{{ profile.user.get_full_name|escapejs }}",
+            phone: "{{ profile.phone|escapejs }}"
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    function findStaff(value) {
+
+        const search = (value || "").trim().toLowerCase();
+
+        if (!search) {
+            return null;
+        }
+
+        // Exact employee-number match
+        let match = staff.find(function (item) {
+            return item.employee.toLowerCase() === search;
+        });
+
+        if (match) {
+            return match;
+        }
+
+        // Exact name match
+        match = staff.find(function (item) {
+            return item.name.toLowerCase() === search;
+        });
+
+        if (match) {
+            return match;
+        }
+
+        // Partial match
+        const matches = staff.filter(function (item) {
+            return (
+                item.employee.toLowerCase().includes(search) ||
+                item.name.toLowerCase().includes(search)
+            );
+        });
+
+        if (matches.length === 1) {
+            return matches[0];
+        }
+
+        return null;
+    }
+
+
+    function updateWarden() {
+
+        const match = findStaff(staffInput.value);
+
+        if (match) {
+
+            staffInput.value = match.employee;
+            nameInput.value = match.name;
+            phoneInput.value = match.phone;
+
+            status.textContent =
+                "Selected: " +
+                match.name +
+                " (" +
+                match.employee +
+                ")";
+
+            status.className =
+                "text-success mt-1";
+
+        } else {
+
+            if (!staffInput.value.trim()) {
+
+                status.textContent =
+                    "Type a staff name or employee number.";
+
+                status.className =
+                    "text-muted mt-1";
+
+            } else {
+
+                status.textContent =
+                    "Keep typing or select an active support staff member.";
+
+                status.className =
+                    "text-warning mt-1";
+            }
+        }
+    }
+
+
+    staffInput.addEventListener("input", updateWarden);
+    staffInput.addEventListener("change", updateWarden);
+    staffInput.addEventListener("blur", updateWarden);
+
+    // Populate existing warden immediately when editing.
+    updateWarden();
+
+})();
+</script>
+
+{% endblock %}

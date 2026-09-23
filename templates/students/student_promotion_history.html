@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-clock-history me-2"></i>
+                Promotion History
+            </h2>
+
+            <p class="text-muted mb-0">
+                {{ student.admission_no }} -
+                {{ student.get_full_name }}
+            </p>
+        </div>
+
+        <a href="{% url 'student_profile' student.id %}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Student Profile
+        </a>
+
+    </div>
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            {% if history %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-primary">
+
+                            <tr>
+                                <th>Academic Year</th>
+                                <th>Previous Class</th>
+                                <th>Previous Stream</th>
+                                <th>Promoted Class</th>
+                                <th>Promoted Stream</th>
+                                <th>Date</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for record in history %}
+
+                                <tr>
+
+                                    <td class="fw-bold">
+                                        {{ record.academic_year.year }}
+                                    </td>
+
+                                    <td>
+                                        {{ record.previous_class }}
+                                    </td>
+
+                                    <td>
+                                        {{ record.previous_stream|default:"-" }}
+                                    </td>
+
+                                    <td class="fw-semibold">
+                                        {{ record.promoted_class }}
+                                    </td>
+
+                                    <td>
+                                        {{ record.promoted_stream|default:"-" }}
+                                    </td>
+
+                                    <td>
+                                        {{ record.promoted_at|date:"d M Y H:i" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-info mb-0">
+                    No promotion history has been recorded for this learner.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

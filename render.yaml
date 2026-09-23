@@ -1,0 +1,17 @@
+﻿services:
+  - type: web
+    name: luhan-school-erp
+    runtime: python
+    buildCommand: ./build.sh
+    startCommand: gunicorn config.wsgi:application
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.14.6"
+      - key: DEBUG
+        value: "False"
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ALLOWED_HOSTS
+        value: "luhan-school-erp.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://luhan-school-erp.onrender.com"

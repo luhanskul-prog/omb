@@ -1,0 +1,1013 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academic Report - {{ student.first_name }}</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+@page {
+    size: A4 portrait;
+    margin: 8mm;
+}
+
+body {
+    margin: 0;
+    background: #eef1f5;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172033;
+    font-size: 10px;
+}
+
+.report {
+    width: 210mm;
+    min-height: 281mm;
+    margin: 15px auto;
+    background: #fff;
+    padding: 10mm;
+    box-shadow: 0 4px 25px rgba(0,0,0,.12);
+}
+
+/* HEADER */
+.school-header {
+    border-bottom: 3px solid #123b7a;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.brand-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.school-name {
+    font-size: 23px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #123b7a;
+    margin: 0;
+}
+
+.motto {
+    font-size: 10px;
+    font-style: italic;
+    color: #667085;
+    margin-top: 3px;
+}
+
+.report-title {
+    font-size: 14px;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-top: 5px;
+    color: #172033;
+}
+
+.term-badge {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 4px 10px;
+    background: #123b7a;
+    color: white;
+    border-radius: 3px;
+    font-weight: bold;
+    font-size: 9px;
+}
+
+/* STUDENT PROFILE */
+.profile {
+    display: flex;
+    border: 1px solid #d5dbe5;
+    margin-bottom: 8px;
+}
+
+.profile-details {
+    flex: 1;
+    padding: 7px 9px;
+}
+
+.profile-photo {
+    width: 72px;
+    height: 82px;
+    margin: 6px 8px 6px 5px;
+    border: 1px solid #cbd2dc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.profile-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1.4fr 1fr;
+    gap: 5px 12px;
+}
+
+.label {
+    color: #667085;
+    font-size: 8px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.value {
+    font-weight: bold;
+    font-size: 10px;
+}
+
+/* SECTION TITLES */
+.section-title {
+    background: #123b7a;
+    color: white;
+    padding: 5px 8px;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-top: 7px;
+}
+
+/* RESULTS */
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table th {
+    background: #e8edf5;
+    color: #172033;
+    font-size: 8px;
+    text-transform: uppercase;
+    padding: 5px 4px;
+    border: 1px solid #cbd2dc;
+}
+
+.results-table td {
+    border: 1px solid #d5dbe5;
+    padding: 4px;
+    font-size: 9px;
+}
+
+.results-table tr:nth-child(even) {
+    background: #fafbfc;
+}
+
+.center {
+    text-align: center;
+}
+
+.grade {
+    font-weight: 900;
+}
+
+/* SUMMARY */
+.summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+    margin-top: 6px;
+}
+
+.summary-card {
+    border: 1px solid #d5dbe5;
+    text-align: center;
+    padding: 6px 3px;
+}
+
+.summary-card .number {
+    font-size: 15px;
+    font-weight: 900;
+    color: #123b7a;
+}
+
+.summary-card .caption {
+    font-size: 7px;
+    color: #667085;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+
+/* PERFORMANCE GRAPH */
+
+.chart-axis {
+    width: 25px;
+    height: 100%;
+    padding: 3px 3px 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: right;
+    font-size: 6.5px;
+    color: #667085;
+    flex-shrink: 0;
+}
+
+.chart-area {
+    position: relative;
+    flex: 1;
+    height: 100%;
+    overflow: hidden;
+}
+
+.grid-line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    border-top: 1px dashed #dfe4ea;
+}
+
+.line-100 { top: 4px; }
+.line-80  { top: 20%; }
+.line-60  { top: 40%; }
+.line-40  { top: 60%; }
+.line-20  { top: 80%; }
+.line-0   { bottom: 20px; }
+
+.bars {
+            height: 160px;
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 4px;
+    bottom: 20px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    gap: 4px;
+}
+
+.bar-column {
+    height: 100%;
+    flex: 1;
+    max-width: 65px;
+    min-width: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+}
+
+.bar-value {
+    font-size: 7px;
+    font-weight: 900;
+    margin-bottom: 2px;
+    color: #123b7a;
+    white-space: nowrap;
+}
+
+.bar {
+    width: 65%;
+    min-height: 2px;
+    background: #123b7a;
+    border-radius: 2px 2px 0 0;
+}
+
+.subject-name {
+    position: absolute;
+    top: calc(100% + 4px);
+    width: 100%;
+    text-align: center;
+    font-size: 6.5px;
+    font-weight: bold;
+    line-height: 1.05;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #344054;
+}
+
+.chart-note {
+    text-align: center;
+    font-size: 6.5px;
+    color: #667085;
+    margin-top: 3px;
+}
+
+/* LOWER SECTIONS */
+.two-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.small-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.small-table td,
+.small-table th {
+    border: 1px solid #d5dbe5;
+    padding: 4px;
+    font-size: 8px;
+}
+
+.small-table th {
+    background: #f0f3f7;
+    text-transform: uppercase;
+}
+
+/* COMMENTS */
+.comment-box {
+    border: 1px solid #d5dbe5;
+    min-height: 40px;
+    padding: 6px;
+    font-size: 8.5px;
+    line-height: 1.35;
+}
+
+/* FOOTER */
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.signature-line {
+    border-top: 1px solid #172033;
+    padding-top: 3px;
+    margin-top: 17px;
+    font-size: 8px;
+}
+
+.grading {
+    margin-top: 8px;
+    border-top: 1px solid #d5dbe5;
+    padding-top: 5px;
+    text-align: center;
+    font-size: 7.5px;
+    color: #667085;
+}
+
+/* PRINT BUTTONS */
+.controls {
+    width: 210mm;
+    margin: 12px auto;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn {
+    border: 0;
+    padding: 9px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-back {
+    background: #fff;
+    border: 1px solid #bbb;
+}
+
+.btn-print {
+    background: #123b7a;
+    color: white;
+}
+
+@media print {
+    body {
+        background: white;
+    }
+
+    .report {
+        margin: 0;
+        box-shadow: none;
+        width: 100%;
+        min-height: auto;
+        padding: 0;
+    }
+
+    .controls {
+        display: none !important;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    .report,
+    .controls {
+        width: 96%;
+    }
+}
+
+        /* =========================================================
+           SUBJECT MARKS GRAPH
+           ========================================================= */
+
+
+/* =========================================================
+   MARKS VS SUBJECTS BAR GRAPH - SCREEN + PRINT
+   ========================================================= */
+
+.performance-chart {
+    margin-top: 8px;
+    border: 1px solid #b8c2cc;
+    border-radius: 5px;
+    padding: 7px 9px 5px;
+    background: #ffffff !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.performance-chart-title {
+    font-size: 10px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 5px;
+    color: #17365d !important;
+    text-transform: uppercase;
+}
+
+.marks-chart {
+    position: relative;
+    height: 175px;
+    margin-left: 38px;
+    margin-right: 5px;
+    border-left: 1px solid #333;
+    border-bottom: 1px solid #333;
+    background-image:
+        linear-gradient(
+            to bottom,
+            #d9dee5 1px,
+            transparent 1px
+        );
+    background-size: 100% 20%;
+}
+
+.marks-y-axis {
+    position: absolute;
+    left: -39px;
+    top: 0;
+    bottom: 0;
+    width: 34px;
+}
+
+.marks-y-label {
+    position: absolute;
+    right: 2px;
+    font-size: 7px;
+    line-height: 8px;
+    color: #333 !important;
+    font-weight: 700;
+}
+
+.marks-y-100 { top: -3px; }
+.marks-y-80  { top: 17%; }
+.marks-y-60  { top: 37%; }
+.marks-y-40  { top: 57%; }
+.marks-y-20  { top: 77%; }
+.marks-y-0   { bottom: -3px; }
+
+.marks-bars {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-evenly;
+    gap: 5px;
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+
+.marks-bar-group {
+    height: 100%;
+    flex: 1;
+    min-width: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.marks-bar-wrapper {
+    height: 145px;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.marks-bar {
+    width: 55%;
+    min-width: 12px;
+    max-width: 35px;
+    background: #174ea6 !important;
+    border: 1px solid #123d82;
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    box-sizing: border-box;
+    position: relative;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+}
+
+.marks-bar-value {
+    position: absolute;
+    top: -13px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 7px;
+    line-height: 8px;
+    font-weight: 800;
+    color: #17365d !important;
+    white-space: nowrap;
+}
+
+.marks-subject {
+    width: 70px;
+    margin-top: 4px;
+    min-height: 18px;
+    text-align: center;
+    font-size: 7px;
+    line-height: 8px;
+    font-weight: 700;
+    color: #222 !important;
+    overflow-wrap: anywhere;
+}
+
+.chart-axis-title {
+    position: absolute;
+    left: -37px;
+    top: 50%;
+    transform: rotate(-90deg) translateX(-50%);
+    transform-origin: left top;
+    font-size: 7px;
+    font-weight: 800;
+    color: #333 !important;
+}
+
+.chart-no-data {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #777 !important;
+}
+
+@media print {
+
+    .performance-chart {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        background: #ffffff !important;
+    }
+
+    .marks-chart,
+    .marks-bars,
+    .marks-bar-group,
+    .marks-bar-wrapper,
+    .marks-bar,
+    .marks-y-axis,
+    .marks-y-label,
+    .marks-subject,
+    .marks-bar-value {
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+
+    .marks-bar {
+        background: #174ea6 !important;
+        border: 1px solid #123d82 !important;
+        print-color-adjust: exact !important;
+        -webkit-print-color-adjust: exact !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="controls">
+    <a href="{% url 'academic:report_cards' %}"
+       class="btn btn-back">
+        ← Back
+    </a>
+
+    <button onclick="window.print()" class="btn btn-print">
+        🖨 Print Report Card
+    </button>
+</div>
+
+<div class="report">
+
+    <!-- SCHOOL HEADER -->
+    <div class="school-header">
+        <div class="brand-row">
+
+            {% if branding and branding.logo %}
+            <img src="{{ branding.logo.url }}"
+                 class="logo"
+                 alt="{{ branding.school_name }}">
+            {% endif %}
+
+            <div>
+                <h1 class="school-name">
+                    {{ branding.school_name|default:"Luhan School" }}
+                </h1>
+
+                {% if branding and branding.motto %}
+                <div class="motto">
+                    {{ branding.motto }}
+                </div>
+                {% endif %}
+
+                <div class="report-title">
+                    Academic Report Card
+                </div>
+
+                <span class="term-badge">
+                    {{ academic_year }} • {{ term }}
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- LEARNER PROFILE -->
+    <div class="profile">
+
+        <div class="profile-details">
+
+            <div class="profile-grid">
+
+                <div>
+                    <div class="label">Learner Name</div>
+                    <div class="value">
+                        {{ student.first_name }}
+                        {% if student.middle_name %} {{ student.middle_name }}{% endif %}
+                        {% if student.last_name %} {{ student.last_name }}{% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <div class="label">Admission Number</div>
+                    <div class="value">{{ student.admission_no }}</div>
+                </div>
+
+                <div>
+                    <div class="label">Gender</div>
+                    <div class="value">{{ student.gender|default:"-" }}</div>
+                </div>
+
+                <div>
+                    <div class="label">Class</div>
+                    <div class="value">{{ student.class_name }}</div>
+                </div>
+
+                <div>
+                    <div class="label">Stream</div>
+                    <div class="value">{{ student.stream|default:"-" }}</div>
+                </div>
+
+                <div>
+                    <div class="label">Position</div>
+                    <div class="value">
+                        {% if position %}
+                            {{ position }} / {{ class_size }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        {% if student.photo %}
+        <div class="profile-photo">
+            <img src="{{ student.photo.url }}" alt="Learner Photo">
+        </div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- ACADEMIC PERFORMANCE -->
+    <div class="section-title">
+        Academic Performance
+    </div>
+
+    <table class="results-table">
+
+        <thead>
+            <tr>
+                <th style="width:4%">#</th>
+                <th>Learning Area / Subject</th>
+                <th>Assessment</th>
+                <th style="width:9%">Score</th>
+                <th style="width:9%">Grade</th>
+                <th>Teacher's Comment</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        {% for result in results %}
+
+        <tr>
+            <td class="center">{{ forloop.counter }}</td>
+
+            <td>
+                <strong>{{ result.subject.name }}</strong>
+            </td>
+
+            <td>{{ result.assessment_type.name }}</td>
+
+            <td class="center">
+                {{ result.score }}
+            </td>
+
+            <td class="center grade">
+                {{ result.grade|default:"-" }}
+            </td>
+
+            <td>
+                {{ result.teacher_comment|default:"-" }}
+            </td>
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="6" class="center">
+                No assessment records available.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+
+
+    <!-- PERFORMANCE SUMMARY -->
+    <div class="summary">
+
+        <div class="summary-card">
+            <div class="number">{{ total|floatformat:2 }}</div>
+            <div class="caption">Total Marks</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="number">{{ average|floatformat:2 }}%</div>
+            <div class="caption">Average</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="number">
+                {% if position %}
+                    {{ position }}/{{ class_size }}
+                {% else %}
+                    -
+                {% endif %}
+            </div>
+            <div class="caption">Class Position</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="number">
+                {{ subject_results|length }}
+            </div>
+            <div class="caption">Learning Areas</div>
+        </div>
+
+    </div>
+
+
+<!-- PERFORMANCE GRAPH -->
+<div class="performance-chart">
+
+    <div class="performance-chart-title">
+        Marks Against Subjects (%)
+    </div>
+
+    {% if subject_results %}
+
+    <div class="marks-chart">
+
+        <!-- VERTICAL 0-100% AXIS -->
+        <div class="marks-y-axis">
+            <span class="marks-y-label marks-y-100">100%</span>
+            <span class="marks-y-label marks-y-80">80%</span>
+            <span class="marks-y-label marks-y-60">60%</span>
+            <span class="marks-y-label marks-y-40">40%</span>
+            <span class="marks-y-label marks-y-20">20%</span>
+            <span class="marks-y-label marks-y-0">0%</span>
+        </div>
+
+        <div class="chart-axis-title">
+            MARKS (%)
+        </div>
+
+        <div class="marks-bars">
+
+            {% for item in subject_results %}
+
+                {% if item.score is not None %}
+
+                    {% widthratio item.score 100 145 as bar_height %}
+
+                    <div class="marks-bar-group">
+
+                        <div class="marks-bar-wrapper">
+
+                            <div
+                                class="marks-bar"
+                                style="height: {{ bar_height }}px;"
+                            >
+                                <span class="marks-bar-value">
+                                    {{ item.score|floatformat:1 }}%
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="marks-subject">
+                            {{ item.subject.name }}
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+        <div class="chart-no-data">
+            No subject marks recorded.
+        </div>
+
+    {% endif %}
+
+</div>
+
+<!-- ATTENDANCE + DEVELOPMENT -->
+
+    <div class="two-columns">
+
+        <div>
+
+            <div class="section-title">
+                Attendance
+            </div>
+
+            <table class="small-table">
+
+                <tr>
+                    <th>School Days</th>
+                    <th>Present</th>
+                    <th>Absent</th>
+                </tr>
+
+                <tr class="center">
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div>
+
+            <div class="section-title">
+                Learner Development
+            </div>
+
+            <table class="small-table">
+
+                <tr>
+                    <td>Participation</td>
+                    <td>Very Good</td>
+                </tr>
+
+                <tr>
+                    <td>Discipline</td>
+                    <td>Good</td>
+                </tr>
+
+                <tr>
+                    <td>Teamwork</td>
+                    <td>Good</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <!-- TEACHER COMMENT -->
+    <div class="section-title">
+        Class Teacher's Comment
+    </div>
+
+    <div class="comment-box">
+        The learner has demonstrated effort and participation throughout
+        the term. Continued focus on academic development and consistent
+        engagement in learning activities is encouraged.
+    </div>
+
+
+    <!-- TARGETS -->
+    <div class="section-title">
+        Next Term Targets
+    </div>
+
+    <table class="small-table">
+
+        <tr>
+            <td><strong>Academic</strong></td>
+            <td>________________________________________________</td>
+
+            <td><strong>Behaviour</strong></td>
+            <td>________________________________________________</td>
+        </tr>
+
+    </table>
+
+
+    <!-- SIGNATURES -->
+    <div class="footer-grid">
+
+        <div>
+            <div class="signature-line">
+                Class Teacher
+            </div>
+        </div>
+
+        <div>
+            <div class="signature-line">
+                Headteacher / Administrator
+            </div>
+        </div>
+
+        <div>
+            <div class="signature-line">
+                Parent / Guardian
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="grading">
+        <strong>Grading Scale:</strong>
+        A — Excellent &nbsp; | &nbsp;
+        B — Very Good &nbsp; | &nbsp;
+        C — Good &nbsp; | &nbsp;
+        D — Satisfactory &nbsp; | &nbsp;
+        E — Needs Improvement
+        <br><br>
+
+        {{ branding.school_name|default:"Luhan School" }}
+        {% if branding and branding.phone %}
+            • {{ branding.phone }}
+        {% endif %}
+        {% if branding and branding.email %}
+            • {{ branding.email }}
+        {% endif %}
+    </div>
+
+</div>
+
+</body>
+</html>

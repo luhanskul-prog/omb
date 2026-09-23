@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-arrow-up-circle-fill me-2"></i>
+                Bulk Learner Promotion
+            </h2>
+            <p class="text-muted mb-0">
+                Promote selected learners to their next class.
+            </p>
+        </div>
+
+        <a href="{% url 'student_management' %}"
+           class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Student Management
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- CURRENT CLASS FILTER -->
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-funnel-fill me-1"></i>
+                Select Learners
+            </h5>
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            Current Academic Year
+                        </label>
+
+                        <select name="current_year"
+                                class="form-select">
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in years %}
+                                <option value="{{ year.id }}"
+                                    {% if selected_year == year.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+                                    {{ year.year }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            Current Class
+                        </label>
+
+                        <select name="current_class"
+                                class="form-select">
+                            <option value="">
+                                All Classes
+                            </option>
+
+                            {% for class_name in classes %}
+                                <option value="{{ class_name }}"
+                                    {% if selected_class == class_name %}
+                                        selected
+                                    {% endif %}>
+                                    {{ class_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            Current Stream
+                        </label>
+
+                        <select name="current_stream"
+                                class="form-select">
+                            <option value="">
+                                All Streams
+                            </option>
+
+                            {% for stream_name in streams %}
+                                <option value="{{ stream_name }}"
+                                    {% if selected_stream == stream_name %}
+                                        selected
+                                    {% endif %}>
+                                    {{ stream_name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+                    <button class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Load Learners
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- PROMOTION FORM -->
+
+    <form method="post"
+          onsubmit="return confirmPromotion();">
+
+        {% csrf_token %}
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-arrow-right-circle-fill me-1"></i>
+                    Destination
+                </h5>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-bold">
+                            Next Academic Year
+                        </label>
+
+                        <select name="target_year"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Academic Year
+                            </option>
+
+                            {% for year in years %}
+                                <option value="{{ year.id }}">
+                                    {{ year.year }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-bold">
+                            Next Class
+                        </label>
+
+                        <select name="target_class"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Next Class
+                            </option>
+
+                            {% for class_name in classes %}
+                                <option value="{{ class_name }}">
+                                    {{ class_name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-bold">
+                            Next Stream
+                        </label>
+
+                        <select name="target_stream"
+                                class="form-select">
+
+                            <option value="">
+                                Select Next Stream
+                            </option>
+
+                            {% for stream_name in streams %}
+                                <option value="{{ stream_name }}">
+                                    {{ stream_name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LEARNERS -->
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-body">
+
+                <div class="d-flex justify-content-between
+                            align-items-center mb-3">
+
+                    <h5 class="fw-bold mb-0">
+                        Learners
+                        <span class="badge bg-primary">
+                            {{ students|length }}
+                        </span>
+                    </h5>
+
+                    <button type="button"
+                            class="btn btn-outline-primary btn-sm"
+                            onclick="toggleAllLearners()">
+                        Select / Deselect All
+                    </button>
+
+                </div>
+
+                {% if students %}
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead class="table-primary">
+
+                                <tr>
+                                    <th width="50">
+                                        Select
+                                    </th>
+
+                                    <th>
+                                        Admission No.
+                                    </th>
+
+                                    <th>
+                                        Learner Name
+                                    </th>
+
+                                    <th>
+                                        Current Class
+                                    </th>
+
+                                    <th>
+                                        Stream
+                                    </th>
+
+                                    <th>
+                                        Gender
+                                    </th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for student in students %}
+
+                                    <tr>
+
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                class="form-check-input learner-check"
+                                                name="student_ids"
+                                                value="{{ student.id }}"
+                                            >
+                                        </td>
+
+                                        <td>
+                                            {{ student.admission_no }}
+                                        </td>
+
+                                        <td class="fw-semibold">
+                                            {{ student.get_full_name }}
+                                        </td>
+
+                                        <td>
+                                            {{ student.class_name }}
+                                        </td>
+
+                                        <td>
+                                            {{ student.stream }}
+                                        </td>
+
+                                        <td>
+                                            {{ student.gender }}
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="mt-4">
+
+                        <button type="submit"
+                                class="btn btn-success btn-lg">
+                            <i class="bi bi-arrow-up-circle-fill me-2"></i>
+                            Promote Selected Learners
+                        </button>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-info mb-0">
+                        No learners found for the selected filters.
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+
+function toggleAllLearners() {
+
+    const boxes =
+        document.querySelectorAll(".learner-check");
+
+    const shouldSelect =
+        Array.from(boxes).some(box => !box.checked);
+
+    boxes.forEach(box => {
+        box.checked = shouldSelect;
+    });
+}
+
+function confirmPromotion() {
+
+    const selected =
+        document.querySelectorAll(
+            ".learner-check:checked"
+        ).length;
+
+    if (selected === 0) {
+
+        alert(
+            "Please select at least one learner."
+        );
+
+        return false;
+    }
+
+    const targetYear =
+        document.querySelector(
+            '[name="target_year"]'
+        ).selectedOptions[0].text;
+
+    const targetClass =
+        document.querySelector(
+            '[name="target_class"]'
+        ).value;
+
+    if (!targetYear || !targetClass) {
+
+        alert(
+            "Please select the next academic year and class."
+        );
+
+        return false;
+    }
+
+    return confirm(
+        "You are about to promote " +
+        selected +
+        " learner(s) to " +
+        targetClass +
+        " for " +
+        targetYear +
+        ".\\n\\n" +
+        "This action will update their current class " +
+        "and create a permanent promotion history record.\\n\\n" +
+        "Continue?"
+    );
+}
+
+</script>
+
+{% endblock %}

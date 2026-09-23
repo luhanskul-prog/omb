@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Subject Marks Excel</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 18px rgba(0,0,0,.08);
+        }
+
+        h1 {
+            color: #123b8f;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        select,
+        input[type=file] {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background: #123b8f;
+            color: white;
+            border: 0;
+            padding: 12px 22px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button.secondary {
+            background: #198754;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #123b8f;
+            text-decoration: none;
+        }
+
+        .alert {
+            padding: 14px;
+            border-radius: 7px;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            background: #ffe5e5;
+            color: #9b0000;
+        }
+
+        .success {
+            background: #e6f7e6;
+            color: #146b14;
+        }
+
+        .info {
+            background: #eaf2ff;
+            color: #174a91;
+        }
+
+        .warning {
+            background: #fff4d6;
+            color: #795400;
+        }
+
+        ul {
+            line-height: 1.7;
+        }
+
+        .rule-box {
+            background: #f8f9fa;
+            border-left: 4px solid #123b8f;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        @media(max-width:700px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a class="back" href="{% url 'academic:marks_entry' %}">
+        ← Back to Mark Entry
+    </a>
+
+    <h1>Upload Subject Marks Excel</h1>
+
+    <div class="alert info">
+        Upload a completed Excel mark sheet.
+        The assessment is taken directly from
+        Assessment & Marks Management.
+        Only OPEN or REOPENED assessments can receive marks.
+        The Excel file may contain all permitted subjects.
+        Each learner and subject is validated before saving.
+    </div>
+
+    <div class="rule-box">
+        <strong>Mark Entry Permission</strong>
+        <ul>
+            <li>Administrators may upload marks for all classes and subjects.</li>
+            <li>Class teachers may upload all subjects for their assigned class.</li>
+            <li>Subject teachers may upload only their assigned subjects and classes.</li>
+            <li>The Excel file may contain multiple subjects.</li>
+            <li>Each learner-subject combination is validated separately.</li>
+            <li>Unauthorized Excel uploads are rejected by the server.</li>
+            <li>If any row contains an error, <strong>no marks from that file are saved.</strong></li>
+        </ul>
+    </div>
+
+    {% if errors %}
+        <div class="alert error">
+            <strong>Upload contains errors.</strong>
+
+            <ul>
+                {% for error in errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if valid_rows %}
+                <p>
+                    {{ valid_rows|length }} valid learner mark(s)
+                    were found, but no marks were saved because
+                    the file contains errors.
+                </p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- CLASS/STREAM SELECTION -->
+    <form method="get">
+
+        <div class="grid">
+
+            <div class="form-group">
+                <label>Class</label>
+
+                <select
+                    name="class"
+                    required
+                    onchange="this.form.submit()"
+                >
+                    <option value="">
+                        Select Class
+                    </option>
+
+                    {% for class_name in classes %}
+                        <option
+                            value="{{ class_name }}"
+                            {% if selected_class|lower == class_name|lower %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ class_name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Stream</label>
+
+                <select
+                    name="stream"
+                    onchange="this.form.submit()"
+                >
+                    <option value="">
+                        {% if selected_class %}
+                            All / Unspecified Stream
+                        {% else %}
+                            Select Class First
+                        {% endif %}
+                    </option>
+
+                    {% for stream in streams %}
+                        <option
+                            value="{{ stream }}"
+                            {% if selected_stream|lower == stream|lower %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ stream }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </div>
+
+    
+        <div class="alert alert-info">
+            <strong>Multi-subject upload:</strong>
+            Subjects are read directly from the Excel file.
+            Each learner-subject combination is checked against
+            your teaching permissions before marks are saved.
+        </div>
+</form>
+
+    {% if selected_class %}
+
+    <form method="post"
+          enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="class"
+            value="{{ selected_class }}"
+        >
+
+        <input
+            type="hidden"
+            name="stream"
+            value="{{ selected_stream }}"
+        >
+
+        <div class="grid">
+
+            <div class="form-group">
+                <label>Active Assessment</label>
+
+                <select name="assessment" required>
+
+                    <option value="">
+                        Select Active Assessment
+                    </option>
+
+                    {% for window in open_windows %}
+                        <option
+                            value="{{ window.id }}"
+                            {% if selected_window_id == window.id|stringformat:"s" %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ window.academic_year }}
+                            -
+                            {{ window.term }}
+                            -
+                            {{ window.assessment_type.name }}
+                            -
+                            {% if window.is_reopened %}
+                                REOPENED
+                            {% else %}
+                                OPEN
+                            {% endif %}
+                            -
+                            Deadline:
+                            {{ window.deadline|date:"d M Y H:i" }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+        </div>
+
+        {% if not open_windows %}
+            <div class="alert warning">
+                There is currently no OPEN or REOPENED assessment
+                in Assessment & Marks Management.
+                Marks cannot be uploaded until an administrator
+                opens or reopens an assessment.
+            </div>
+        {% endif %}
+
+        <div class="form-group">
+            <label>Excel File</label>
+
+            <input
+                type="file"
+                name="excel_file"
+                accept=".xlsx"
+                required
+            >
+        </div>
+
+        <button
+            type="submit"
+            {% if not open_windows %}
+                disabled
+            {% endif %}
+        >
+            Validate & Upload Marks
+        </button>
+
+    </form>
+
+    {% else %}
+
+        <div class="alert warning">
+            Select your permitted class first.
+            The available streams and subjects will then be
+            restricted according to your teaching assignments.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

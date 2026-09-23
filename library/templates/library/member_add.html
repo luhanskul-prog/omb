@@ -1,0 +1,254 @@
+﻿{% extends "library/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="mb-1">
+                Add Library Member
+            </h2>
+
+            <p class="text-muted mb-0">
+                Search an existing student or employee and add them to the Library.
+            </p>
+        </div>
+
+        <a href="{% url 'library_members' %}"
+           class="btn btn-secondary">
+            ← Back to Members
+        </a>
+
+    </div>
+
+
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <strong>Find Student or Staff</strong>
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="action"
+                       value="lookup">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Member Type
+                        </label>
+
+                        {{ lookup_form.member_type }}
+
+                    </div>
+
+
+                    <div class="col-md-5">
+
+                        <label class="form-label">
+                            Admission Number / Employee Number
+                        </label>
+
+                        {{ lookup_form.identifier }}
+
+                    </div>
+
+
+                    <div class="col-md-3 d-flex align-items-end">
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+
+                            🔍 Load Details
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    {% if found %}
+
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+
+            <strong>
+                Details Found
+            </strong>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="alert alert-success">
+
+                <strong>{{ details.type }} found.</strong>
+
+                The following details were pulled from the ERP record.
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+
+                    <label class="form-label text-muted">
+                        Name
+                    </label>
+
+                    <div class="form-control bg-light">
+                        {{ details.name }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label text-muted">
+                        {% if member_type == "student" %}
+                            Admission Number
+                        {% else %}
+                            Employee Number
+                        {% endif %}
+                    </label>
+
+                    <div class="form-control bg-light">
+                        {{ details.number }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label text-muted">
+                        Gender
+                    </label>
+
+                    <div class="form-control bg-light">
+                        {{ details.gender|default:"—" }}
+                    </div>
+
+                </div>
+
+
+                {% if member_type == "student" %}
+
+                <div class="col-md-4">
+
+                    <label class="form-label text-muted">
+                        Class
+                    </label>
+
+                    <div class="form-control bg-light">
+                        {{ details.class_name|default:"—" }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <label class="form-label text-muted">
+                        Stream
+                    </label>
+
+                    <div class="form-control bg-light">
+                        {{ details.stream|default:"—" }}
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label text-muted">
+                        Phone
+                    </label>
+
+                    <div class="form-control bg-light">
+                        {{ details.phone|default:"—" }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if existing_member %}
+
+            <div class="alert alert-warning mt-4">
+
+                <strong>Already a Library Member.</strong>
+
+                This person is already registered in the Library.
+
+            </div>
+
+            {% else %}
+
+            <form method="post" class="mt-4">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="action"
+                       value="add">
+
+                <input type="hidden"
+                       name="member_type"
+                       value="{{ member_type }}">
+
+                <input type="hidden"
+                       name="identifier"
+                       value="{{ identifier }}">
+
+                <button type="submit"
+                        class="btn btn-success btn-lg">
+
+                    ✓ Add to Library
+
+                </button>
+
+                <a href="{% url 'library_member_add' %}"
+                   class="btn btn-outline-secondary btn-lg ms-2">
+
+                    Search Another
+
+                </a>
+
+            </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

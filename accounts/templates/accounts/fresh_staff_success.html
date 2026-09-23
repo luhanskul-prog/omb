@@ -1,0 +1,166 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+
+        <div class="display-3">✅</div>
+
+        <h2 class="fw-bold">
+            Staff Account Created Successfully
+        </h2>
+
+        <p class="text-muted">
+            The staff member has been registered successfully.
+        </p>
+
+    </div>
+
+
+    <div class="card shadow border-0">
+
+        <div class="card-header bg-success text-white">
+            <h5 class="mb-0">
+                Account Information
+            </h5>
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <strong>Name</strong>
+                    <div>
+                        {{ staff.first_name }}
+                        {{ staff.last_name }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Staff Type</strong>
+                    <div>
+                        {{ staff.staff_type }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Role</strong>
+                    <div>
+                        {{ staff.role }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Employee Number</strong>
+                    <div>
+                        <span class="fw-bold">
+                            {{ staff.employee_number }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Username</strong>
+                    <div>
+                        <span class="fw-bold">
+                            {{ staff.username }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Initial Password</strong>
+                    <div>
+                        <code>{{ staff.password }}</code>
+                    </div>
+                </div>
+
+            </div>
+
+
+            {% if staff.subjects %}
+
+            <hr>
+
+            <h5 class="fw-bold">
+                Subjects
+            </h5>
+
+            <ul>
+
+                {% for subject in staff.subjects %}
+                    <li>{{ subject }}</li>
+                {% endfor %}
+
+            </ul>
+
+            {% endif %}
+
+
+            {% if staff.classes %}
+
+            <hr>
+
+            <h5 class="fw-bold">
+                Teaching Assignments
+            </h5>
+
+            <ul>
+
+                {% for assignment in staff.classes %}
+                    <li>{{ assignment }}</li>
+                {% endfor %}
+
+            </ul>
+
+            {% endif %}
+
+
+            {% if staff.class_teachers %}
+
+            <hr>
+
+            <h5 class="fw-bold">
+                Class Teacher
+            </h5>
+
+            <ul>
+
+                {% for class_name in staff.class_teachers %}
+                    <li>{{ class_name }}</li>
+                {% endfor %}
+
+            </ul>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="text-center mt-4">
+
+        <a
+            href="{% url 'accounts:fresh_staff_start' %}"
+            class="btn btn-primary me-2"
+        >
+            Add Another Staff Member
+        </a>
+
+        <a
+            href="{% url 'accounts:staff_management' %}"
+            class="btn btn-outline-secondary"
+        >
+            Staff Management
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

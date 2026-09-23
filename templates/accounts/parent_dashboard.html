@@ -1,0 +1,1729 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Parent Dashboard | {{ branding.school_name|default:"Luhan School" }}
+</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+:root{
+    --primary:#0b4f8a;
+    --primary-dark:#06365f;
+    --light:#f4f7fb;
+    --dark:#172033;
+    --muted:#6c757d;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:var(--light);
+    font-family:Arial,sans-serif;
+    color:var(--dark);
+}
+
+/* SIDEBAR */
+.sidebar { position: fixed !important; top: 0; left: 0; bottom: 0; height: 100vh; max-height: 100vh; overflow: hidden; z-index: 1000; }
+
+.brand{
+    text-align:center;
+    margin-bottom:30px;
+    padding-bottom:20px;
+    border-bottom:1px solid rgba(255,255,255,.15);
+}
+
+.brand h4{
+    margin-top:10px;
+    margin-bottom:5px;
+}
+
+.brand small{
+    opacity:.8;
+}
+
+.nav-link{
+    display:block;
+    color:rgba(255,255,255,.9);
+    text-decoration:none;
+    padding:12px 15px;
+    margin-bottom:5px;
+    border-radius:8px;
+    transition:.2s;
+}
+
+.nav-link:hover,
+.nav-link.active{
+    background:rgba(255,255,255,.16);
+    color:white;
+}
+
+/* MAIN */
+.main{
+    margin-left:250px;
+    padding:25px;
+}
+
+.topbar{
+    background:white;
+    padding:18px 22px;
+    border-radius:14px;
+    margin-bottom:22px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+}
+
+/* WELCOME */
+.welcome{
+    background:linear-gradient(135deg,var(--primary),#1976b9);
+    color:white;
+    padding:30px;
+    border-radius:16px;
+    margin-bottom:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.avatar{
+    width:75px;
+    height:75px;
+    border-radius:50%;
+    background:white;
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    font-weight:bold;
+    flex-shrink:0;
+}
+
+/* DASHBOARD CARDS */
+.card-box,
+.section{
+    background:white;
+    border-radius:14px;
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+}
+
+.card-box{
+    padding:20px;
+    height:100%;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.stat{
+    font-size:24px;
+    font-weight:bold;
+}
+
+/* CHILDREN */
+.child-card{
+    border:1px solid #e5e7eb;
+    border-radius:14px;
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.child-header{
+    background:#f4f8fd;
+    padding:20px;
+}
+
+.child-avatar{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    background:white;
+    color:var(--primary);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    font-weight:bold;
+    flex-shrink:0;
+    border:3px solid white;
+}
+
+.child-body{
+    padding:20px;
+}
+
+/* MINI CARDS */
+.mini-card{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+    padding:15px;
+    height:100%;
+}
+
+.mini-label{
+    font-size:12px;
+    color:var(--muted);
+    font-weight:600;
+}
+
+.mini-value{
+    font-size:18px;
+    font-weight:bold;
+    margin-top:5px;
+}
+
+/* TABLE */
+.table th{
+    color:var(--muted);
+    font-size:13px;
+    font-weight:600;
+    white-space:nowrap;
+}
+
+.table td{
+    vertical-align:middle;
+}
+
+/* SECTION */
+.section{
+    padding:20px;
+    margin-bottom:22px;
+}
+
+.section h5{
+    font-weight:bold;
+    margin-bottom:18px;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+
+    .sidebar { position: fixed !important; top: 0; left: 0; bottom: 0; height: 100vh; max-height: 100vh; overflow: hidden; z-index: 1000; }
+
+    .main{
+        margin-left:0;
+        padding:15px;
+    }
+
+    .welcome{
+        padding:20px;
+    }
+
+    .welcome .d-flex{
+        flex-wrap:wrap;
+    }
+
+    .avatar{
+        margin-bottom:15px;
+    }
+}
+
+@media(max-width:576px){
+
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start !important;
+        gap:10px;
+    }
+
+    .welcome h2{
+        font-size:22px;
+    }
+
+    .child-header{
+        padding:15px;
+    }
+
+    .child-body{
+        padding:15px;
+    }
+}
+</style>
+<style>
+/* =========================================================
+   PARENT PORTAL - STUDENT PORTAL STYLE
+   Green Parent Theme
+   ========================================================= */
+
+:root {
+    --primary: #198754;
+    --primary-dark: #146c43;
+    --green: #198754;
+    --light: #f4f7fb;
+    --dark: #172033;
+    --muted: #6c757d;
+}
+
+/* Fixed sidebar */
+.sidebar {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    bottom: 0 !important; max-height: 100vh !important;
+    width: 250px !important;
+    height: 100vh !important;
+    overflow-x: hidden !important; overflow-y: auto !important;
+    z-index: 1000 !important;
+    background: #198754 !important;
+    color: white !important;
+}
+
+/* Sidebar branding */
+.sidebar .brand,
+.sidebar .logo,
+.sidebar .school-brand {
+    background: #146c43 !important;
+    color: white !important;
+}
+
+/* Sidebar links */
+.sidebar .nav-link {
+    color: rgba(255,255,255,.90) !important;
+    border-radius: 8px !important;
+    margin: 3px 10px !important;
+    padding: 10px 14px !important;
+    transition: .2s ease !important;
+}
+
+/* Hover */
+.sidebar .nav-link:hover {
+    background: rgba(255,255,255,.15) !important;
+    color: white !important;
+}
+
+/* Active */
+.sidebar .nav-link.active {
+    background: white !important;
+    color: #198754 !important;
+    font-weight: 700 !important;
+}
+
+/* Main content stays beside fixed sidebar */
+.main,
+.main-content,
+.content-wrapper {
+    margin-left: 250px !important;
+    min-height: 100vh;
+}
+
+/* Page background */
+body {
+    background: #f4f7fb !important;
+}
+
+/* Top bar */
+.topbar,
+.header,
+.page-header {
+    background: white !important;
+    border-bottom: 1px solid #edf0f4 !important;
+}
+
+/* Cards */
+.card,
+.panel,
+.dashboard-card {
+    background: white !important;
+    border: 1px solid #edf0f4 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04) !important;
+}
+
+/* Green buttons */
+.btn-primary,
+.primary-btn {
+    background: #198754 !important;
+    border-color: #198754 !important;
+}
+
+.btn-primary:hover,
+.primary-btn:hover {
+    background: #146c43 !important;
+    border-color: #146c43 !important;
+}
+
+/* Green accents */
+.text-primary {
+    color: #198754 !important;
+}
+
+.bg-primary {
+    background: #198754 !important;
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+    .sidebar {
+        width: 70px !important;
+    }
+
+    .main,
+    .main-content,
+    .content-wrapper {
+        margin-left: 70px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 65px !important;
+    }
+
+    .main,
+    .main-content,
+    .content-wrapper {
+        margin-left: 65px !important;
+    }
+}
+</style>
+<style id="PARENT-FIXED-SCROLL">
+html,
+body {
+    overflow-x: hidden !important;
+}
+
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    z-index: 1000 !important;
+}
+
+.main,
+.main-content,
+.content-wrapper {
+    margin-left: 250px !important;
+}
+
+@media (max-width: 900px) {
+    .main,
+    .main-content,
+    .content-wrapper {
+        margin-left: 70px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .main,
+    .main-content,
+    .content-wrapper {
+        margin-left: 65px !important;
+    }
+}
+</style>
+<style id="PARENT-SIDEBAR-END-FIX">
+html,
+body {
+    overflow-x: hidden !important;
+}
+
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 250px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+}
+
+.sidebar .nav-link:last-child {
+    margin-bottom: 0 !important;
+}
+
+.sidebar .nav-link.mt-4 {
+    margin-bottom: 0 !important;
+}
+
+.main,
+.main-content,
+.content-wrapper {
+    margin-left: 250px !important;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 70px !important;
+    }
+
+    .main,
+    .main-content,
+    .content-wrapper {
+        margin-left: 70px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 65px !important;
+    }
+
+    .main,
+    .main-content,
+    .content-wrapper {
+        margin-left: 65px !important;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+    <div class="brand">
+        <h4>
+            {{ branding.school_name|default:"Luhan School" }}
+        </h4>
+
+        <small>Parent Portal</small>
+    </div>
+
+    <a href="{% url 'accounts:parent_dashboard' %}" class="nav-link active">
+        &#127968; Dashboard
+    </a>
+
+    {% if children %}
+        <a href="#children" class="nav-link">
+            &#128101; My Children
+        </a>
+
+        {% for child in children %}
+            {% if portal_capabilities.portal_view_academic %}
+<a href="{% url 'accounts:parent_academic_results' child.id %}" class="nav-link">
+                &#128202; Results Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+
+            {% if portal_capabilities.portal_view_fees %}
+<a href="{% url 'accounts:parent_fees' child.id %}" class="nav-link">
+                &#128176; Fees Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+
+            {% if portal_capabilities.portal_view_timetable %}
+<a href="{% url 'accounts:parent_timetable' child.id %}" class="nav-link">
+                &#128467; Timetable Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+
+            {% if portal_capabilities.portal_view_assignments %}
+<a href="{% url 'accounts:parent_assignments' child.id %}" class="nav-link">
+                &#128221; Assignments Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+
+            {% if portal_capabilities.portal_view_learning %}
+<a href="{% url 'accounts:parent_learning' child.id %}" class="nav-link">
+                &#128218; Learning Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+
+            {% if portal_capabilities.portal_view_attendance %}
+<a href="{% url 'accounts:parent_attendance' child.id %}" class="nav-link">
+                &#128197; Attendance Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+
+            {% if portal_capabilities.portal_view_library %}
+<a href="{% url 'accounts:parent_library' child.id %}" class="nav-link">
+                &#128214; Library Ã¢â‚¬â€ {{ child.first_name }}
+            </a>
+{% endif %}
+        {% endfor %}
+    {% endif %}
+
+    {% if portal_capabilities.portal_view_announcements %}
+<a href="{% url 'accounts:parent_announcements' %}" class="nav-link">
+        &#128226; Announcements
+    </a>
+{% endif %}
+
+    {% if portal_capabilities.portal_view_messaging %}
+<a href="{% url 'messaging:portal_messages' %}" class="nav-link">
+        &#128172; My Messages
+    </a>
+{% endif %}
+    {% if portal_capabilities.portal_view_weekly_reports %}
+<a href="{% url 'weekly_reports:parent_reports' %}" class="nav-link">
+        &#128202; Weekly Assessments
+    </a>
+{% endif %}
+
+
+    {% if portal_capabilities.portal_view_hostel %}
+<a href="{% url 'accounts:parent_hostel' %}" class="nav-link">
+    <i class="bi bi-house-door me-2"></i>
+    Hostel &amp; Room
+</a>
+{% endif %}
+
+{% if portal_capabilities.portal_view_hostel %}
+<a href="{% url 'accounts:parent_hostel_incident' child.id %}" class="nav-link">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    Report Incident
+</a>
+{% endif %}
+
+<a href="{% url 'accounts:profile_settings' %}" class="nav-link">
+        &#128100; My Profile
+    </a>
+
+    <a href="{% url 'accounts:logout' %}" class="nav-link mt-4">
+        &#128682; Logout
+    </a>
+</div>
+
+<div class="main">
+
+    <!-- PARENT-BRANDING-SLIDESHOW -->
+<section class="parent-welcome-slider" id="PARENT-BRANDING-SLIDESHOW">
+
+    <div class="welcome-slide active">
+        <div class="welcome-logo">
+            {% if branding and branding.logo %}
+                <img src="{{ branding.logo.url }}" alt="{{ branding.school_name }}">
+            {% else %}
+                <div class="logo-placeholder">Ã°Å¸ÂÂ«</div>
+            {% endif %}
+        </div>
+
+        <div class="welcome-text">
+            <div class="welcome-small">WELCOME TO OUR SCHOOL</div>
+            <h1>{{ branding.school_name|default:"Luhan School" }}</h1>
+
+            {% if branding.motto %}
+                <p class="school-motto">Ã¢â‚¬Å“{{ branding.motto }}Ã¢â‚¬Â</p>
+            {% endif %}
+
+            <p class="welcome-message">
+                Welcome to the Parent Portal. We are delighted to have you
+                as part of our school community.
+            </p>
+        </div>
+    </div>
+
+    <div class="welcome-slide">
+        <div class="contact-icon">Ã°Å¸â€œÅ¾</div>
+
+        <div class="welcome-text">
+            <div class="welcome-small">CONTACT US</div>
+            <h2>Talk to Our School</h2>
+
+            {% if branding.phone %}
+                <p class="contact-line">
+                    <strong>Phone:</strong> {{ branding.phone }}
+                </p>
+            {% endif %}
+
+            {% if branding.alternative_phone %}
+                <p class="contact-line">
+                    <strong>Alternative:</strong> {{ branding.alternative_phone }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="welcome-slide">
+        <div class="contact-icon">Ã¢Å“â€°Ã¯Â¸Â</div>
+
+        <div class="welcome-text">
+            <div class="welcome-small">GET IN TOUCH</div>
+            <h2>Email & Website</h2>
+
+            {% if branding.email %}
+                <p class="contact-line">
+                    <strong>Email:</strong> {{ branding.email }}
+                </p>
+            {% endif %}
+
+            {% if branding.website %}
+                <p class="contact-line">
+                    <strong>Website:</strong> {{ branding.website }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="welcome-slide">
+        <div class="contact-icon">Ã°Å¸â€œÂ</div>
+
+        <div class="welcome-text">
+            <div class="welcome-small">FIND OUR SCHOOL</div>
+            <h2>Our Address</h2>
+
+            {% if branding.physical_address %}
+                <p class="contact-line">
+                    <strong>Physical Address:</strong><br>
+                    {{ branding.physical_address }}
+                </p>
+            {% endif %}
+
+            {% if branding.postal_address %}
+                <p class="contact-line">
+                    <strong>Postal Address:</strong><br>
+                    {{ branding.postal_address }}
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="slider-dots">
+        <span class="slider-dot active"></span>
+        <span class="slider-dot"></span>
+        <span class="slider-dot"></span>
+        <span class="slider-dot"></span>
+    </div>
+
+</section>
+<!-- END PARENT-BRANDING-SLIDESHOW -->
+
+<style>
+.parent-welcome-slider {
+    position: relative;
+    width: 100%;
+    min-height: 270px;
+    margin-bottom: 25px;
+    border-radius: 18px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #198754, #146c43);
+    color: white;
+    box-shadow: 0 5px 20px rgba(0,0,0,.10);
+}
+
+.welcome-slide {
+    display: none;
+    min-height: 270px;
+    padding: 35px 45px;
+    align-items: center;
+    justify-content: center;
+    gap: 45px;
+    animation: parentSlideIn .6s ease;
+}
+
+.welcome-slide.active {
+    display: flex;
+}
+
+.welcome-logo {
+    width: 145px;
+    height: 145px;
+    min-width: 145px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,.18);
+}
+
+.welcome-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 50%;
+}
+
+.logo-placeholder {
+    font-size: 55px;
+}
+
+.welcome-text {
+    max-width: 750px;
+}
+
+.welcome-small {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    opacity: .85;
+    margin-bottom: 8px;
+}
+
+.welcome-text h1 {
+    font-size: 38px;
+    font-weight: 800;
+    margin: 0 0 10px;
+}
+
+.welcome-text h2 {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.school-motto {
+    font-size: 21px;
+    font-weight: 600;
+    margin: 8px 0 15px;
+}
+
+.welcome-message {
+    font-size: 16px;
+    opacity: .92;
+    margin: 0;
+}
+
+.contact-icon {
+    width: 110px;
+    height: 110px;
+    min-width: 110px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 52px;
+}
+
+.contact-line {
+    font-size: 18px;
+    margin: 8px 0;
+}
+
+.slider-dots {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    right: 0;
+    text-align: center;
+}
+
+.slider-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin: 0 4px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.45);
+}
+
+.slider-dot.active {
+    background: white;
+    transform: scale(1.25);
+}
+
+@keyframes parentSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 700px) {
+    .welcome-slide {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+        padding: 30px 20px 45px;
+    }
+
+    .welcome-logo {
+        width: 100px;
+        height: 100px;
+        min-width: 100px;
+    }
+
+    .contact-icon {
+        width: 80px;
+        height: 80px;
+        min-width: 80px;
+        font-size: 38px;
+    }
+
+    .welcome-text h1 {
+        font-size: 27px;
+    }
+
+    .welcome-text h2 {
+        font-size: 25px;
+    }
+}
+</style>
+
+<script>
+(function () {
+    const slides = document.querySelectorAll(
+        '#PARENT-BRANDING-SLIDESHOW .welcome-slide'
+    );
+
+    const dots = document.querySelectorAll(
+        '#PARENT-BRANDING-SLIDESHOW .slider-dot'
+    );
+
+    let current = 0;
+
+    function showSlide(index) {
+        slides.forEach(function(slide, i) {
+            slide.classList.toggle('active', i === index);
+        });
+
+        dots.forEach(function(dot, i) {
+            dot.classList.toggle('active', i === index);
+        });
+    }
+
+    setInterval(function() {
+        current = (current + 1) % slides.length;
+        showSlide(current);
+    }, 5000);
+})();
+</script>
+
+<!-- TOP BAR -->
+    <div class="topbar d-flex justify-content-between align-items-center">
+
+        <div>
+            <strong>Parent Portal</strong>
+
+            <div class="text-muted small">
+                {{ branding.school_name|default:"Luhan School" }}
+            </div>
+        </div>
+
+        <div>
+            Welcome,
+            <strong>
+                {{ parent.full_name|default:parent }}
+            </strong>
+        </div>
+
+    </div>
+
+
+    <!-- WELCOME -->
+    <div class="welcome">
+
+        <div class="d-flex align-items-center">
+
+            <div class="avatar me-4">
+
+                {% if parent.full_name %}
+                    {{ parent.full_name|first|upper }}
+                {% else %}
+                    P
+                {% endif %}
+
+            </div>
+
+            <div>
+
+                <h2 class="mb-1">
+                    Welcome,
+                    {{ parent.full_name|default:"Parent" }}!
+                </h2>
+
+                <p class="mb-3">
+                    Parent / Guardian Portal
+                </p>
+
+                <div>
+
+                    <span class="me-4">
+                        Children:
+                        <strong>{{ children_count }}</strong>
+                    </span>
+
+                    {% if parent.phone %}
+
+                        <span class="me-4">
+                            Phone:
+                            <strong>{{ parent.phone }}</strong>
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+    <div class="row g-4 mb-4">
+
+        <!-- CHILDREN -->
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card-box">
+
+                <div class="stat-label">
+                    MY CHILDREN
+                </div>
+
+                <div class="stat">
+                    {{ children_count }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- FEES PAID -->
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card-box">
+
+                <div class="stat-label">
+                    FEES PAID
+                </div>
+
+                <div class="stat text-success">
+                    KSh {{ total_paid|floatformat:2 }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OUTSTANDING -->
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card-box">
+
+                <div class="stat-label">
+                    OUTSTANDING
+                </div>
+
+                <div class="stat text-danger">
+
+                    {% if total_balance < 0 %}
+
+                        -KSh {{ total_balance|stringformat:".2f"|cut:"-" }}
+
+                    {% elif total_balance > 0 %}
+
+                        KSh {{ total_balance|floatformat:2 }}
+
+                    {% else %}
+
+                        KSh 0.00
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ANNOUNCEMENTS -->
+        <div class="col-md-6 col-xl-3">
+
+            <div class="card-box">
+
+                <div class="stat-label">
+                    ANNOUNCEMENTS
+                </div>
+
+                <div class="stat">
+                    {{ published_announcements|length }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CHILDREN SECTION -->
+    <div class="section" id="children">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <h5>
+                My Children
+            </h5>
+
+            <span class="badge bg-primary">
+                {{ children_count }}
+                Child{{ children_count|pluralize }}
+            </span>
+
+        </div>
+
+
+        {% if children %}
+
+            {% for child in children %}
+
+                <div class="child-card">
+
+                    <!-- CHILD HEADER -->
+                    <div class="child-header">
+
+                        <div class="d-flex align-items-center">
+
+                            {% if child.photo %}
+
+                                <img src="{{ child.photo.url }}"
+                                     class="child-avatar me-3"
+                                     alt="{{ child.get_full_name }}">
+
+                            {% else %}
+
+                                <div class="child-avatar me-3">
+                                    {{ child.first_name|first|upper }}
+                                </div>
+
+                            {% endif %}
+
+
+                            <div>
+
+                                <h4 class="mb-1">
+                                    {{ child.get_full_name }}
+                                </h4>
+
+                                <div class="text-muted">
+                                    Admission:
+                                    <strong>
+                                        {{ child.admission_no }}
+                                    </strong>
+                                </div>
+
+                                <div class="text-muted">
+
+                                    Class:
+                                    <strong>
+                                        {{ child.class_name }}
+                                    </strong>
+
+                                    {% if child.stream %}
+
+                                        Ãƒâ€šÃ‚Â· Stream:
+                                        <strong>
+                                            {{ child.stream }}
+                                        </strong>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CHILD BODY -->
+                    <div class="child-body">
+
+
+                        <!-- CHILD SUMMARY -->
+                        <div class="row g-3 mb-4">
+
+
+                            <!-- PAID -->
+                            <div class="col-md-3 col-6">
+
+                                <div class="mini-card">
+
+                                    <div class="mini-label">
+                                        FEES PAID
+                                    </div>
+
+                                    <div class="mini-value text-success">
+                                        KSh
+                                        {{ child.total_fee_paid|floatformat:2 }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- BALANCE -->
+                            <div class="col-md-3 col-6">
+
+                                <div class="mini-card">
+
+                                    <div class="mini-label">
+                                        BALANCE
+                                    </div>
+
+                                    <div class="mini-value text-danger">
+
+                                        {% if child.total_fee_balance < 0 %}
+
+                                            -KSh {{ child.total_fee_balance|stringformat:".2f"|cut:"-" }}
+
+                                        {% elif child.total_fee_balance > 0 %}
+
+                                            KSh {{ child.total_fee_balance|floatformat:2 }}
+
+                                        {% else %}
+
+                                            KSh 0.00
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- ATTENDANCE -->
+                            <div class="col-md-3 col-6">
+
+                                <div class="mini-card">
+
+                                    <div class="mini-label">
+                                        ATTENDANCE
+                                    </div>
+
+                                    <div class="mini-value text-primary">
+                                        {{ child.attendance_percentage|floatformat:1 }}%
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- RESULTS -->
+                            <div class="col-md-3 col-6">
+
+                                <div class="mini-card">
+
+                                    <div class="mini-label">
+                                        RESULTS
+                                    </div>
+
+                                    <div class="mini-value">
+                                        {{ child.academic_count }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ACADEMIC RESULTS -->
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+
+                            <h5 class="mb-0">
+                                Academic Results
+                            </h5>
+
+                            {% if portal_capabilities.portal_view_academic %}
+<a href="{% url 'accounts:parent_academic_results' child.id %}"
+                               class="btn btn-primary btn-sm">
+                                View Full Results
+                            </a>
+{% endif %}
+
+                        </div>
+
+
+                        {% if child.parent_academic_results %}
+
+                            <div class="table-responsive">
+
+                                <table class="table table-hover">
+
+                                    <thead>
+
+                                        <tr>
+                                            <th>Subject</th>
+                                            <th>Assessment</th>
+                                            <th>Term</th>
+                                            <th>Year</th>
+                                            <th>Score</th>
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody>
+
+                                        {% for result in child.parent_academic_results|slice:":5" %}
+
+                                            <tr>
+
+                                                <td>
+                                                    {{ result.subject.name }}
+                                                </td>
+
+                                                <td>
+                                                    {{ result.assessment_type.name }}
+                                                </td>
+
+                                                <td>
+                                                    {{ result.term.name }}
+                                                </td>
+
+                                                <td>
+                                                    {{ result.academic_year.year }}
+                                                </td>
+
+                                                <td>
+                                                    <strong>
+                                                        {{ result.score }}
+                                                    </strong>
+                                                </td>
+
+                                            </tr>
+
+                                        {% endfor %}
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                No academic results available.
+                            </div>
+
+                        {% endif %}
+
+
+                        <!-- ATTENDANCE -->
+                        <div id="attendance" class="mt-4">
+
+                            <h5>
+                                Attendance Summary
+                            </h5>
+
+                            <div class="mb-3">
+
+                                Attendance Rate:
+
+                                <strong>
+                                    {{ child.attendance_percentage|floatformat:1 }}%
+                                </strong>
+
+                            </div>
+
+
+                            <div class="progress mb-3"
+                                 style="height:12px">
+
+                                <div class="progress-bar bg-success"
+                                     style="width:{{ child.attendance_percentage }}%">
+                                </div>
+
+                            </div>
+
+
+                            <div class="row text-center">
+
+
+                                <div class="col-3">
+
+                                    <strong class="text-success fs-5">
+                                        {{ child.attendance_present }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small>
+                                        Present
+                                    </small>
+
+                                </div>
+
+
+                                <div class="col-3">
+
+                                    <strong class="text-danger fs-5">
+                                        {{ child.attendance_absent }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small>
+                                        Absent
+                                    </small>
+
+                                </div>
+
+
+                                <div class="col-3">
+
+                                    <strong class="text-warning fs-5">
+                                        {{ child.attendance_late }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small>
+                                        Late
+                                    </small>
+
+                                </div>
+
+
+                                <div class="col-3">
+
+                                    <strong class="text-secondary fs-5">
+                                        {{ child.attendance_excused }}
+                                    </strong>
+
+                                    <br>
+
+                                    <small>
+                                        Excused
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- FEES -->
+                        <div id="fees" class="row mt-4">
+
+
+                            <!-- PAID -->
+                            <div class="col-md-6">
+
+                                <div class="alert alert-success">
+
+                                    <strong>
+                                        Fees Paid
+                                    </strong>
+
+                                    <div class="fs-5">
+                                        KSh
+                                        {{ child.total_fee_paid|floatformat:2 }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- OUTSTANDING -->
+                            <div class="col-md-6">
+
+                                <div class="alert alert-danger">
+
+                                    <strong>
+                                        Outstanding Balance
+                                    </strong>
+
+                                    <div class="fs-5">
+
+                                        {% if child.total_fee_balance < 0 %}
+
+                                            -KSh {{ child.total_fee_balance|stringformat:".2f"|cut:"-" }}
+
+                                        {% elif child.total_fee_balance > 0 %}
+
+                                            KSh {{ child.total_fee_balance|floatformat:2 }}
+
+                                        {% else %}
+
+                                            KSh 0.00
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ASSIGNMENTS -->
+                        <div id="assignments" class="mt-4">
+
+                            <h5>
+                                Recent Assignments
+                            </h5>
+
+
+                            {% if child.parent_assignments %}
+
+                                {% for assignment in child.parent_assignments|slice:":5" %}
+
+                                    <div class="border-bottom py-3">
+
+                                        <strong>
+                                            {{ assignment.title }}
+                                        </strong>
+
+
+                                        {% if assignment.subject %}
+
+                                            <div class="text-muted small">
+                                                {{ assignment.subject }}
+                                            </div>
+
+                                        {% endif %}
+
+
+                                        {% if assignment.due_date %}
+
+                                            <small class="text-danger">
+                                                Due:
+                                                {{ assignment.due_date|date:"d M Y" }}
+                                            </small>
+
+                                        {% endif %}
+
+
+                                        {% if assignment.description %}
+
+                                            <div class="mt-1">
+                                                {{ assignment.description|truncatechars:180 }}
+                                            </div>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                {% endfor %}
+
+                            {% else %}
+
+                                <div class="text-muted">
+                                    No assignments available.
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <div class="text-center py-5">
+
+                <h5>
+                    No Children Linked
+                </h5>
+
+                <p class="text-muted">
+                    No learners are currently linked to your parent account.
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- ANNOUNCEMENTS -->
+    <div class="section" id="announcements">
+
+        <h5>
+            School Announcements
+        </h5>
+
+
+        {% if published_announcements %}
+
+            {% for notice in published_announcements %}
+
+                <div class="border-bottom py-3">
+
+                    <div class="d-flex justify-content-between">
+
+                        <strong>
+                            {{ notice.title }}
+                        </strong>
+
+
+                        <span class="badge
+                            {% if notice.priority == "urgent" %}
+                                bg-danger
+                            {% elif notice.priority == "important" %}
+                                bg-warning text-dark
+                            {% else %}
+                                bg-primary
+                            {% endif %}
+                        ">
+
+                            {{ notice.get_priority_display }}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="text-muted small">
+
+                        {{ notice.publish_date|date:"d M Y" }}
+
+                    </div>
+
+
+                    <div class="mt-2">
+
+                        {{ notice.content|linebreaksbr }}
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+
+        {% else %}
+
+            <div class="text-muted">
+                No new announcements.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer class="text-center text-muted py-4">
+
+        {{ branding.school_name|default:"Luhan School" }}
+
+        <br>
+
+        {{ branding.motto|default:"Igniting Curiosity, Fueling Innovation." }}
+
+    </footer>
+
+</div>
+
+
+{% if portal_capabilities.portal_view_weekly_reports %}
+<a href="{% url 'weekly_reports:parent_reports' %}"
+   class="btn btn-primary">
+    Weekly Assessment Reports
+</a>
+{% endif %}
+
+
+
+    </a>
+</div>
+
+</body>
+</html>
+
+
+
+
+
+
+
+<style>
+html {
+    scroll-behavior: smooth;
+}
+
+#children {
+    scroll-margin-top: 30px;
+}
+</style>
+
+<style id="FINAL-PARENT-LAYOUT">
+html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+}
+
+.sidebar {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: 250px !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    z-index: 1000 !important;
+}
+
+.main {
+    margin-left: 250px !important;
+    padding: 25px !important;
+    min-height: 100vh !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+}
+
+#children,
+#announcements {
+    scroll-margin-top: 20px !important;
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 70px !important;
+    }
+
+    .main {
+        margin-left: 70px !important;
+        padding: 15px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar {
+        width: 65px !important;
+    }
+
+    .main {
+        margin-left: 65px !important;
+        padding: 12px !important;
+    }
+}
+</style>
+
+

@@ -1,0 +1,328 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>Library Management</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #172033;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #063b91;
+            color: white;
+            padding: 22px 14px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            padding: 12px;
+            margin-bottom: 20px;
+        }
+
+        .brand small {
+            display: block;
+            font-size: 12px;
+            opacity: .75;
+            margin-top: 5px;
+        }
+
+        .nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 14px;
+            margin: 4px 0;
+            border-radius: 8px;
+        }
+
+        .nav a:hover {
+            background: rgba(255,255,255,.13);
+        }
+
+        .content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        .topbar {
+            background: white;
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 27px;
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        .muted {
+            color: #687386;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        .stat {
+            font-size: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 7px;
+            text-decoration: none;
+            border: 0;
+            cursor: pointer;
+            background: #063b91;
+            color: white;
+            font-size: 14px;
+        }
+
+        .btn.secondary {
+            background: #64748b;
+        }
+
+        .btn.success {
+            background: #16803c;
+        }
+
+        .btn.danger {
+            background: #c62828;
+        }
+
+        .btn.light {
+            background: #e9eef7;
+            color: #172033;
+        }
+
+        .table-wrap {
+            background: white;
+            border-radius: 12px;
+            overflow-x: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 13px 15px;
+            border-bottom: 1px solid #edf0f5;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            font-size: 13px;
+        }
+
+        .form-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 900px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        .form-row {
+            margin-bottom: 17px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccd4df;
+            border-radius: 7px;
+            font-size: 14px;
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .search input,
+        .search select {
+            max-width: 300px;
+        }
+
+        .message {
+            padding: 12px 15px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            margin-bottom: 18px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #e9eef7;
+            font-size: 12px;
+        }
+
+        @media(max-width: 800px) {
+
+            .sidebar {
+                width: 210px;
+            }
+
+            .content {
+                margin-left: 210px;
+                width: calc(100% - 210px);
+                padding: 18px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="layout">
+
+    <aside class="sidebar">
+
+        <div class="brand">
+            📚 Library
+            <small>Library Management</small>
+        </div>
+
+        <nav class="nav">
+
+            <a href="{% url 'library_dashboard' %}">
+                Dashboard
+            </a>
+
+            <a href="{% url 'library_books' %}">
+                📖 Books
+            </a>
+
+            <a href="{% url 'library_categories' %}">
+                🗂 Categories
+            </a>
+
+            <a href="{% url 'library_members' %}">
+                👥 Members
+            </a>
+
+            <a href="{% url 'library_issues' %}">
+                🔄 Issues & Returns
+            </a>
+
+            <a href="{% url 'library_reports' %}">
+                📊 Reports
+            </a>
+
+            <a href="/">
+                ← ERP Dashboard
+            </a>
+
+        </nav>
+
+    </aside>
+
+    <main class="content">
+
+        <div class="topbar">
+
+            <h1>
+                {% block page_title %}
+                Library Management
+                {% endblock %}
+            </h1>
+
+            <div class="muted">
+                Custom Library Management
+            </div>
+
+        </div>
+
+        {% if messages %}
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+</div>
+
+</body>
+</html>

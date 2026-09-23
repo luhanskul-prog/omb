@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Assessment Report</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f7fb;font-family:Arial,Helvetica,sans-serif;color:#172033}
+.topbar{background:#123f91;color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;gap:20px}
+.brand-title{font-size:22px;font-weight:700}
+.brand-sub{opacity:.85;font-size:13px;margin-top:4px}
+.container{max-width:1400px;margin:25px auto;padding:0 18px}
+.card{background:#fff;border-radius:14px;box-shadow:0 4px 18px rgba(20,40,80,.08);padding:22px;margin-bottom:20px}
+h1{margin:0 0 6px;font-size:28px}
+h2{margin:0 0 15px}
+h3{margin:0 0 10px}
+.muted{color:#68758a}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}}
+.stat{background:#f7f9fd;border-radius:12px;padding:17px}
+.stat-value{font-size:26px;font-weight:700;color:#123f91}
+label{display:block;font-weight:600;margin-bottom:6px}
+input,select,textarea{width:100%;border:1px solid #d7deea;border-radius:8px;padding:10px 12px;font-size:14px;background:#fff}
+textarea{min-height:120px}
+.btn{display:inline-block;border:0;border-radius:8px;padding:10px 15px;text-decoration:none;cursor:pointer;font-weight:600;font-size:14px}
+.btn-primary{background:#123f91;color:#fff}
+.btn-secondary{background:#e9eef7;color:#17315f}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:15px}
+.badge{display:inline-block;border-radius:20px;padding:5px 9px;font-size:12px;font-weight:700}
+.badge-published{background:#dff6e9;color:#146c43}
+.badge-draft{background:#fff0d5;color:#8a5b00}
+.reply{background:#f7f9fd;border-radius:10px;padding:14px;margin-bottom:10px}
+.reply-meta{font-size:12px;color:#68758a;margin-bottom:7px}
+.report-box{background:#f8faff;border-left:4px solid #123f91;padding:15px;border-radius:8px;line-height:1.6}
+.empty{padding:35px;text-align:center;color:#68758a}
+.alert{padding:12px 15px;border-radius:8px;margin-bottom:15px;background:#fff4d6}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div>
+        <div class="brand-title">Weekly Assessment Reports</div>
+        <div class="brand-sub">
+            Weekly learner progress, scores and teacher reports
+        </div>
+    </div>
+
+    <a class="btn btn-secondary"
+       href="{% url 'weekly_reports:dashboard' %}">
+        Portal
+    </a>
+</div>
+
+<div class="container">
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+<div class="card">
+    <div style="display:flex;justify-content:space-between;gap:15px;flex-wrap:wrap">
+
+        <div>
+            <h1>
+                {{ report.student.first_name }}
+                {% if report.student.middle_name %}{{ report.student.middle_name }}{% endif %}
+                {{ report.student.last_name }}
+            </h1>
+
+            <div class="muted">
+                Admission No: {{ report.student.admission_no }}
+                |
+                Class: {{ report.class_name }}
+                {% if report.stream %} / {{ report.stream }}{% endif %}
+            </div>
+        </div>
+
+        <div>
+        {% if report.is_published %}
+            <span class="badge badge-published">Published</span>
+        {% else %}
+            <span class="badge badge-draft">Unpublished</span>
+        {% endif %}
+        </div>
+
+    </div>
+</div>
+
+<div class="grid">
+
+    <div class="stat">
+        <div class="muted">Week Number</div>
+        <div class="stat-value">{{ report.week_number }}</div>
+    </div>
+
+    <div class="stat">
+        <div class="muted">Date From</div>
+        <div class="stat-value" style="font-size:18px">{{ report.week_start }}</div>
+    </div>
+
+    <div class="stat">
+        <div class="muted">Date To</div>
+        <div class="stat-value" style="font-size:18px">{{ report.week_end }}</div>
+    </div>
+
+    <div class="stat">
+        <div class="muted">Percentage</div>
+        <div class="stat-value">
+            {% if report.percentage != None %}{{ report.percentage }}%{% else %}—{% endif %}
+        </div>
+    </div>
+
+</div>
+
+<div class="card">
+    <h2>Learning Area / Subject</h2>
+    <h3>{{ report.subject.name }}</h3>
+
+    <div class="grid" style="margin-top:15px">
+
+        <div class="stat">
+            <div class="muted">Score</div>
+            <div class="stat-value">
+                {% if report.score != None %}{{ report.score }}{% else %}—{% endif %}
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="muted">Maximum Score</div>
+            <div class="stat-value">{{ report.max_score }}</div>
+        </div>
+
+        <div class="stat">
+            <div class="muted">Percentage</div>
+            <div class="stat-value">
+                {% if report.percentage != None %}{{ report.percentage }}%{% else %}—{% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="card">
+    <h2>Teacher's Weekly Report</h2>
+
+    <div class="report-box">
+        {% if report.teacher_report %}
+            {{ report.teacher_report|linebreaks }}
+        {% else %}
+            No teacher report has been entered.
+        {% endif %}
+    </div>
+</div>
+
+{% if can_edit %}
+<div class="card">
+    <a class="btn btn-primary" href="{% url 'weekly_reports:edit' report.pk %}">
+        Edit Report
+    </a>
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>Replies</h2>
+
+    {% if replies %}
+        {% for reply in replies %}
+        <div class="reply">
+            <div class="reply-meta">
+                <strong>{{ reply.author.get_full_name|default:reply.author.username }}</strong>
+                · {{ reply.created_at|date:"d M Y H:i" }}
+            </div>
+            {{ reply.message|linebreaks }}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty">No replies have been added yet.</div>
+    {% endif %}
+
+    {% if can_reply %}
+    <hr style="border:0;border-top:1px solid #edf0f5;margin:20px 0">
+
+    <h3>
+        {% if is_admin %}
+            Add Administrator Response
+        {% elif is_staff %}
+            Reply to Parent / Learner
+        {% else %}
+            Reply to Teacher
+        {% endif %}
+    </h3>
+
+    <form method="post"
+          action="{% url 'weekly_reports:reply' report.pk %}">
+        {% csrf_token %}
+
+        <textarea name="message"
+                  placeholder="{% if is_admin %}Write an administrator response...{% elif is_staff %}Write a response to the parent or learner...{% else %}Write your response or feedback here...{% endif %}"
+                  required></textarea>
+
+        <div class="actions">
+            <button class="btn btn-primary" type="submit">
+                {% if is_admin %}
+                    Send Administrator Response
+                {% elif is_staff %}
+                    Send Teacher Response
+                {% else %}
+                    Send Reply
+                {% endif %}
+            </button>
+        </div>
+    </form>
+    {% endif %}
+</div>
+</div>
+
+</body>
+</html>

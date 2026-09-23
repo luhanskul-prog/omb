@@ -1,0 +1,205 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Hostel Incidents{% endblock %}
+{% block heading %}Hostel Incidents{% endblock %}
+{% block subheading %}Record, investigate and resolve boarding incidents{% endblock %}
+
+{% block content %}
+
+<div class="card-box">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Incident Register</h2>
+            <div class="card-sub">Learner welfare and hostel incident history</div>
+        </div>
+
+        {% if erp_permission.add_hostelincident %}
+        <a href="{% url 'hostel:incident_create' %}" class="btn-main">
+            + Report Incident
+        </a>
+        {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="search-box">
+
+            <div class="row g-2">
+
+                <div class="col-md-5">
+
+                    <input
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search incident, learner or hostel..."
+                    >
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <select name="severity" class="form-select">
+
+                        <option value="">All Severity</option>
+
+                        {% for value,label in severity_choices %}
+
+                        <option value="{{ value }}"
+                            {% if severity == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select name="status" class="form-select">
+
+                        <option value="">All Status</option>
+                        <option value="open" {% if status == "open" %}selected{% endif %}>Open</option>
+                        <option value="resolved" {% if status == "resolved" %}selected{% endif %}>Resolved</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn-main w-100">
+                        Filter
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+
+                <tr>
+                    <th>Date</th>
+                    <th>Incident</th>
+                    <th>Student</th>
+                    <th>Hostel</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for incident in incidents %}
+
+                <tr>
+
+                    <td>{{ incident.incident_date }}</td>
+
+                    <td>
+
+                        <strong>{{ incident.title }}</strong>
+
+                        <br>
+
+                        <small class="text-muted">
+                            {{ incident.description|truncatechars:70 }}
+                        </small>
+
+                    </td>
+
+                    <td>
+                        {{ incident.student|default:"General Hostel Incident" }}
+                    </td>
+
+                    <td>{{ incident.hostel.name }}</td>
+
+                    <td>
+
+                        {% if incident.severity == "critical" %}
+                            <span class="badge-soft red">Critical</span>
+                        {% elif incident.severity == "high" %}
+                            <span class="badge-soft red">High</span>
+                        {% elif incident.severity == "medium" %}
+                            <span class="badge-soft orange">Medium</span>
+                        {% else %}
+                            <span class="badge-soft blue">Low</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if incident.resolved %}
+                            <span class="badge-soft green">Resolved</span>
+                        {% else %}
+                            <span class="badge-soft red">Open</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if erp_permission.change_hostelincident %}
+                        <a href="{% url 'hostel:incident_edit' incident.pk %}" class="btn-lightx">
+                            Edit
+                        </a>
+                        {% endif %}
+
+                        {% if not incident.resolved %}
+
+                        {% if erp_permission.change_hostelincident %}
+                        <form method="post"
+                              action="{% url 'hostel:incident_resolve' incident.pk %}"
+                              class="d-inline">
+
+                            {% csrf_token %}
+
+                            <button class="btn-main">
+                                Resolve
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    {% endif %}</td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="text-center text-muted p-5">
+                        No incidents found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

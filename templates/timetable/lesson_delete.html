@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Delete Timetable Lesson</title>
+<style>
+body{font-family:Arial;background:#f4f7fb}
+.box{max-width:500px;margin:80px auto;background:white;padding:30px;border-radius:12px;text-align:center}
+button,a{padding:11px 18px;border:0;border-radius:7px;text-decoration:none;font-weight:bold}
+button{background:#dc3545;color:white}
+a{background:#eef3f9;color:#063b91}
+
+/* =========================================================
+   LUHAN TIMETABLE COMPACT NAVIGATION
+   ========================================================= */
+
+.timetable-compact-nav{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:5px !important;
+    align-items:center !important;
+}
+
+.timetable-compact-nav a,
+.timetable-compact-nav button{
+    font-size:11px !important;
+    padding:6px 9px !important;
+    line-height:1.15 !important;
+    border-radius:6px !important;
+}
+
+.timetable-compact-nav i{
+    font-size:11px !important;
+}
+
+.timetable-compact-title{
+    font-size:20px !important;
+    line-height:1.2 !important;
+}
+
+.timetable-compact-subtitle{
+    font-size:11px !important;
+    line-height:1.3 !important;
+}
+
+.timetable-compact-section{
+    font-size:13px !important;
+}
+
+.timetable-compact-card-title{
+    font-size:13px !important;
+}
+
+</style>
+</head>
+<body>
+<div class="box">
+<h2>Delete Timetable Lesson</h2>
+<p>
+Are you sure you want to delete
+<strong>{{ lesson.subject.name }}</strong>
+for <strong>{{ lesson.class_group }}</strong>?
+</p>
+
+<form method="post">
+{% csrf_token %}
+<button type="submit">Yes, Delete</button>
+<a href="{% url 'timetable:workspace' %}">Cancel</a>
+</form>
+</div>
+</body>
+</html>

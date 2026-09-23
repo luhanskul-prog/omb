@@ -1,0 +1,788 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       COMPACT CLASS PAYMENT LIST
+    ===================================================== */
+
+    body {
+        background: #f4f6f9;
+    }
+
+    .payment-page {
+        width: 100%;
+        padding: 4px 8px;
+        margin: 0;
+    }
+
+    /* =====================================================
+       TOP HEADER
+       ===================================================== */
+
+    .school-header {
+        background: white;
+        border-bottom: 2px solid #198754;
+        padding: 4px 6px;
+        margin-bottom: 5px;
+
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .school-name {
+        font-size: 20px;
+        font-weight: 800;
+        color: #198754;
+        margin: 0;
+        line-height: 1.1;
+    }
+
+    .report-title {
+        font-size: 13px;
+        font-weight: 700;
+        margin: 1px 0;
+        line-height: 1.1;
+    }
+
+    .report-details {
+        font-size: 10px;
+        color: #555;
+        line-height: 1.1;
+    }
+
+    /* =====================================================
+       SMALL FEE COLLECTION BOX
+       ===================================================== */
+
+    .collection-box {
+        border: 1px solid #198754;
+        border-radius: 4px;
+        padding: 2px 9px;
+        min-width: 85px;
+        text-align: center;
+        line-height: 1;
+    }
+
+    .collection-label {
+        font-size: 8px;
+        font-weight: 700;
+        color: #555;
+    }
+
+    .collection-value {
+        font-size: 16px;
+        font-weight: 800;
+        color: #198754;
+    }
+
+    /* =====================================================
+       FILTER AREA
+       ===================================================== */
+
+    .filter-area {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 4px 6px;
+        margin-bottom: 5px;
+    }
+
+    .filter-area .form-label {
+        font-size: 9px;
+        font-weight: 700;
+        margin-bottom: 1px;
+    }
+
+    .filter-area .form-select {
+        height: 26px;
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+
+    .filter-button {
+        height: 26px;
+        font-size: 10px;
+        padding: 2px 12px;
+    }
+
+    /* =====================================================
+       SUMMARY
+       ===================================================== */
+
+    .summary-row {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 5px;
+    }
+
+    .summary-box {
+        background: white;
+        border: 1px solid #ddd;
+        padding: 3px 8px;
+        flex: 1;
+        line-height: 1.1;
+    }
+
+    .summary-label {
+        font-size: 8px;
+        font-weight: 700;
+        color: #777;
+    }
+
+    .summary-value {
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    /* =====================================================
+       TABLE
+       ===================================================== */
+
+    .table-container {
+        background: white;
+        padding: 5px;
+        border: 1px solid #ddd;
+        width: 100%;
+    }
+
+    .table-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 3px;
+    }
+
+    .table-heading h5 {
+        font-size: 12px;
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .table-heading small {
+        font-size: 9px;
+    }
+
+    table {
+        width: 100%;
+        margin: 0 !important;
+        font-size: 9px;
+        border-collapse: collapse;
+    }
+
+    table th {
+        background: #198754 !important;
+        color: white !important;
+        font-size: 9px;
+        font-weight: 700;
+        padding: 3px 4px !important;
+        border: 1px solid #aaa;
+        white-space: nowrap;
+    }
+
+    table td {
+        padding: 3px 4px !important;
+        border: 1px solid #bbb;
+        white-space: nowrap;
+    }
+
+    .learner-name {
+        font-weight: 600;
+        min-width: 180px;
+    }
+
+    .money {
+        text-align: right;
+    }
+
+    .status {
+        text-align: center;
+        font-size: 8px;
+        font-weight: 800;
+    }
+
+    .paid {
+        color: #198754;
+    }
+
+    .partial {
+        color: #d39e00;
+    }
+
+    .not-paid {
+        color: #dc3545;
+    }
+
+    .total-row th,
+    .total-row td {
+        background: #212529 !important;
+        color: white !important;
+        font-weight: 800;
+        padding: 4px !important;
+    }
+
+    /* =====================================================
+       PRINT
+       ===================================================== */
+
+    @media print {
+
+        body {
+            background: white !important;
+        }
+
+        .payment-page {
+            padding: 0 3px;
+        }
+
+        .filter-area,
+        .no-print {
+            display: none !important;
+        }
+
+        .school-header {
+            border-bottom: 2px solid #000;
+            margin-bottom: 3px;
+        }
+
+        .school-name {
+            color: black !important;
+        }
+
+        .table-container {
+            border: none;
+            padding: 0;
+        }
+
+        table {
+            font-size: 8px;
+        }
+
+        table th,
+        table td {
+            padding: 2px 3px !important;
+        }
+
+    }
+
+</style>
+
+
+<div class="payment-page">
+
+
+    <!-- =====================================================
+         SCHOOL / REPORT HEADER
+         ===================================================== -->
+
+    <div class="school-header">
+
+        <div>
+
+            <h1 class="school-name">
+                LUHAN SCHOOL
+            </h1>
+
+            <div class="report-title">
+                CLASS FEE PAYMENT LIST
+            </div>
+
+            <div class="report-details">
+
+                {% if selected_class %}
+                    {{ class_name }}
+                {% else %}
+                    Select a class
+                {% endif %}
+
+                {% if term_name %}
+                    | {{ term_name }}
+                {% endif %}
+
+                {% if selected_year %}
+                    | Academic Year {{ selected_year }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <!-- SMALL PERCENTAGE -->
+
+        {% if selected_class %}
+
+        <div class="collection-box">
+
+            <div class="collection-label">
+                FEE COLLECTION
+            </div>
+
+            <div class="collection-value">
+                {{ collection_percentage|floatformat:1 }}%
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTERS
+         ===================================================== -->
+
+    <div class="filter-area no-print">
+
+        <form method="get">
+
+            <div class="row g-1 align-items-end">
+
+                <!-- CLASS -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Class
+                    </label>
+
+                    <select
+                        name="class_code"
+                        class="form-select"
+                        required
+                    >
+
+                        <option value="">
+                            -- Select Class --
+                        </option>
+
+                        {% for code, name in class_choices %}
+
+                            <option
+                                value="{{ code }}"
+                                {% if selected_class == code %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- YEAR -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Academic Year
+                    </label>
+
+                    <select
+                        name="academic_year"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Years
+                        </option>
+
+                        {% for year in academic_years %}
+
+                            <option
+                                value="{{ year.id }}"
+                                {% if selected_year == year.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ year.year }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- TERM -->
+
+                <div class="col-md-3">
+
+                    <label class="form-label">
+                        Term
+                    </label>
+
+                    <select
+                        name="term"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Terms
+                        </option>
+
+                        {% for code, name in term_choices %}
+
+                            <option
+                                value="{{ code }}"
+                                {% if selected_term == code %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <!-- FILTER BUTTON -->
+
+                <div class="col-md-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success filter-button w-100"
+                    >
+                        Filter
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+         ===================================================== -->
+
+    {% if selected_class %}
+
+    <div class="summary-row">
+
+        <div class="summary-box">
+
+            <div class="summary-label">
+                AMOUNT CHARGED
+            </div>
+
+            <div class="summary-value">
+                KSh {{ total_charged|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <div class="summary-label">
+                AMOUNT PAID
+            </div>
+
+            <div class="summary-value text-success">
+                KSh {{ total_paid|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-box">
+
+            <div class="summary-label">
+                BALANCE
+            </div>
+
+            <div class="summary-value text-danger">
+                KSh {{ total_balance|floatformat:2 }}
+            </div>
+
+        </div>
+
+
+        <div class="no-print">
+
+            <button
+                onclick="window.print()"
+                class="btn btn-dark filter-button"
+            >
+                Print
+            </button>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         PAYMENT TABLE
+         ===================================================== -->
+
+    <div class="table-container">
+
+        <div class="table-heading">
+
+            <div>
+
+                <h5>
+                    LEARNER FEE COLLECTION
+                </h5>
+
+                {% if selected_class %}
+
+                    <small class="text-muted">
+
+                        {{ class_name }}
+
+                        {% if term_name %}
+                            | {{ term_name }}
+                        {% endif %}
+
+                    </small>
+
+                {% endif %}
+
+            </div>
+
+            <div class="no-print">
+
+                <a
+                    href="{% url 'fees:dashboard' %}"
+                    class="btn btn-secondary filter-button"
+                >
+                    Fees Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+
+        {% if selected_class %}
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered
+                          table-striped table-hover">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Admission No.</th>
+
+                        <th>Learner Name</th>
+
+                        <th>Stream</th>
+
+                        <th class="text-end">
+                            Amount Charged
+                        </th>
+
+                        <th class="text-end">
+                            Amount Paid
+                        </th>
+
+                        <th class="text-end">
+                            Balance
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for item in learners %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            {{ item.student.admission_no }}
+                        </td>
+
+                        <td class="learner-name">
+
+                            {{ item.student.first_name }}
+
+                            {% if item.student.middle_name %}
+                                {{ item.student.middle_name }}
+                            {% endif %}
+
+                            {{ item.student.last_name }}
+
+                        </td>
+
+                        <td>
+                            {{ item.student.stream|default:"-" }}
+                        </td>
+
+
+                        <td class="money">
+
+                            KSh
+                            {{ item.charged|floatformat:2 }}
+
+                        </td>
+
+
+                        <td class="money text-success">
+
+                            KSh
+                            {{ item.paid|floatformat:2 }}
+
+                        </td>
+
+
+                        <td class="money">
+
+                            {% if item.balance > 0 %}
+
+                                <span class="text-danger fw-bold">
+                                    KSh {{ item.balance|floatformat:2 }}
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-success fw-bold">
+                                    KSh 0.00
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td class="status">
+
+                            {% if item.status == "PAID" %}
+
+                                <span class="paid">
+                                    PAID
+                                </span>
+
+                            {% elif item.status == "PARTIAL" %}
+
+                                <span class="partial">
+                                    PARTIAL
+                                </span>
+
+                            {% else %}
+
+                                <span class="not-paid">
+                                    NOT PAID
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="text-center text-muted"
+                        >
+
+                            No learners found in this class.
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+
+                <!-- =================================================
+                     TOTALS
+                     ================================================= -->
+
+                {% if learners %}
+
+                <tfoot>
+
+                    <tr class="total-row">
+
+                        <th colspan="4" class="text-end">
+                            TOTAL
+                        </th>
+
+                        <th class="money">
+                            KSh {{ total_charged|floatformat:2 }}
+                        </th>
+
+                        <th class="money">
+                            KSh {{ total_paid|floatformat:2 }}
+                        </th>
+
+                        <th class="money">
+                            KSh {{ total_balance|floatformat:2 }}
+                        </th>
+
+                        <th>
+                        </th>
+
+                    </tr>
+
+                </tfoot>
+
+                {% endif %}
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-3">
+
+            <h6 class="text-muted mb-1">
+                Select a class to view the payment list.
+            </h6>
+
+            <small class="text-muted">
+                Choose the class, academic year and term above.
+            </small>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

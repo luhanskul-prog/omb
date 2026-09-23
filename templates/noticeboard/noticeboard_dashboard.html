@@ -1,0 +1,1020 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Notice Board | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #202938;
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 225px;
+            background: #111827;
+            color: #fff;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            margin-right: 10px;
+            font-weight: 700;
+        }
+
+        .brand-text {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            display: block;
+            font-size: 9px;
+            color: #9ca3af;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        .menu-title {
+            color: #6b7280;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            padding: 18px 18px 7px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 15px;
+            margin: 2px 9px;
+            border-radius: 7px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 12px;
+            transition: .2s;
+        }
+
+        .side-link:hover,
+        .side-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .side-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 225px;
+            min-height: 100vh;
+        }
+
+        /* =====================================================
+           TOPBAR
+        ===================================================== */
+
+        .topbar {
+            height: 65px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .page-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: #172033;
+        }
+
+        .page-subtitle {
+            font-size: 11px;
+            color: #8a94a6;
+            margin-top: 3px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            font-size: 11px;
+            color: #dc3545;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 22px 25px;
+        }
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            min-height: 78px;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+            transition: .2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 18px rgba(15,23,42,.08);
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-right: 11px;
+        }
+
+        .stat-number {
+            font-size: 19px;
+            font-weight: 700;
+            line-height: 1;
+            color: #172033;
+        }
+
+        .stat-label {
+            color: #667085;
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .blue {
+            background: #eaf2ff;
+            color: #2563eb;
+        }
+
+        .green {
+            background: #eaf8f0;
+            color: #16834b;
+        }
+
+        .orange {
+            background: #fff4df;
+            color: #d98200;
+        }
+
+        .purple {
+            background: #f1eaff;
+            color: #7048c8;
+        }
+
+        /* =====================================================
+           SECTIONS
+        ===================================================== */
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 0;
+            color: #172033;
+        }
+
+        .section-description {
+            font-size: 10px;
+            color: #667085;
+            margin-top: 3px;
+        }
+
+        /* =====================================================
+           NOTICE CARDS
+        ===================================================== */
+
+        .notice-card {
+            background: #fff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+            height: 100%;
+            transition: .2s;
+        }
+
+        .notice-card:hover {
+            transform: translateY(-2px);
+            border-color: #2563eb;
+            box-shadow: 0 8px 20px rgba(37,99,235,.10);
+        }
+
+        .notice-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #172033;
+            margin-bottom: 7px;
+        }
+
+        .notice-content {
+            font-size: 10px;
+            line-height: 1.6;
+            color: #667085;
+        }
+
+        .notice-meta {
+            font-size: 9px;
+            color: #8a94a6;
+            margin-top: 10px;
+        }
+
+        .badge-active {
+            background: #eaf8f0;
+            color: #16834b;
+            font-size: 9px;
+        }
+
+        .badge-expired {
+            background: #fff0f0;
+            color: #dc3545;
+            font-size: 9px;
+        }
+
+        /* =====================================================
+           QUICK ACTIONS
+        ===================================================== */
+
+        .quick-card {
+            background: #fff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+        }
+
+        .quick-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid #d5deeb;
+            background: #fff;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #344054;
+            min-height: 38px;
+            transition: .2s;
+        }
+
+        .quick-btn:hover {
+            border-color: #2563eb;
+            background: #f5f8ff;
+            color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
+            background: #fff;
+            border: 1px dashed #cfd8e3;
+            border-radius: 10px;
+            padding: 35px 20px;
+            text-align: center;
+            color: #8a94a6;
+        }
+
+        .empty-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .empty-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #344054;
+        }
+
+        .empty-text {
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .text-muted {
+            color: #8a94a6 !important;
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 65px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0;
+            }
+
+            .brand-text,
+            .brand-subtitle,
+            .menu-title,
+            .side-link span:not(.side-icon) {
+                display: none;
+            }
+
+            .side-link {
+                justify-content: center;
+                padding: 11px 5px;
+            }
+
+            .main {
+                margin-left: 65px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .page-heading {
+                font-size: 16px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+
+
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            LS
+        </div>
+
+        <div class="brand-text">
+
+            Luhan ERP
+
+            <span class="brand-subtitle">
+                School Management System
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Main
+    </div>
+
+
+    <a href="{% if is_notice_admin %}{% url 'admin_dashboard' %}{% else %}{% url 'accounts:staff_dashboard' %}{% endif %}"
+       class="side-link">
+
+        <span class="side-icon">âŒ‚</span>
+        <span>Dashboard</span>
+
+    </a>
+
+
+    <a href="/students/"
+       class="side-link">
+
+        <span class="side-icon">ðŸŽ“</span>
+        <span>Students</span>
+
+    </a>
+
+
+    <a href="/academic/"
+       class="side-link">
+
+        <span class="side-icon">ðŸ“š</span>
+        <span>Academic</span>
+
+    </a>
+
+
+    <a href="/attendance/"
+       class="side-link">
+
+        <span class="side-icon">âœ“</span>
+        <span>Attendance</span>
+
+    </a>
+
+
+    {% if is_notice_admin %}
+
+    <div class="menu-title">
+        Administration
+    </div>
+
+    <a href="{% url 'accounts:staff_management' %}"
+       class="side-link">
+        <span class="side-icon">ðŸ‘¥</span>
+        <span>Staff</span>
+    </a>
+
+    <a href="{% url 'accounts:department_management' %}"
+       class="side-link">
+        <span class="side-icon">â–«</span>
+        <span>Departments</span>
+    </a>
+
+    <a href="{% url 'accounts:role_management' %}"
+       class="side-link">
+        <span class="side-icon">ðŸ”</span>
+        <span>Roles</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:dashboard' %}"
+       class="side-link">
+        <span class="side-icon">ðŸ’¼</span>
+        <span>HR &amp; Payroll</span>
+    </a>
+
+    <a href="{% url 'fees:dashboard' %}"
+       class="side-link">
+        <span class="side-icon">ðŸ’³</span>
+        <span>Fees</span>
+    </a>
+
+    <a href="{% url 'timetable:dashboard' %}"
+       class="side-link">
+        <span class="side-icon">â–£</span>
+        <span>Timetabling</span>
+    </a>
+
+    <a href="{% url 'transport:dashboard' %}"
+       class="side-link">
+        <span class="side-icon">ðŸšŒ</span>
+        <span>Transport</span>
+    </a>
+
+    <a href="{% url 'hostel:dashboard' %}"
+       class="side-link">
+        <span class="side-icon">ðŸ </span>
+        <span>Hostel</span>
+    </a>
+
+    <a href="/inventory/"
+       class="side-link">
+        <span class="side-icon">ðŸ“¦</span>
+        <span>Inventory</span>
+    </a>
+
+    <a href="/library/"
+       class="side-link">
+        <span class="side-icon">ðŸ“–</span>
+        <span>Library</span>
+    </a>
+
+    <a href="/noticeboard/"
+       class="side-link active">
+        <span class="side-icon">ðŸ“¢</span>
+        <span>Notice Board</span>
+    </a>
+
+    <div class="menu-title">
+        System
+    </div>
+
+    <a href="/admin/"
+       class="side-link">
+        <span class="side-icon">âš™</span>
+        <span>System Admin</span>
+    </a>
+
+    {% endif %}
+    <a href="{% url 'logout' %}"
+       class="side-link">
+
+        <span class="side-icon">â†ª</span>
+        <span>Logout</span>
+
+    </a>
+
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1 class="page-heading">
+                Notice Board
+            </h1>
+
+            <div class="page-subtitle">
+                School announcements and communication
+            </div>
+
+        </div>
+
+
+        <div class="user-area">
+
+            <div class="user-avatar">
+
+                {{ request.user.username|slice:":1"|upper }}
+
+            </div>
+
+            <div>
+
+                <div class="user-name">
+
+                    {{ request.user.get_full_name|default:request.user.username }}
+
+                </div>
+
+                <a href="{% url 'logout' %}"
+                   class="logout-btn">
+
+                    Sign out
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- =====================================================
+         CONTENT
+    ===================================================== -->
+
+    <div class="content">
+
+
+        <!-- STATISTICS -->
+
+        <div class="row g-3">
+
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        ðŸ“¢
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_notices|default:"0" }}
+                        </div>
+
+                        <div class="stat-label">
+                            Total Notices
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        âœ“
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ active_notices|default:"0" }}
+                        </div>
+
+                        <div class="stat-label">
+                            Active Notices
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        ðŸ“…
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ upcoming_notices|default:"0" }}
+                        </div>
+
+                        <div class="stat-label">
+                            Upcoming Notices
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+                        ðŸ“
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ notices|length|default:"0" }}
+                        </div>
+
+                        <div class="stat-label">
+                            Recent Notices
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             RECENT NOTICES
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title">
+                        Recent Notices
+                    </h2>
+
+                    <div class="section-description">
+                        Latest school announcements for your staff portal
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if notices %}
+
+                <div class="row g-3">
+
+                    {% for notice in notices %}
+
+                        <div class="col-xl-4 col-lg-6 col-md-6">
+
+                            <div class="notice-card">
+
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+
+                                    <div class="notice-title">
+                                        {{ notice.title }}
+                                    </div>
+
+                                    {% if notice.is_active %}
+                                        <span class="badge badge-active">
+                                            Active
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-expired">
+                                            Inactive
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+
+                                <div class="notice-content">
+
+                                    {{ notice.content|truncatewords:35 }}
+
+                                </div>
+
+
+                                <div class="notice-meta">
+
+                                    {% if notice.created_at %}
+                                        Posted:
+                                        {{ notice.created_at|date:"d M Y, H:i" }}
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ðŸ“¢
+                    </div>
+
+                    <div class="empty-title">
+                        No notices available
+                    </div>
+
+                    <div class="empty-text">
+                        There are currently no announcements on the notice board.
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="quick-card">
+
+                <div class="section-header mb-3">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Notice Board Actions
+                        </h2>
+
+                        <div class="section-description">
+                            Manage school announcements and communication
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-2">
+
+                    {% if is_notice_admin %}
+
+                    <div class="col-xl-3 col-md-4 col-6">
+
+                        <a href="/admin/noticeboard/notice/add/"
+                           class="quick-btn">
+
+                            ðŸ“¢ Add Notice
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-xl-3 col-md-4 col-6">
+
+                        <a href="/admin/noticeboard/notice/"
+                           class="quick-btn">
+
+                            ðŸ“‹ Manage Notices
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-xl-3 col-md-4 col-6">
+
+                        <a href="{% url 'admin_dashboard' %}"
+                           class="quick-btn">
+
+                            âŒ‚ Admin Dashboard
+
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                    <div class="col-xl-3 col-md-4 col-6">
+
+                        <a href="{% url 'accounts:staff_dashboard' %}"
+                           class="quick-btn">
+
+                            ðŸ‘¤ Staff Dashboard
+
+                        </a>
+
+                    </div>
+
+                    <div class="col-xl-3 col-md-4 col-6">
+
+                        <a href="{% url 'logout' %}"
+                           class="quick-btn">
+
+                            â†ª Sign Out
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- FOOTER -->
+
+        <div class="text-center mt-4 mb-2">
+
+            <small class="text-muted">
+
+                Luhan School ERP Â· Notice Board
+
+            </small>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

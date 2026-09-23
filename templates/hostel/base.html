@@ -1,0 +1,1275 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>{% block title %}Hostel Management{% endblock %}</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#f5f7fb;
+    color:#172033;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.sidebar{
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    width:235px;
+    background:#111827;
+    color:white;
+    overflow-y:auto;
+    z-index:1000;
+}
+
+.brand{
+    height:68px;
+    display:flex;
+    align-items:center;
+    padding:0 18px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.brand-logo{
+    width:38px;
+    height:38px;
+    border-radius:9px;
+    background:#2563eb;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    margin-right:10px;
+    font-weight:800;
+}
+
+.brand-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.brand-name{
+    font-size:14px;
+    font-weight:800;
+}
+
+.brand-sub{
+    font-size:9px;
+    color:#9ca3af;
+    display:block;
+    margin-top:2px;
+}
+
+.menu-title{
+    padding:17px 18px 7px;
+    color:#6b7280;
+    font-size:9px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.8px;
+}
+
+.side-link{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    margin:2px 9px;
+    border-radius:7px;
+    color:#d1d5db;
+    text-decoration:none;
+    font-size:11px;
+}
+
+.side-link:hover,
+.side-link.active{
+    background:#2563eb;
+    color:white;
+}
+
+.side-icon{
+    width:20px;
+    text-align:center;
+    font-size:14px;
+}
+
+.main{
+    margin-left:235px;
+    min-height:100vh;
+}
+
+.topbar{
+    height:68px;
+    background:#fff;
+    border-bottom:1px solid #e5e7eb;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 25px;
+}
+
+.heading{
+    margin:0;
+    font-size:18px;
+    font-weight:800;
+}
+
+.subheading{
+    color:#8a94a6;
+    font-size:10px;
+    margin-top:3px;
+}
+
+.user{
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+.avatar{
+    width:34px;
+    height:34px;
+    background:#2563eb;
+    border-radius:50%;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:12px;
+    font-weight:800;
+}
+
+.user-name{
+    font-size:11px;
+    font-weight:700;
+}
+
+.signout{
+    color:#dc3545;
+    font-size:9px;
+    text-decoration:none;
+}
+
+.content{
+    padding:22px 25px;
+}
+
+.stat{
+    background:#fff;
+    border:1px solid #dce3ed;
+    border-radius:11px;
+    padding:15px;
+    min-height:90px;
+    display:flex;
+    align-items:center;
+    box-shadow:0 2px 5px rgba(15,23,42,.04);
+}
+
+.stat-icon{
+    width:40px;
+    height:40px;
+    border-radius:9px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-right:11px;
+    font-size:17px;
+}
+
+.stat-number{
+    font-size:20px;
+    font-weight:800;
+}
+
+.stat-label{
+    color:#667085;
+    font-size:10px;
+    margin-top:3px;
+}
+
+.blue{background:#eaf2ff;color:#2563eb}
+.green{background:#eaf8f0;color:#16834b}
+.orange{background:#fff4df;color:#d98200}
+.red{background:#fff0f0;color:#dc3545}
+.purple{background:#f1eaff;color:#7048c8}
+
+.card-box{
+    background:#fff;
+    border:1px solid #dce3ed;
+    border-radius:11px;
+    box-shadow:0 2px 5px rgba(15,23,42,.04);
+}
+
+.card-head{
+    padding:15px 17px;
+    border-bottom:1px solid #edf0f4;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.card-title{
+    font-size:13px;
+    font-weight:800;
+    margin:0;
+}
+
+.card-sub{
+    color:#8a94a6;
+    font-size:9px;
+    margin-top:3px;
+}
+
+.card-body{
+    padding:16px;
+}
+
+.btn-main{
+    background:#2563eb;
+    color:#fff;
+    border:0;
+    border-radius:7px;
+    font-size:10px;
+    font-weight:700;
+    padding:9px 13px;
+    text-decoration:none;
+}
+
+.btn-main:hover{
+    background:#1d4ed8;
+    color:#fff;
+}
+
+.btn-lightx{
+    background:#f8fafc;
+    border:1px solid #dce3ed;
+    color:#344054;
+    border-radius:7px;
+    font-size:10px;
+    font-weight:700;
+    padding:8px 12px;
+    text-decoration:none;
+}
+
+.btn-dangerx{
+    background:#fff0f0;
+    border:1px solid #ffd4d4;
+    color:#dc3545;
+    border-radius:7px;
+    font-size:9px;
+    font-weight:700;
+    padding:7px 10px;
+}
+
+.table{
+    margin:0;
+}
+
+.table th{
+    font-size:9px;
+    color:#667085;
+    text-transform:uppercase;
+    letter-spacing:.4px;
+    white-space:nowrap;
+    padding:10px;
+}
+
+.table td{
+    font-size:10px;
+    padding:11px 10px;
+    vertical-align:middle;
+}
+
+.badge-soft{
+    border-radius:20px;
+    padding:4px 8px;
+    font-size:8px;
+    font-weight:800;
+}
+
+.search-box{
+    background:#fff;
+    border:1px solid #dce3ed;
+    border-radius:10px;
+    padding:12px;
+    margin-bottom:15px;
+}
+
+.form-control,
+.form-select{
+    font-size:11px;
+    border-color:#d6dee9;
+    border-radius:7px;
+}
+
+.form-label{
+    font-size:10px;
+    font-weight:700;
+    color:#475467;
+}
+
+.form-card{
+    max-width:850px;
+    margin:auto;
+}
+
+.alert{
+    font-size:10px;
+}
+
+.quick{
+    text-decoration:none;
+    color:#172033;
+    display:block;
+    border:1px solid #dce3ed;
+    border-radius:9px;
+    padding:14px;
+    background:#fff;
+    transition:.2s;
+}
+
+.quick:hover{
+    border-color:#2563eb;
+    transform:translateY(-2px);
+    color:#2563eb;
+}
+
+.quick-icon{
+    font-size:20px;
+    margin-bottom:7px;
+}
+
+.quick-name{
+    font-size:11px;
+    font-weight:800;
+}
+
+.quick-desc{
+    color:#8a94a6;
+    font-size:9px;
+    margin-top:3px;
+}
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:65px;
+    }
+
+    .brand{
+        justify-content:center;
+        padding:0;
+    }
+
+    .brand-name,
+    .brand-sub,
+    .menu-title,
+    .side-link span:not(.side-icon){
+        display:none;
+    }
+
+    .side-link{
+        justify-content:center;
+        padding:11px 5px;
+    }
+
+    .main{
+        margin-left:65px;
+    }
+
+}
+
+@media(max-width:576px){
+
+    .topbar{
+        padding:0 13px;
+    }
+
+    .content{
+        padding:13px;
+    }
+
+    .user-name{
+        display:none;
+    }
+
+}
+
+/* =========================================================
+   LUHAN ERP - HOSTEL MANAGEMENT PREMIUM UI
+   ========================================================= */
+
+:root{
+    --primary:#1d4ed8;
+    --primary-dark:#163ea8;
+    --primary-light:#eaf2ff;
+    --navy:#0f172a;
+    --sidebar:#111827;
+    --sidebar-hover:#1e40af;
+    --text:#172033;
+    --muted:#667085;
+    --border:#e4e9f1;
+    --background:#f4f7fb;
+    --white:#ffffff;
+    --green:#16a34a;
+    --green-bg:#eaf8ef;
+    --orange:#d97706;
+    --orange-bg:#fff5df;
+    --red:#dc2626;
+    --red-bg:#fff0f0;
+    --purple:#7c3aed;
+    --purple-bg:#f2ecff;
+    --cyan:#0891b2;
+    --cyan-bg:#e7f8fc;
+    --shadow:0 4px 16px rgba(15,23,42,.06);
+    --shadow-hover:0 8px 24px rgba(15,23,42,.10);
+}
+
+*{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    background:var(--background);
+    color:var(--text);
+    font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif;
+    font-size:13px;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+    background:linear-gradient(180deg,#0f172a 0%,#111827 55%,#172554 100%);
+    box-shadow:4px 0 20px rgba(15,23,42,.10);
+}
+
+.brand{
+    height:72px;
+    padding:0 17px;
+    background:rgba(255,255,255,.025);
+}
+
+.brand-logo{
+    width:42px;
+    height:42px;
+    border-radius:11px;
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    box-shadow:0 4px 12px rgba(37,99,235,.35);
+}
+
+.brand-name{
+    font-size:14px;
+    letter-spacing:.1px;
+}
+
+.brand-sub{
+    color:#94a3b8;
+}
+
+.menu-title{
+    padding:20px 18px 8px;
+    color:#64748b;
+    letter-spacing:1px;
+}
+
+.side-link{
+    padding:11px 14px;
+    margin:3px 9px;
+    border-radius:9px;
+    color:#cbd5e1;
+    transition:.18s ease;
+}
+
+.side-link:hover{
+    background:rgba(37,99,235,.18);
+    color:#fff;
+    transform:translateX(2px);
+}
+
+.side-link.active{
+    background:linear-gradient(90deg,#2563eb,#1d4ed8);
+    color:#fff;
+    box-shadow:0 4px 12px rgba(37,99,235,.25);
+}
+
+.side-icon{
+    width:22px;
+    color:inherit;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+    background:var(--background);
+}
+
+.topbar{
+    height:72px;
+    padding:0 28px;
+    background:rgba(255,255,255,.96);
+    box-shadow:0 1px 0 var(--border);
+    position:sticky;
+    top:0;
+    z-index:900;
+}
+
+.heading{
+    font-size:20px;
+    color:#101828;
+    letter-spacing:-.2px;
+}
+
+.subheading{
+    color:#7b8798;
+    font-size:11px;
+}
+
+.user-name{
+    color:#344054;
+}
+
+.avatar{
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+    box-shadow:0 3px 8px rgba(37,99,235,.22);
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+    padding:26px 28px 40px;
+    max-width:1700px;
+}
+
+/* ================= STAT CARDS ================= */
+
+.stat{
+    position:relative;
+    overflow:hidden;
+    min-height:104px;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    box-shadow:var(--shadow);
+    transition:.2s ease;
+}
+
+.stat:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow-hover);
+}
+
+.stat::after{
+    content:"";
+    position:absolute;
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    right:-25px;
+    bottom:-28px;
+    background:currentColor;
+    opacity:.035;
+}
+
+.stat-icon{
+    width:46px;
+    height:46px;
+    border-radius:12px;
+    margin-right:13px;
+    font-size:18px;
+}
+
+.stat-number{
+    font-size:24px;
+    line-height:1;
+    letter-spacing:-.5px;
+}
+
+.stat-label{
+    font-size:11px;
+    color:#667085;
+    margin-top:6px;
+}
+
+/* colour utilities */
+
+.blue{
+    background:#eaf2ff;
+    color:#2563eb;
+}
+
+.green{
+    background:#eaf8ef;
+    color:#16834b;
+}
+
+.orange{
+    background:#fff4df;
+    color:#d98200;
+}
+
+.red{
+    background:#fff0f0;
+    color:#dc3545;
+}
+
+.purple{
+    background:#f1eaff;
+    color:#7048c8;
+}
+
+.cyan{
+    background:#e7f8fc;
+    color:#0891b2;
+}
+
+/* ================= CARDS ================= */
+
+.card-box{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    margin-bottom:20px;
+}
+
+.card-head{
+    padding:17px 19px;
+    border-bottom:1px solid #edf0f4;
+    background:linear-gradient(180deg,#fff,#fbfcfe);
+}
+
+.card-title{
+    font-size:14px;
+    color:#172033;
+    letter-spacing:-.1px;
+}
+
+.card-sub{
+    font-size:10px;
+    color:#8a94a6;
+}
+
+.card-body{
+    padding:19px;
+}
+
+/* ================= BUTTONS ================= */
+
+.btn-main,
+.btn-primary{
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+    color:#fff;
+    border:0;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:700;
+    padding:9px 14px;
+    box-shadow:0 3px 8px rgba(37,99,235,.18);
+    transition:.18s ease;
+}
+
+.btn-main:hover,
+.btn-primary:hover{
+    background:linear-gradient(135deg,#1d4ed8,#1e40af);
+    color:#fff;
+    transform:translateY(-1px);
+}
+
+.btn-lightx,
+.btn-light{
+    background:#fff;
+    border:1px solid #d9e0ea;
+    color:#344054;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:700;
+    padding:8px 13px;
+}
+
+.btn-lightx:hover,
+.btn-light:hover{
+    background:#f8fafc;
+    border-color:#b9c5d6;
+}
+
+.btn-danger{
+    border-radius:8px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.btn-success{
+    border-radius:8px;
+    font-size:11px;
+    font-weight:700;
+}
+
+/* ================= TABLES ================= */
+
+table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+}
+
+thead th{
+    background:#f8fafc;
+    color:#667085;
+    font-size:10px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.45px;
+    padding:12px 13px;
+    border-bottom:1px solid var(--border);
+    white-space:nowrap;
+}
+
+tbody td{
+    padding:12px 13px;
+    font-size:11px;
+    color:#344054;
+    border-bottom:1px solid #eef1f5;
+    vertical-align:middle;
+}
+
+tbody tr{
+    transition:.15s ease;
+}
+
+tbody tr:hover{
+    background:#f8fbff;
+}
+
+tbody tr:last-child td{
+    border-bottom:0;
+}
+
+/* ================= FORMS ================= */
+
+.form-label{
+    font-size:10px;
+    font-weight:800;
+    color:#475467;
+    margin-bottom:6px;
+}
+
+.form-control,
+.form-select,
+textarea{
+    border:1px solid #d7dee9;
+    border-radius:8px;
+    min-height:38px;
+    font-size:11px;
+    color:#344054;
+    background:#fff;
+    transition:.18s ease;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 3px rgba(37,99,235,.10);
+}
+
+textarea{
+    min-height:90px;
+}
+
+/* ================= SEARCH/FILTER AREA ================= */
+
+.search-box{
+    background:#f8fafc;
+    border:1px solid #e7ebf1;
+    border-radius:11px;
+    padding:14px;
+    margin-bottom:17px;
+}
+
+.search-box .form-control,
+.search-box .form-select{
+    background:#fff;
+}
+
+/* ================= BADGES ================= */
+
+.badge{
+    border-radius:20px;
+    padding:5px 9px;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.1px;
+}
+
+.badge.bg-success{
+    background:#dcfce7!important;
+    color:#15803d!important;
+}
+
+.badge.bg-danger{
+    background:#fee2e2!important;
+    color:#b91c1c!important;
+}
+
+.badge.bg-warning{
+    background:#fef3c7!important;
+    color:#a16207!important;
+}
+
+.badge.bg-primary{
+    background:#dbeafe!important;
+    color:#1d4ed8!important;
+}
+
+.badge.bg-info{
+    background:#cffafe!important;
+    color:#0e7490!important;
+}
+
+.badge.bg-secondary{
+    background:#e5e7eb!important;
+    color:#4b5563!important;
+}
+
+/* ================= STATUS HELPERS ================= */
+
+.status-available,
+.status-present,
+.status-paid,
+.status-active,
+.status-resolved{
+    color:#15803d;
+    background:#dcfce7;
+}
+
+.status-occupied,
+.status-absent,
+.status-unpaid,
+.status-ended,
+.status-critical{
+    color:#b91c1c;
+    background:#fee2e2;
+}
+
+.status-reserved,
+.status-late,
+.status-pending,
+.status-medium{
+    color:#a16207;
+    background:#fef3c7;
+}
+
+.status-maintenance,
+.status-permission{
+    color:#6d28d9;
+    background:#ede9fe;
+}
+
+/* ================= ACTION BUTTON GROUP ================= */
+
+.action-buttons{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    flex-wrap:wrap;
+}
+
+.action-buttons a,
+.action-buttons button{
+    white-space:nowrap;
+}
+
+/* ================= ALERTS ================= */
+
+.alert{
+    border:0;
+    border-radius:10px;
+    font-size:11px;
+    box-shadow:0 2px 8px rgba(15,23,42,.04);
+}
+
+/* ================= EMPTY STATES ================= */
+
+.empty-state{
+    text-align:center;
+    padding:45px 20px;
+    color:#98a2b3;
+}
+
+.empty-state strong{
+    display:block;
+    color:#667085;
+    font-size:13px;
+    margin-bottom:5px;
+}
+
+/* ================= DASHBOARD QUICK ACTIONS ================= */
+
+.quick-action,
+.action-card{
+    border:1px solid var(--border);
+    background:#fff;
+    border-radius:12px;
+    padding:15px;
+    text-decoration:none;
+    color:#344054;
+    display:block;
+    transition:.2s ease;
+}
+
+.quick-action:hover,
+.action-card:hover{
+    transform:translateY(-3px);
+    border-color:#b9cdfc;
+    box-shadow:var(--shadow-hover);
+    color:#1d4ed8;
+}
+
+/* ================= PROGRESS ================= */
+
+.progress{
+    height:8px;
+    border-radius:20px;
+    background:#edf1f6;
+    overflow:hidden;
+}
+
+.progress-bar{
+    border-radius:20px;
+}
+
+/* ================= LINKS ================= */
+
+a{
+    transition:.15s ease;
+}
+
+.table a{
+    color:#1d4ed8;
+    text-decoration:none;
+    font-weight:700;
+}
+
+.table a:hover{
+    color:#163ea8;
+}
+
+/* ================= MODERN SCROLLBAR ================= */
+
+.sidebar::-webkit-scrollbar{
+    width:5px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:#334155;
+    border-radius:10px;
+}
+
+/* ================= MOBILE ================= */
+
+@media(max-width:900px){
+
+    .sidebar{
+        width:205px;
+    }
+
+    .main{
+        margin-left:205px;
+    }
+
+    .content{
+        padding:20px 16px 35px;
+    }
+
+    .topbar{
+        padding:0 16px;
+    }
+}
+
+@media(max-width:700px){
+
+    .sidebar{
+        position:relative;
+        width:100%;
+        height:auto;
+        min-height:auto;
+    }
+
+    .main{
+        margin-left:0;
+    }
+
+    .topbar{
+        position:relative;
+        height:auto;
+        min-height:68px;
+        padding:12px 15px;
+    }
+
+    .content{
+        padding:15px 12px 30px;
+    }
+
+    .heading{
+        font-size:17px;
+    }
+
+    .user-name{
+        display:none;
+    }
+
+    .card-body{
+        padding:13px;
+    }
+
+    .table-responsive{
+        border-radius:9px;
+    }
+
+    .stat{
+        min-height:90px;
+    }
+}
+
+/* ================= PRINT ================= */
+
+@media print{
+
+    .sidebar,
+    .topbar,
+    .btn-main,
+    .btn-primary,
+    .btn-lightx,
+    .search-box,
+    .action-buttons{
+        display:none!important;
+    }
+
+    .main{
+        margin-left:0!important;
+    }
+
+    .content{
+        padding:0!important;
+    }
+
+    .card-box{
+        box-shadow:none!important;
+        border:1px solid #ddd!important;
+    }
+}
+</style>
+
+{% block extra_css %}{% endblock %}
+
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-logo">
+
+            {% if branding and branding.logo %}
+                <img src="{{ branding.logo.url }}" alt="Logo">
+            {% else %}
+                LS
+            {% endif %}
+
+        </div>
+
+        <div>
+
+            <div class="brand-name">
+                {% if branding %}
+                    {{ branding.school_name }}
+                {% else %}
+                    Luhan ERP
+                {% endif %}
+            </div>
+
+            <span class="brand-sub">
+                Hostel Management
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="menu-title">Main</div>
+
+    <a href="{% url 'admin_dashboard' %}" class="side-link">
+        <span class="side-icon">⌂</span>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="/students/" class="side-link">
+        <span class="side-icon">🎓</span>
+        <span>Students</span>
+    </a>
+
+    <a href="/academic/" class="side-link">
+        <span class="side-icon">📚</span>
+        <span>Academic</span>
+    </a>
+
+    <a href="/attendance/" class="side-link">
+        <span class="side-icon">✓</span>
+        <span>Attendance</span>
+    </a>
+
+    <div class="menu-title">Hostel</div>
+
+    <a href="{% url 'hostel:dashboard' %}" class="side-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+        <span class="side-icon">🏠</span>
+        <span>Overview</span>
+    </a>
+
+    <a href="{% url 'hostel:hostels' %}" class="side-link">
+        <span class="side-icon">🏢</span>
+        <span>Hostels</span>
+    </a>
+
+    <a href="{% url 'hostel:rooms' %}" class="side-link">
+        <span class="side-icon">🚪</span>
+        <span>Rooms</span>
+    </a>
+
+    <a href="{% url 'hostel:beds' %}" class="side-link">
+        <span class="side-icon">🛏</span>
+        <span>Beds</span>
+    </a>
+
+    <a href="{% url 'hostel:allocations' %}" class="side-link">
+        <span class="side-icon">🎓</span>
+        <span>Allocations</span>
+    </a>
+
+    <a href="{% url 'hostel:attendance' %}" class="side-link">
+        <span class="side-icon">✓</span>
+        <span>Attendance</span>
+    </a>
+
+    <a href="{% url 'hostel:fees' %}" class="side-link">
+        <span class="side-icon">💳</span>
+        <span>Hostel Fees</span>
+    </a>
+
+    <a href="{% url 'hostel:incidents' %}" class="side-link">
+        <span class="side-icon">⚠</span>
+        <span>Incidents</span>
+    </a>
+
+    <div class="menu-title">Administration</div>
+
+    <a href="{% url 'accounts:staff_management' %}" class="side-link">
+        <span class="side-icon">👥</span>
+        <span>Staff</span>
+    </a>
+
+    <a href="{% url 'fees:dashboard' %}" class="side-link">
+        <span class="side-icon">💰</span>
+        <span>Fees</span>
+    </a>
+
+    <a href="{% url 'transport:dashboard' %}" class="side-link">
+        <span class="side-icon">🚌</span>
+        <span>Transport</span>
+    </a>
+
+    <div class="menu-title">System</div>
+
+    <a href="{% url 'logout' %}" class="side-link">
+        <span class="side-icon">↪</span>
+        <span>Logout</span>
+    </a>
+
+</aside>
+
+<main class="main">
+
+<header class="topbar">
+
+    <div>
+        <h1 class="heading">
+            {% block heading %}Hostel Management{% endblock %}
+        </h1>
+
+        <div class="subheading">
+            {% block subheading %}
+            Boarding, accommodation and learner welfare
+            {% endblock %}
+        </div>
+    </div>
+
+    <div class="user">
+
+        <div class="avatar">
+            {{ request.user.username|slice:":1"|upper }}
+        </div>
+
+        <div>
+            <div class="user-name">
+                {{ request.user.get_full_name|default:request.user.username }}
+            </div>
+
+            <a href="{% url 'logout' %}" class="signout">
+                Sign out
+            </a>
+        </div>
+
+    </div>
+
+</header>
+
+<div class="content">
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show">
+
+                {{ message }}
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+</div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
+

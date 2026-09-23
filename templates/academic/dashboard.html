@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Academic Dashboard | {{ branding.school_name|default:"Luhan School" }}</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+
+
+<style id="academic-attractive-borders">
+/* Academic Dashboard - attractive card separation */
+.academic-dashboard-card {
+    border: 1px solid rgba(30, 64, 175, 0.22) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.08) !important;
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease !important;
+}
+
+.academic-dashboard-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(30, 64, 175, 0.55) !important;
+    box-shadow: 0 7px 18px rgba(15, 23, 42, 0.14) !important;
+}
+
+/* Clear separation between dashboard cards */
+.academic-dashboard-card + .academic-dashboard-card {
+    margin-left: 4px;
+}
+
+/* Make links/cards visually clean */
+.academic-dashboard-card a {
+    text-decoration: none;
+}
+
+/* Prevent the new styling from affecting page-wide containers */
+</style>
+
+
+<style>
+/* =========================================================
+   ACADEMIC TEACHING DOCUMENT ACTION BUTTONS
+========================================================= */
+
+.academic-action-card {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    gap: 16px;
+
+    width: 100%;
+    min-height: 118px;
+
+    padding: 18px 20px;
+    margin: 12px 0;
+
+    border: 0 !important;
+    border-radius: 18px;
+
+    text-decoration: none !important;
+
+    background: #ffffff;
+
+    box-shadow:
+        0 5px 18px rgba(15, 23, 42, 0.08);
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease;
+
+    overflow: hidden;
+}
+
+.academic-action-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 12px 30px rgba(15, 23, 42, 0.14);
+}
+
+.academic-action-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+}
+
+.academic-action-icon {
+    width: 60px;
+    height: 60px;
+
+    min-width: 60px;
+
+    border-radius: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ffffff;
+    font-size: 30px;
+
+    box-shadow:
+        0 6px 14px rgba(0, 0, 0, 0.12);
+}
+
+.academic-action-content {
+    flex: 1;
+}
+
+.academic-action-content h5 {
+    margin: 0 0 6px;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    color: #172033;
+}
+
+.academic-action-content p {
+    margin: 0;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #697386;
+}
+
+.academic-action-arrow {
+    font-size: 25px;
+    font-weight: 700;
+
+    color: #a0a8b6;
+
+    transition:
+        transform .2s ease,
+        color .2s ease;
+}
+
+.academic-action-card:hover .academic-action-arrow {
+    transform: translateX(5px);
+    color: #2563eb;
+}
+
+
+/* BLUE */
+.academic-action-blue::before {
+    background: #2563eb;
+}
+
+.academic-action-blue .academic-action-icon {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #60a5fa
+    );
+}
+
+
+/* PURPLE */
+.academic-action-purple::before {
+    background: #7c3aed;
+}
+
+.academic-action-purple .academic-action-icon {
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #a78bfa
+    );
+}
+
+
+/* GREEN */
+.academic-action-green::before {
+    background: #059669;
+}
+
+.academic-action-green .academic-action-icon {
+    background: linear-gradient(
+        135deg,
+        #059669,
+        #34d399
+    );
+}
+
+
+/* Keep the existing list usable */
+.academic-action-list {
+    list-style: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+}
+
+.academic-action-list > li {
+    list-style: none !important;
+}
+
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .academic-action-card {
+        min-height: 105px;
+        padding: 15px;
+    }
+
+    .academic-action-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        font-size: 25px;
+    }
+
+    .academic-action-content h5 {
+        font-size: 15px;
+    }
+
+    .academic-action-content p {
+        font-size: 12px;
+    }
+
+    .academic-action-arrow {
+        font-size: 20px;
+    }
+}
+</style>
+
+
+<style id="academic-teaching-document-buttons">
+/* =========================================================
+   TEACHING DOCUMENT ACTION BUTTONS
+========================================================= */
+
+.academic-doc-button {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    gap: 16px;
+
+    width: 100%;
+    min-height: 112px;
+
+    padding: 18px 22px;
+    margin: 12px 0;
+
+    border: 1px solid #e5e7eb !important;
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    text-decoration: none !important;
+
+    box-shadow: 0 5px 18px rgba(15, 23, 42, .08);
+
+    transition:
+        transform .22s ease,
+        box-shadow .22s ease;
+}
+
+.academic-doc-button:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, .14);
+}
+
+.academic-doc-button::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 6px;
+    border-radius: 18px 0 0 18px;
+}
+
+.academic-doc-icon {
+    width: 60px;
+    height: 60px;
+    min-width: 60px;
+
+    border-radius: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #ffffff;
+    font-size: 30px;
+    font-weight: 700;
+
+    box-shadow: 0 6px 14px rgba(0, 0, 0, .12);
+}
+
+.academic-doc-text {
+    flex: 1;
+}
+
+.academic-doc-text strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    color: #172033;
+}
+
+.academic-doc-text span {
+    display: block;
+
+    font-size: 13px;
+    line-height: 1.5;
+
+    color: #687386;
+}
+
+.academic-doc-arrow {
+    font-size: 25px;
+    font-weight: 700;
+    color: #9ca3af;
+
+    transition:
+        transform .2s ease,
+        color .2s ease;
+}
+
+.academic-doc-button:hover .academic-doc-arrow {
+    transform: translateX(5px);
+    color: #2563eb;
+}
+
+
+/* BLUE */
+.academic-doc-blue::before {
+    background: #2563eb;
+}
+
+.academic-doc-blue .academic-doc-icon {
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #60a5fa
+    );
+}
+
+
+/* PURPLE */
+.academic-doc-purple::before {
+    background: #7c3aed;
+}
+
+.academic-doc-purple .academic-doc-icon {
+    background: linear-gradient(
+        135deg,
+        #7c3aed,
+        #a78bfa
+    );
+}
+
+
+/* GREEN */
+.academic-doc-green::before {
+    background: #059669;
+}
+
+.academic-doc-green .academic-doc-icon {
+    background: linear-gradient(
+        135deg,
+        #059669,
+        #34d399
+    );
+}
+
+
+/* MOBILE */
+@media (max-width: 768px) {
+
+    .academic-doc-button {
+        min-height: 100px;
+        padding: 15px;
+    }
+
+    .academic-doc-icon {
+        width: 52px;
+        height: 52px;
+        min-width: 52px;
+        font-size: 25px;
+    }
+
+    .academic-doc-text strong {
+        font-size: 14px;
+    }
+
+    .academic-doc-text span {
+        font-size: 12px;
+    }
+
+    .academic-doc-arrow {
+        font-size: 20px;
+    }
+}
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="top-header">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-3">
+
+
+            <div>
+
+                <h2 class="page-title mb-1">
+                    Academic Dashboard
+                </h2>
+
+
+                <p class="text-muted mb-0">
+                    {{ branding.school_name|default:"Luhan School" }}
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <a
+                    href="/accounts/admin-dashboard/"
+                    class="btn btn-outline-secondary"
+                >
+
+                    <i class="bi bi-arrow-left me-1"></i> Admin Dashboard
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<div class="container pb-5">
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="row g-4 mb-5">
+
+
+        <!-- LEARNERS -->
+
+        <div class="col-md-4">
+            <div class="academic-dashboard-card  dashboard-card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-2"><i class="bi bi-people-fill text-primary me-2"></i> Learners</h5>
+                    <div class="stat-number text-primary">
+                        {{ students_count }}
+                    </div>
+                    <p class="text-muted mb-0">Total registered learners</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SUBJECTS -->
+
+        <div class="col-md-4">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-2"><i class="bi bi-book-fill text-success me-2"></i> Subjects</h5>
+                    <div class="stat-number text-success">
+                        {{ subjects_count }}
+                    </div>
+                    <p class="text-muted mb-0">Active subjects</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ASSESSMENT RECORDS -->
+
+        <div class="col-md-4">
+            <div class="card dashboard-card shadow-sm">
+                <div class="card-body">
+                    <h5 class="mb-2"><i class="bi bi-clipboard-data-fill text-warning me-2"></i> Assessment Records</h5>
+                    <div class="stat-number text-warning">
+                        {{ results_count }}
+                    </div>
+                    <p class="text-muted mb-0">Recorded assessment results</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ACADEMIC MANAGEMENT
+    ====================================================== -->
+
+    <h4 class="section-title">
+
+        Academic Management
+
+    </h4>
+
+
+    <div class="row g-4">
+
+
+        <!-- =================================================
+             MARK ENTRY
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+
+
+                <h5>
+
+                    Mark Entry
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Enter and update learner assessment marks.
+                    Choose between individual entry and whole
+                    class entry.
+
+                </p>
+
+
+                {% if erp_permission.add_academicrecord or erp_permission.change_academicrecord %}
+                <a
+                    href="{% url 'academic:marks_entry' %}"
+                    class="btn btn-primary w-100"
+                >
+
+                    Mark Entry
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             CLASS LIST
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-list-ol"></i>
+                </div>
+
+
+                <h5>
+
+                    Class List
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Load a class list by academic year, term,
+                    grade and optional stream. Print the list
+                    neatly on A4 paper.
+
+                </p>
+
+
+                {% if erp_permission.view_academicrecord %}
+                <a
+                    href="{% url 'academic:class_list' %}"
+                    class="btn btn-dark w-100"
+                >
+
+                    Open Class List
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             SUBJECTS
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-book"></i>
+                </div>
+
+
+                <h5>
+
+                    Subjects
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Add, edit and manage the subjects offered
+                    by the school.
+
+                </p>
+
+
+                {% if portal_capabilities.portal_is_admin %}
+                <a
+                    href="/admin/academic/subject/"
+                    class="btn btn-success w-100"
+                >
+
+                    Manage Subjects
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ASSESSMENT TYPES
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-clipboard-check"></i>
+                </div>
+
+
+                <h5>
+
+                    Assessment Types
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Manage examination and assessment types
+                    such as CAT, Mid-Term and End-Term.
+
+                </p>
+
+
+                {% if portal_capabilities.portal_is_admin %}
+                <a
+                    href="/admin/academic/assessmenttype/"
+                    class="btn btn-info text-white w-100"
+                >
+
+                    Manage Assessments
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             REPORT CARDS
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+
+
+                <h5>
+
+                    Report Cards
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Generate, view and print learner academic
+                    report cards.
+
+                </p>
+
+
+                {% if erp_permission.view_academicrecord %}
+                <a
+                    href="{% url 'academic:report_cards' %}"
+                    class="btn btn-secondary w-100"
+                >
+
+                    Open Report Cards
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             ACADEMIC RESULTS
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-bar-chart-line"></i>
+                </div>
+
+
+                <h5>
+
+                    Academic Results
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    View learner performance and assessment
+                    records by class, stream, subject and
+                    examination type.
+
+                </p>
+
+
+                {% if erp_permission.view_academicrecord %}
+                <a
+                    href="{% url 'academic:academic_results' %}"
+                    class="btn btn-outline-primary w-100"
+                >
+
+                    Open Academic Results
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PERFORMANCE ANALYSIS
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+
+
+                <h5>
+
+                    Performance Analysis
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Analyse class, subject and learner
+                    performance, averages, grades and rankings.
+
+                </p>
+
+
+                {% if erp_permission.view_academicrecord %}
+                <a
+                    href="{% url 'academic:performance_analysis' %}"
+                    class="btn btn-outline-success w-100"
+                >
+
+                    Open Performance Analysis
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             STREAMS
+        ================================================== -->
+
+        <div class="col-md-4">
+
+            <div class="function-card shadow-sm">
+
+                <div class="icon-box">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+
+
+                <h5>
+
+                    Streams
+
+                </h5>
+
+
+                <p class="text-muted">
+
+                    Add and manage streams used when entering
+                    whole-class marks and analysing results.
+
+                </p>
+
+
+                {% if portal_capabilities.portal_is_admin %}
+                <a
+                    href="/admin/academic/stream/"
+                    class="btn btn-outline-dark w-100"
+                >
+
+                    Manage Streams
+
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         INFORMATION
+    ====================================================== -->
+
+    <div class="alert alert-info info-box mt-5">
+
+        <strong>Academic Module</strong>
+
+        <br>
+
+        The academic system allows administrators and teachers
+        to enter assessment marks, calculate grades, generate
+        report cards, view academic results, print class lists
+        and analyse learner and class performance.
+
+    </div>
+
+
+</div>
+
+
+
+
+<!-- PROFESSIONAL DOCUMENTS & TERMLY SUBMISSION -->
+<div class="row g-4 mt-4">
+
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                &#8226;
+                <p class="text-muted">
+                    
+<a href="#" class="academic-doc-button academic-doc-blue">
+    <div class="academic-doc-icon">&#128221;</div>
+
+    <div class="academic-doc-text">
+        <strong>Manage Teaching Documents</strong>
+        <span>Schemes of Work, Records of Work and Lesson Plans.</span>
+    </div>
+
+    <div class="academic-doc-arrow">&#8594;</div>
+</a>
+
+                </p>
+    {% if portal_capabilities.portal_is_admin %}
+                <a href="{% url 'professional_documents:admin_documents' %}"
+                   class="btn btn-success">
+                    Professional Documents
+                </a>
+    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                &#8226;
+                <p class="text-muted">
+                    
+<a href="#" class="academic-doc-button academic-doc-purple">
+    <div class="academic-doc-icon">&#128208;</div>
+
+    <div class="academic-doc-text">
+        <strong>Set Submission Requirements</strong>
+        <span>Set the required number of Schemes, Records of Work and Lesson Plans for each assigned subject.</span>
+    </div>
+
+    <div class="academic-doc-arrow">&#8594;</div>
+</a>
+
+                </p>
+    {% if portal_capabilities.portal_is_admin %}
+                <a href="{% url 'termly_submission:admin_requirements' %}"
+                   class="btn btn-primary">
+                    Set Requirements
+                </a>
+    {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                &#8226;
+                <p class="text-muted">
+                    
+<a href="#" class="academic-doc-button academic-doc-green">
+    <div class="academic-doc-icon">&#128269;</div>
+
+    <div class="academic-doc-text">
+        <strong>Employee Submission Tracking</strong>
+        <span>Search by employee number and view approved submission percentages and administrator feedback.</span>
+    </div>
+
+    <div class="academic-doc-arrow">&#8594;</div>
+</a>
+
+                </p>
+    {% if portal_capabilities.portal_is_admin %}
+                <a href="{% url 'termly_submission:admin_report' %}"
+                   class="btn btn-dark">
+                    View Submission
+                </a>
+    {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- =========================================================
+     BOOTSTRAP JS
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+
+<!-- ASSESSMENT & MARKS MANAGEMENT -->
+<div style="margin-top:20px;">
+    {% if erp_permission.add_academicrecord or erp_permission.change_academicrecord %}
+    <a href="{% url 'academic:assessment_management' %}"
+       style="display:block;text-decoration:none;background:linear-gradient(135deg,#0b3d91,#1769aa);color:white;border-radius:14px;padding:22px;box-shadow:0 6px 18px rgba(0,0,0,.12);">
+        <div style="display:flex;align-items:center;gap:18px;">
+            &#128202;
+            <div style="flex:1;">
+                <div style="font-size:20px;font-weight:700;">
+                    Assessment & Marks Management
+                </div>
+                <div style="font-size:14px;opacity:.9;margin-top:5px;">
+                    Set assessment deadlines, monitor recording progress,
+                    upload marks and manage assessment windows.
+                </div>
+            </div>
+            &#128202;
+        </div>
+    </a>
+    {% endif %}
+</div>
+
+</body>
+
+</html>
+
+
+<div class="col-md-4 mb-4">
+    <div class="card h-100 shadow-sm">
+        <div class="card-body">
+            &#8226;
+            <p class="text-muted">
+                Manage Schemes of Work, Records of Work and Lesson Plans.
+            </p>
+            <a href="{% url 'professional_documents:admin_documents' %}"
+               class="btn btn-success">
+                Professional Documents
+            </a>
+        </div>
+    </div>
+</div>

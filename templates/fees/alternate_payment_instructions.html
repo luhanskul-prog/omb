@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Instructions</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+    color:#172033;
+}
+.container{
+    max-width:850px;
+    margin:35px auto;
+    padding:20px;
+}
+.card{
+    background:white;
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+.logo{
+    max-height:75px;
+    max-width:180px;
+}
+.method{
+    border-radius:15px;
+    padding:24px;
+    margin-top:20px;
+    background:#f8fafc;
+    border:2px solid #e5e7eb;
+}
+.method h2{
+    margin-top:0;
+}
+.number{
+    font-size:28px;
+    font-weight:800;
+    color:#dc2626;
+    margin:12px 0;
+}
+.amount{
+    font-size:20px;
+    font-weight:700;
+}
+.instructions{
+    margin-top:18px;
+    padding:15px;
+    background:#fff7ed;
+    border-radius:10px;
+    white-space:pre-line;
+}
+.actions{
+    margin-top:25px;
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+}
+.btn{
+    display:inline-block;
+    padding:13px 18px;
+    border-radius:9px;
+    text-decoration:none;
+    font-weight:700;
+}
+.primary{
+    background:#dc2626;
+    color:white;
+}
+.secondary{
+    background:#e5e7eb;
+    color:#111827;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<div class="header">
+
+{% if branding and branding.logo %}
+<img src="{{ branding.logo.url }}" class="logo">
+{% endif %}
+
+<h1>PAYMENT INSTRUCTIONS</h1>
+
+<p>
+{{ student.first_name }}
+{% if student.middle_name %} {{ student.middle_name }}{% endif %}
+{% if student.last_name %} {{ student.last_name }}{% endif %}
+</p>
+
+<p>
+Admission Number:
+<strong>{{ student.admission_no }}</strong>
+</p>
+
+<p class="amount">
+Amount: KSh {{ payment.amount|floatformat:2 }}
+</p>
+
+</div>
+
+{% if payment.payment_method == "paybill" %}
+
+<div class="method">
+<h2>📱 M-Pesa PayBill</h2>
+
+<p>PayBill Number:</p>
+<div class="number">
+{% if paybill %}{{ paybill }}{% else %}Not configured{% endif %}
+</div>
+
+<p>
+<strong>Account / Reference:</strong>
+{{ student.admission_no }}
+</p>
+
+{% if paybill_instructions %}
+<div class="instructions">
+{{ paybill_instructions }}
+</div>
+{% endif %}
+</div>
+
+{% elif payment.payment_method == "till" %}
+
+<div class="method">
+<h2>🏪 M-Pesa Till</h2>
+
+<p>Till Number:</p>
+<div class="number">
+{% if till %}{{ till }}{% else %}Not configured{% endif %}
+</div>
+
+<p>
+Keep the M-Pesa transaction message for verification.
+</p>
+
+{% if till_instructions %}
+<div class="instructions">
+{{ till_instructions }}
+</div>
+{% endif %}
+</div>
+
+{% elif payment.payment_method == "bank" %}
+
+<div class="method">
+<h2>🏦 Bank Payment</h2>
+
+<p><strong>Bank:</strong> {{ bank_name|default:"Not configured" }}</p>
+
+<p>
+<strong>Account Name:</strong>
+{{ bank_account_name|default:"Not configured" }}
+</p>
+
+<p>
+<strong>Account Number:</strong>
+{{ bank_account|default:"Not configured" }}
+</p>
+
+<p>
+<strong>Branch:</strong>
+{{ bank_branch|default:"Not configured" }}
+</p>
+
+{% if bank_instructions %}
+<div class="instructions">
+{{ bank_instructions }}
+</div>
+{% endif %}
+</div>
+
+{% endif %}
+
+<div class="actions">
+
+<a
+href="{% url 'fees:alternate_payment_status' payment.id %}"
+class="btn primary">
+I HAVE PAID
+</a>
+
+<a
+href="{% url 'fees:alternate_payment' %}?admission_no={{ student.admission_no }}"
+class="btn secondary">
+Back
+</a>
+
+</div>
+
+</div>
+</div>
+
+</body>
+</html>

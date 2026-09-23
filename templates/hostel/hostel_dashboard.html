@@ -1,0 +1,1960 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Hostel Management | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #202938;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 225px;
+            background: #111827;
+            color: #fff;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            margin-right: 10px;
+            font-weight: 700;
+        }
+
+        .brand-text {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            display: block;
+            font-size: 9px;
+            color: #9ca3af;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        .menu-title {
+            color: #6b7280;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            padding: 18px 18px 7px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 15px;
+            margin: 2px 9px;
+            border-radius: 7px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 12px;
+            transition: .2s;
+        }
+
+        .side-link:hover,
+        .side-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .side-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 225px;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           TOPBAR
+        ===================================================== */
+
+        .topbar {
+            height: 65px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .page-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: #172033;
+        }
+
+        .page-subtitle {
+            font-size: 11px;
+            color: #8a94a6;
+            margin-top: 3px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            font-size: 11px;
+            color: #dc3545;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 22px 25px;
+        }
+
+
+        /* =====================================================
+           STATISTICS
+        ===================================================== */
+
+        .stat-card {
+            background: #fff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            padding: 14px;
+            display: flex;
+            align-items: center;
+            min-height: 82px;
+            transition: .2s;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #c8d4e5;
+            box-shadow: 0 7px 18px rgba(15,23,42,.08);
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            margin-right: 11px;
+        }
+
+        .stat-number {
+            font-size: 19px;
+            font-weight: 700;
+            line-height: 1;
+            color: #172033;
+        }
+
+        .stat-label {
+            color: #667085;
+            font-size: 10px;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+
+        /* =====================================================
+           COLOUR CLASSES
+        ===================================================== */
+
+        .blue {
+            background: #eaf2ff;
+            color: #2563eb;
+        }
+
+        .green {
+            background: #eaf8f0;
+            color: #16834b;
+        }
+
+        .orange {
+            background: #fff4df;
+            color: #d98200;
+        }
+
+        .purple {
+            background: #f1eaff;
+            color: #7048c8;
+        }
+
+        .red {
+            background: #fff0f0;
+            color: #dc3545;
+        }
+
+
+        /* =====================================================
+           SECTION
+        ===================================================== */
+
+        .section {
+            margin-top: 25px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 0;
+            color: #172033;
+        }
+
+        .section-description {
+            font-size: 10px;
+            color: #667085;
+            margin-top: 3px;
+        }
+
+
+        /* =====================================================
+           MODULE CARDS
+        ===================================================== */
+
+        .module {
+            background: #ffffff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            min-height: 108px;
+            padding: 13px;
+            text-decoration: none;
+            color: #172033;
+            display: block;
+            transition: all .2s ease;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+        }
+
+        .module:hover {
+            transform: translateY(-3px);
+            border-color: #2563eb;
+            box-shadow: 0 8px 20px rgba(37,99,235,.12);
+            background: #fbfdff;
+            color: #172033;
+        }
+
+        .module-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            margin-bottom: 9px;
+            font-weight: 600;
+            border: 1px solid rgba(0,0,0,.04);
+        }
+
+        .module-name {
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0;
+            color: #172033;
+            line-height: 1.3;
+        }
+
+        .module-description {
+            font-size: 9.5px;
+            color: #667085;
+            margin-top: 4px;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .arrow {
+            position: absolute;
+            right: 11px;
+            top: 11px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #f0f5ff;
+            color: #2563eb;
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s ease;
+        }
+
+        .module:hover .arrow {
+            background: #2563eb;
+            color: #ffffff;
+            transform: translateX(2px);
+        }
+
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .table-card {
+            background: #ffffff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            font-size: 9px;
+            color: #667085;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 9px;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            font-size: 10px;
+            padding: 10px 9px;
+            vertical-align: middle;
+            border-color: #eef1f5;
+        }
+
+        .badge-soft {
+            display: inline-block;
+            padding: 4px 7px;
+            border-radius: 20px;
+            font-size: 8px;
+            font-weight: 700;
+        }
+
+        .badge-green {
+            background: #eaf8f0;
+            color: #16834b;
+        }
+
+        .badge-orange {
+            background: #fff4df;
+            color: #d98200;
+        }
+
+        .badge-red {
+            background: #fff0f0;
+            color: #dc3545;
+        }
+
+        .badge-blue {
+            background: #eaf2ff;
+            color: #2563eb;
+        }
+
+
+        /* =====================================================
+           QUICK ACTIONS
+        ===================================================== */
+
+        .quick-card {
+            background: #fff;
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(15,23,42,.04);
+        }
+
+        .quick-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            border: 1px solid #d5deeb;
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 10px 11px;
+            font-size: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #344054;
+            min-height: 38px;
+            transition: all .2s ease;
+            box-shadow: 0 2px 5px rgba(15,23,42,.03);
+        }
+
+        .quick-btn:hover {
+            border-color: #2563eb;
+            background: #f5f8ff;
+            color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(37,99,235,.10);
+        }
+
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty {
+            text-align: center;
+            color: #98a2b3;
+            font-size: 10px;
+            padding: 20px;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .text-muted {
+            color: #8a94a6 !important;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 65px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0;
+            }
+
+            .brand-text,
+            .brand-subtitle,
+            .menu-title,
+            .side-link span:not(.side-icon) {
+                display: none;
+            }
+
+            .side-link {
+                justify-content: center;
+                padding: 11px 5px;
+            }
+
+            .side-icon {
+                font-size: 16px;
+            }
+
+            .main {
+                margin-left: 65px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+
+        @media (max-width: 576px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .page-heading {
+                font-size: 16px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .module {
+                min-height: 100px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            LS
+        </div>
+
+        <div class="brand-text">
+
+            Luhan ERP
+
+            <span class="brand-subtitle">
+                School Management System
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="menu-title">
+        Main
+    </div>
+
+
+    <a href="{% url 'admin_dashboard' %}"
+       class="side-link">
+
+        <span class="side-icon">⌂</span>
+        <span>Dashboard</span>
+
+    </a>
+
+
+    <a href="/students/"
+       class="side-link">
+
+        <span class="side-icon">🎓</span>
+        <span>Students</span>
+
+    </a>
+
+
+    <a href="/academic/"
+       class="side-link">
+
+        <span class="side-icon">📚</span>
+        <span>Academic</span>
+
+    </a>
+
+
+    <a href="/attendance/"
+       class="side-link">
+
+        <span class="side-icon">✓</span>
+        <span>Attendance</span>
+
+    </a>
+
+
+    <div class="menu-title">
+        Administration
+    </div>
+
+
+    <a href="{% url 'accounts:staff_management' %}"
+       class="side-link">
+
+        <span class="side-icon">👥</span>
+        <span>Staff</span>
+
+    </a>
+
+
+    <a href="{% url 'accounts:department_management' %}"
+       class="side-link">
+
+        <span class="side-icon">▦</span>
+        <span>Departments</span>
+
+    </a>
+
+
+    <a href="{% url 'accounts:role_management' %}"
+       class="side-link">
+
+        <span class="side-icon">🔐</span>
+        <span>Roles</span>
+
+    </a>
+
+
+    <a href="{% url 'hr_payroll:dashboard' %}"
+       class="side-link">
+
+        <span class="side-icon">💼</span>
+        <span>HR & Payroll</span>
+
+    </a>
+
+
+    <a href="{% url 'fees:dashboard' %}"
+       class="side-link">
+
+        <span class="side-icon">💳</span>
+        <span>Fees</span>
+
+    </a>
+
+
+    <a href="{% url 'timetable:dashboard' %}"
+       class="side-link">
+
+        <span class="side-icon">▣</span>
+        <span>Timetabling</span>
+
+    </a>
+
+
+    <a href="{% url 'transport:dashboard' %}"
+       class="side-link">
+
+        <span class="side-icon">🚌</span>
+        <span>Transport</span>
+
+    </a>
+
+
+    <a href="{% url 'hostel:dashboard' %}"
+       class="side-link active">
+
+        <span class="side-icon">🏠</span>
+        <span>Hostel</span>
+
+    </a>
+
+
+    <div class="menu-title">
+        System
+    </div>
+
+
+    <a href="/admin/"
+       class="side-link">
+
+        <span class="side-icon">⚙</span>
+        <span>System Admin</span>
+
+    </a>
+
+
+    <a href="{% url 'logout' %}"
+       class="side-link">
+
+        <span class="side-icon">↪</span>
+        <span>Logout</span>
+
+    </a>
+
+</aside>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+
+    <!-- TOP BAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1 class="page-heading">
+                Hostel Management
+            </h1>
+
+            <div class="page-subtitle">
+                Boarding, rooms, beds and student accommodation
+            </div>
+
+        </div>
+
+
+        <div class="user-area">
+
+            <div class="user-avatar">
+                {{ request.user.username|slice:":1"|upper }}
+            </div>
+
+            <div>
+
+                <div class="user-name">
+                    {{ request.user.get_full_name|default:request.user.username }}
+                </div>
+
+                <a href="{% url 'logout' %}"
+                   class="logout-btn">
+
+                    Sign out
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+
+        <!-- =================================================
+             STATISTICS
+        ================================================== -->
+
+        <div class="row g-3">
+
+
+            <!-- HOSTELS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        🏠
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_hostels }}
+                        </div>
+
+                        <div class="stat-label">
+                            Total Hostels
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROOMS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+                        🚪
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_rooms }}
+                        </div>
+
+                        <div class="stat-label">
+                            Total Rooms
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- BEDS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        🛏️
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_beds }}
+                        </div>
+
+                        <div class="stat-label">
+                            Total Beds
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ALLOCATIONS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        🎓
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_allocations }}
+                        </div>
+
+                        <div class="stat-label">
+                            Student Allocations
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- AVAILABLE BEDS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ available_beds }}
+                        </div>
+
+                        <div class="stat-label">
+                            Available Beds
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- OCCUPIED BEDS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon red">
+                        👤
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ occupied_beds }}
+                        </div>
+
+                        <div class="stat-label">
+                            Occupied Beds
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ATTENDANCE -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        ✓
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_attendance }}
+                        </div>
+
+                        <div class="stat-label">
+                            Attendance Records
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- INCIDENTS -->
+
+            <div class="col-xl-3 col-md-6">
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        ⚠
+                    </div>
+
+                    <div>
+
+                        <div class="stat-number">
+                            {{ total_incidents }}
+                        </div>
+
+                        <div class="stat-label">
+                            Incidents
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             HOSTEL MANAGEMENT MODULES
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title">
+                        Hostel Management
+                    </h2>
+
+                    <div class="section-description">
+                        Manage boarding facilities and student accommodation
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <!-- HOSTELS -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/hostel/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon blue">
+                            🏠
+                        </div>
+
+                        <h3 class="module-name">
+                            Hostels
+                        </h3>
+
+                        <div class="module-description">
+                            Manage hostel buildings and facilities
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ROOMS -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/room/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon purple">
+                            🚪
+                        </div>
+
+                        <h3 class="module-name">
+                            Rooms
+                        </h3>
+
+                        <div class="module-description">
+                            Manage rooms and room capacities
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- BEDS -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/bed/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon orange">
+                            🛏️
+                        </div>
+
+                        <h3 class="module-name">
+                            Beds
+                        </h3>
+
+                        <div class="module-description">
+                            Track available and occupied beds
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ALLOCATIONS -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/studenthostelallocation/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon green">
+                            🎓
+                        </div>
+
+                        <h3 class="module-name">
+                            Student Allocation
+                        </h3>
+
+                        <div class="module-description">
+                            Allocate students to rooms and beds
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- ATTENDANCE -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/hostelattendance/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon blue">
+                            ✓
+                        </div>
+
+                        <h3 class="module-name">
+                            Hostel Attendance
+                        </h3>
+
+                        <div class="module-description">
+                            Monitor boarding attendance
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- FEES -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/hostelfee/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon green">
+                            💳
+                        </div>
+
+                        <h3 class="module-name">
+                            Hostel Fees
+                        </h3>
+
+                        <div class="module-description">
+                            Manage hostel charges and payments
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- INCIDENTS -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/hostel/hostelincident/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon red">
+                            ⚠
+                        </div>
+
+                        <h3 class="module-name">
+                            Incidents
+                        </h3>
+
+                        <div class="module-description">
+                            Record and monitor hostel incidents
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- DJANGO ADMIN -->
+
+                <div class="col-xl-3 col-lg-4 col-md-6">
+
+                    <a href="/admin/"
+                       class="module">
+
+                        <span class="arrow">→</span>
+
+                        <div class="module-icon blue">
+                            ⚙
+                        </div>
+
+                        <h3 class="module-name">
+                            System Administration
+                        </h3>
+
+                        <div class="module-description">
+                            Manage hostel records through administration
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             BED STATUS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+
+                    <h2 class="section-title">
+                        Bed Occupancy
+                    </h2>
+
+                    <div class="section-description">
+                        Current hostel bed availability
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+
+                <div class="col-md-4">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon green">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <div class="stat-number">
+                                {{ available_beds }}
+                            </div>
+
+                            <div class="stat-label">
+                                Available Beds
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon red">
+                            👤
+                        </div>
+
+                        <div>
+
+                            <div class="stat-number">
+                                {{ occupied_beds }}
+                            </div>
+
+                            <div class="stat-label">
+                                Occupied Beds
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon orange">
+                            •
+                        </div>
+
+                        <div>
+
+                            <div class="stat-number">
+                                {{ other_beds }}
+                            </div>
+
+                            <div class="stat-label">
+                                Other Bed Status
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECENT HOSTELS AND ROOMS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="row g-3">
+
+
+                <!-- RECENT HOSTELS -->
+
+                <div class="col-lg-6">
+
+                    <div class="table-card">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <h2 class="section-title">
+                                    Recent Hostels
+                                </h2>
+
+                                <div class="section-description">
+                                    Recently added hostel facilities
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Hostel</th>
+                                        <th>Details</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for hostel in hostels %}
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                {{ hostel }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge-soft badge-blue">
+                                                Hostel
+                                            </span>
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="2"
+                                            class="empty">
+
+                                            No hostels have been added yet.
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- RECENT ROOMS -->
+
+                <div class="col-lg-6">
+
+                    <div class="table-card">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <h2 class="section-title">
+                                    Recent Rooms
+                                </h2>
+
+                                <div class="section-description">
+                                    Recently created hostel rooms
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+                                        <th>Room</th>
+                                        <th>Details</th>
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for room in rooms %}
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                {{ room }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+                                            <span class="badge-soft badge-blue">
+                                                Room
+                                            </span>
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="2"
+                                            class="empty">
+
+                                            No rooms have been added yet.
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             RECENT ALLOCATIONS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="table-card">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Recent Student Allocations
+                        </h2>
+
+                        <div class="section-description">
+                            Latest student hostel placements
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="table-responsive">
+
+                    <table class="table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Student</th>
+                                <th>Allocation</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for allocation in allocations %}
+
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        {{ allocation }}
+                                    </strong>
+                                </td>
+
+                                <td>
+
+                                    <span class="badge-soft badge-green">
+                                        Allocated
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                            {% empty %}
+
+                            <tr>
+
+                                <td colspan="2"
+                                    class="empty">
+
+                                    No student hostel allocations yet.
+
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             INCIDENTS AND FEES
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="row g-3">
+
+
+                <!-- INCIDENTS -->
+
+                <div class="col-lg-6">
+
+                    <div class="table-card">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <h2 class="section-title">
+                                    Recent Incidents
+                                </h2>
+
+                                <div class="section-description">
+                                    Latest hostel incident records
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Incident</th>
+                                        <th>Status</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for incident in incidents %}
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                {{ incident }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge-soft badge-orange">
+                                                Recorded
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="2"
+                                            class="empty">
+
+                                            No incidents recorded.
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- FEES -->
+
+                <div class="col-lg-6">
+
+                    <div class="table-card">
+
+                        <div class="section-header">
+
+                            <div>
+
+                                <h2 class="section-title">
+                                    Recent Hostel Fees
+                                </h2>
+
+                                <div class="section-description">
+                                    Latest hostel fee records
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="table-responsive">
+
+                            <table class="table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Record</th>
+                                        <th>Status</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    {% for fee in fee_records %}
+
+                                    <tr>
+
+                                        <td>
+                                            <strong>
+                                                {{ fee }}
+                                            </strong>
+                                        </td>
+
+                                        <td>
+
+                                            <span class="badge-soft badge-green">
+                                                Fee Record
+                                            </span>
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% empty %}
+
+                                    <tr>
+
+                                        <td colspan="2"
+                                            class="empty">
+
+                                            No hostel fee records yet.
+
+                                        </td>
+
+                                    </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             QUICK ACTIONS
+        ================================================== -->
+
+        <section class="section">
+
+            <div class="quick-card">
+
+                <div class="section-header mb-3">
+
+                    <div>
+
+                        <h2 class="section-title">
+                            Quick Actions
+                        </h2>
+
+                        <div class="section-description">
+                            Frequently used hostel management functions
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="row g-2">
+
+
+                    <div class="col-xl-2 col-md-4 col-6">
+
+                        <a href="/admin/hostel/hostel/add/"
+                           class="quick-btn">
+
+                            🏠 Add Hostel
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="col-xl-2 col-md-4 col-6">
+
+                        <a href="/admin/hostel/room/add/"
+                           class="quick-btn">
+
+                            🚪 Add Room
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="col-xl-2 col-md-4 col-6">
+
+                        <a href="/admin/hostel/bed/add/"
+                           class="quick-btn">
+
+                            🛏️ Add Bed
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="col-xl-2 col-md-4 col-6">
+
+                        <a href="/admin/hostel/studenthostelallocation/add/"
+                           class="quick-btn">
+
+                            🎓 Allocate Student
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="col-xl-2 col-md-4 col-6">
+
+                        <a href="/admin/hostel/hostelattendance/add/"
+                           class="quick-btn">
+
+                            ✓ Attendance
+
+                        </a>
+
+                    </div>
+
+
+                    <div class="col-xl-2 col-md-4 col-6">
+
+                        <a href="{% url 'admin_dashboard' %}"
+                           class="quick-btn">
+
+                            ← Admin Dashboard
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+        ================================================== -->
+
+        <div class="text-center mt-4 mb-2">
+
+            <small class="text-muted">
+                Luhan School ERP · Hostel Management
+            </small>
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

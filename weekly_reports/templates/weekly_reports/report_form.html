@@ -1,0 +1,1110 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>{{ title }}</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    background:#f4f7fb;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+}
+
+.topbar{
+    background:#123f91;
+    color:#fff;
+    padding:18px 24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.brand-title{
+    font-size:22px;
+    font-weight:700;
+}
+
+.brand-sub{
+    font-size:13px;
+    opacity:.85;
+    margin-top:4px;
+}
+
+.container{
+    max-width:1100px;
+    margin:25px auto;
+    padding:0 18px;
+}
+
+.card{
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 4px 18px rgba(20,40,80,.08);
+    padding:22px;
+    margin-bottom:20px;
+}
+
+h1{
+    margin:0 0 6px;
+    font-size:28px;
+}
+
+h2{
+    margin:0 0 15px;
+}
+
+.muted{
+    color:#68758a;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+label{
+    display:block;
+    font-weight:600;
+    margin-bottom:7px;
+}
+
+input,
+select,
+textarea{
+    width:100%;
+    border:1px solid #d7deea;
+    border-radius:8px;
+    padding:11px 12px;
+    font-size:14px;
+    background:#fff;
+}
+
+textarea{
+    min-height:140px;
+    resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    outline:none;
+    border-color:#123f91;
+    box-shadow:0 0 0 2px rgba(18,63,145,.10);
+}
+
+.btn{
+    display:inline-block;
+    border:0;
+    border-radius:8px;
+    padding:11px 17px;
+    text-decoration:none;
+    cursor:pointer;
+    font-weight:600;
+    font-size:14px;
+}
+
+.btn-primary{
+    background:#123f91;
+    color:#fff;
+}
+
+.btn-secondary{
+    background:#e9eef7;
+    color:#17315f;
+}
+
+.actions{
+    display:flex;
+    gap:9px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.alert{
+    padding:12px 15px;
+    border-radius:8px;
+    margin-bottom:15px;
+    background:#fff4d6;
+}
+
+.error{
+    color:#b42318;
+    font-size:13px;
+    margin-top:5px;
+}
+
+.search-box{
+    position:relative;
+}
+
+.search-help{
+    margin-top:6px;
+    font-size:12px;
+    color:#68758a;
+}
+
+.student-search-results{
+    display:none;
+    position:absolute;
+    z-index:1000;
+    left:0;
+    right:0;
+    top:100%;
+    background:#fff;
+    border:1px solid #d7deea;
+    border-radius:0 0 9px 9px;
+    max-height:280px;
+    overflow-y:auto;
+    box-shadow:0 8px 20px rgba(20,40,80,.12);
+}
+
+.student-option{
+    padding:11px 13px;
+    cursor:pointer;
+    border-bottom:1px solid #edf0f5;
+}
+
+.student-option:hover{
+    background:#f2f6ff;
+}
+
+.student-option strong{
+    display:block;
+}
+
+.student-option small{
+    color:#68758a;
+}
+
+.selected-student{
+    margin-top:8px;
+    padding:10px 12px;
+    background:#eef4ff;
+    border-left:4px solid #123f91;
+    border-radius:7px;
+    display:none;
+}
+
+@media(max-width:700px){
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+
+    <div>
+        <div class="brand-title">Weekly Assessment Reports</div>
+
+        <div class="brand-sub">
+            Enter learner weekly performance, scores and teacher reports
+        </div>
+    </div>
+
+    <a class="btn btn-secondary"
+       href="{% url 'weekly_reports:dashboard' %}">
+        Portal
+    </a>
+
+</div>
+
+
+<div class="container">
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+
+<div class="card">
+
+    <h1>{{ title }}</h1>
+
+    <div class="muted">
+        Search for a learner using their name or admission number,
+        then complete the weekly assessment.
+    </div>
+
+</div>
+
+
+<div class="card">
+
+<form method="post" id="weeklyReportForm">
+
+{% csrf_token %}
+
+
+{% if form.non_field_errors %}
+
+<div class="alert">
+
+    {% for error in form.non_field_errors %}
+        {{ error }}
+    {% endfor %}
+
+</div>
+
+{% endif %}
+
+
+<div class="form-grid">
+
+
+<!-- LEARNER -->
+
+<div class="full">
+
+    <label for="{{ form.student.id_for_label }}">
+        Learner
+    </label>
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="studentSearch"
+            autocomplete="off"
+            placeholder="Search learner by name or admission number..."
+            value="{% if form.student.value %}{% for student in form.student.field.queryset %}{% if student.pk|stringformat:'s' == form.student.value|stringformat:'s' %}{{ student.first_name }} {% if student.middle_name %}{{ student.middle_name }} {% endif %}{{ student.last_name }} â€” {{ student.admission_no }}{% endif %}{% endfor %}{% endif %}"
+        >
+
+        <div
+            id="studentResults"
+            class="student-search-results"
+        ></div>
+
+    </div>
+
+
+    <!-- Actual Django field -->
+
+    <div style="display:none;">
+        {{ form.student }}
+    </div>
+
+
+    <div
+        id="selectedStudent"
+        class="selected-student"
+    ></div>
+
+
+    <div class="search-help">
+        Start typing the learner's first name, last name,
+        middle name or admission number.
+    </div>
+
+
+    {% for error in form.student.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+{% if portal == "staff" %}
+
+<!-- ASSESSMENT WEEK -->
+
+<div class="full">
+
+    <label for="{{ form.week.id_for_label }}">
+        Assessment Week
+    </label>
+
+    {{ form.week }}
+
+    {% for error in form.week.errors %}
+    <div class="error">{{ error }}</div>
+    {% endfor %}
+
+</div>
+
+
+<div>
+
+    <label for="staffClassDisplay">
+        Grade / Class
+    </label>
+
+    <input
+        type="text"
+        id="staffClassDisplay"
+        readonly
+        placeholder="Automatically shown"
+    >
+
+</div>
+
+
+<div>
+
+    <label for="staffStreamDisplay">
+        Stream
+    </label>
+
+    <input
+        type="text"
+        id="staffStreamDisplay"
+        readonly
+        placeholder="Automatically shown"
+    >
+
+</div>
+
+{% endif %}
+<!-- SUBJECT -->
+
+<div>
+
+    <label for="{{ form.subject.id_for_label }}">
+        Learning Area / Subject
+    </label>
+
+    {{ form.subject }}
+
+    {% for error in form.subject.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+{% if portal == "admin" %}
+
+<!-- WEEK START -->
+
+<div>
+
+    <label for="{{ form.week_start.id_for_label }}">
+        Date From
+    </label>
+
+    {{ form.week_start }}
+
+    {% for error in form.week_start.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+<!-- WEEK END -->
+
+<div>
+
+    <label for="{{ form.week_end.id_for_label }}">
+        Date To
+    </label>
+
+    {{ form.week_end }}
+
+    {% for error in form.week_end.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+<!-- WEEK NUMBER -->
+
+<div>
+
+    <label for="{{ form.week_number.id_for_label }}">
+        Week Number
+    </label>
+
+    {{ form.week_number }}
+
+    {% for error in form.week_number.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+
+{% endif %}
+
+<!-- SCORE -->
+
+<div>
+
+    <label for="{{ form.score.id_for_label }}">
+        Score
+    </label>
+
+    {{ form.score }}
+
+    {% for error in form.score.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+<!-- MAX SCORE -->
+
+<div>
+
+    <label for="{{ form.max_score.id_for_label }}">
+        Maximum Score
+    </label>
+
+    {{ form.max_score }}
+
+    {% for error in form.max_score.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+<!-- PUBLISHED -->
+
+<div>
+
+    <label for="{{ form.is_published.id_for_label }}">
+        Publication
+    </label>
+
+    {{ form.is_published }}
+
+    <div class="search-help">
+        Published reports can be viewed by learners and parents.
+    </div>
+
+    {% for error in form.is_published.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+
+<!-- TEACHER REPORT -->
+
+<div class="full">
+
+    <label for="{{ form.teacher_report.id_for_label }}">
+        Teacher's Weekly Report
+    </label>
+
+    {{ form.teacher_report }}
+
+    {% for error in form.teacher_report.errors %}
+    <div class="error">
+        {{ error }}
+    </div>
+    {% endfor %}
+
+</div>
+
+</div>
+
+
+<div class="actions">
+
+    <button
+        class="btn btn-primary"
+        type="submit"
+    >
+        Save Weekly Assessment
+    </button>
+
+
+    {% if report %}
+
+    <a
+        class="btn btn-secondary"
+        href="{% url 'weekly_reports:detail' report.pk %}"
+    >
+        Cancel
+    </a>
+
+    {% else %}
+
+    <a
+        class="btn btn-secondary"
+        href="{% url 'weekly_reports:dashboard' %}"
+    >
+        Cancel
+    </a>
+
+    {% endif %}
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+
+{% if portal == "staff" %}
+
+<div style="display:none;" id="staffStudentData">
+
+{% for student in form.student.field.queryset %}
+
+<span
+    data-staff-student
+    data-student-id="{{ student.pk }}"
+    data-name="{{ student.first_name }}{% if student.middle_name %} {{ student.middle_name }}{% endif %} {{ student.last_name }}"
+    data-admission="{{ student.admission_no|default:'' }}"
+    data-class-name="{{ student.class_name|default:'' }}"
+    data-stream-name="{{ student.stream|default:'' }}"
+></span>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+<script>
+
+(function(){
+
+    const searchInput = document.getElementById("studentSearch");
+    const results = document.getElementById("studentResults");
+    const studentSelect = document.getElementById("id_student");
+    const selectedBox = document.getElementById("selectedStudent");
+
+    if(!searchInput || !results || !studentSelect){
+        return;
+    }
+
+    const students = [];
+
+    {% if portal == "staff" %}
+
+    document
+        .querySelectorAll("[data-staff-student]")
+        .forEach(function(node){
+
+            const id = node.dataset.studentId || "";
+            const name = node.dataset.name || "";
+            const admission = node.dataset.admission || "";
+            const className = node.dataset.className || "";
+            const stream = node.dataset.streamName || "";
+
+            if(!id){
+                return;
+            }
+
+            students.push({
+                id: id,
+                name: name.trim(),
+                admission: admission.trim(),
+                className: className.trim(),
+                stream: stream.trim(),
+                text:
+                    name.trim() +
+                    (admission.trim()
+                        ? " — " + admission.trim()
+                        : "")
+            });
+
+        });
+
+    {% else %}
+
+    Array.from(studentSelect.options).forEach(function(option){
+
+        if(!option.value){
+            return;
+        }
+
+        const text = option.textContent.trim();
+
+        students.push({
+            id: option.value,
+            name: text,
+            admission: "",
+            className: "",
+            stream: "",
+            text: text
+        });
+
+    });
+
+    {% endif %}
+
+
+    function showResults(){
+
+        const query = searchInput.value
+            .trim()
+            .toLowerCase();
+
+        results.innerHTML = "";
+
+        if(!query){
+            results.style.display = "none";
+            return;
+        }
+
+        const matches = students.filter(function(student){
+
+            return (
+                student.name.toLowerCase().includes(query) ||
+                student.admission.toLowerCase().includes(query) ||
+                student.text.toLowerCase().includes(query)
+            );
+
+        }).slice(0,20);
+
+
+        if(!matches.length){
+
+            results.innerHTML =
+                '<div class="student-search-empty">' +
+                'No matching learner found.' +
+                '</div>';
+
+            results.style.display = "block";
+            return;
+        }
+
+
+        matches.forEach(function(student){
+
+            const item = document.createElement("div");
+
+            item.className = "student-search-result";
+
+            item.innerHTML =
+                "<strong>" +
+                escapeHtml(student.name) +
+                "</strong>" +
+                (
+                    student.admission
+                        ? "<span> — " +
+                          escapeHtml(student.admission) +
+                          "</span>"
+                        : ""
+                ) +
+                (
+                    student.className
+                        ? "<small>" +
+                          escapeHtml(student.className) +
+                          (
+                              student.stream
+                                  ? " • " +
+                                    escapeHtml(student.stream)
+                                  : ""
+                          ) +
+                          "</small>"
+                        : ""
+                );
+
+
+            item.addEventListener("click",function(){
+
+                studentSelect.value = student.id;
+
+                searchInput.value = student.text;
+
+                if(selectedBox){
+
+                    selectedBox.innerHTML =
+                        "<strong>Selected learner:</strong> " +
+                        escapeHtml(student.text);
+
+                    selectedBox.style.display = "block";
+
+                }
+
+                results.innerHTML = "";
+                results.style.display = "none";
+
+                studentSelect.dispatchEvent(
+                    new Event("change",{bubbles:true})
+                );
+
+            });
+
+
+            results.appendChild(item);
+
+        });
+
+
+        results.style.display = "block";
+
+    }
+
+
+    function escapeHtml(value){
+
+        return String(value)
+            .replace(/&/g,"&amp;")
+            .replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;")
+            .replace(/"/g,"&quot;")
+            .replace(/'/g,"&#039;");
+
+    }
+
+
+    searchInput.addEventListener(
+        "input",
+        showResults
+    );
+
+
+    searchInput.addEventListener(
+        "focus",
+        function(){
+
+            if(searchInput.value.trim()){
+                showResults();
+            }
+
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        function(event){
+
+            if(
+                !searchInput.contains(event.target) &&
+                !results.contains(event.target)
+            ){
+
+                results.style.display = "none";
+
+            }
+
+        }
+    );
+
+
+    if(studentSelect.value){
+
+        const selected = students.find(
+            function(student){
+                return student.id === studentSelect.value;
+            }
+        );
+
+        if(selected){
+
+            searchInput.value = selected.text;
+
+            if(selectedBox){
+
+                selectedBox.innerHTML =
+                    "<strong>Selected learner:</strong> " +
+                    escapeHtml(selected.text);
+
+                selectedBox.style.display = "block";
+
+            }
+
+        }
+
+    }
+
+})();
+
+
+{% if portal == "staff" %}
+
+(function(){
+
+    const studentSelect =
+        document.getElementById("id_student");
+
+    const classDisplay =
+        document.getElementById("staffClassDisplay");
+
+    const streamDisplay =
+        document.getElementById("staffStreamDisplay");
+
+    const dataContainer =
+        document.getElementById("staffStudentData");
+
+
+    if(
+        !studentSelect ||
+        !classDisplay ||
+        !streamDisplay ||
+        !dataContainer
+    ){
+
+        return;
+
+    }
+
+
+    const studentData = {};
+
+
+    dataContainer
+        .querySelectorAll("[data-staff-student]")
+        .forEach(function(node){
+
+            studentData[
+                node.dataset.studentId
+            ] = {
+
+                className:
+                    node.dataset.className || "",
+
+                stream:
+                    node.dataset.streamName || ""
+
+            };
+
+        });
+
+
+    function updateClassStream(){
+
+        const selected =
+            studentData[
+                studentSelect.value
+            ];
+
+
+        classDisplay.value =
+            selected
+                ? selected.className
+                : "";
+
+
+        streamDisplay.value =
+            selected
+                ? selected.stream
+                : "";
+
+    }
+
+
+    studentSelect.addEventListener(
+        "change",
+        updateClassStream
+    );
+
+
+    updateClassStream();
+
+})();
+
+{% endif %}
+
+</script>
+
+{% if portal == "staff" %}
+<script>
+(function(){
+
+    const studentSelect = document.getElementById("id_student");
+    const subjectSelect = document.getElementById("id_subject");
+    const dataContainer = document.getElementById("staffStudentData");
+
+    if(!studentSelect || !subjectSelect || !dataContainer){
+        return;
+    }
+
+    const studentData = {};
+
+    dataContainer
+        .querySelectorAll("[data-staff-student]")
+        .forEach(function(node){
+
+            const id = node.dataset.studentId || "";
+
+            if(!id){
+                return;
+            }
+
+            studentData[id] = {
+                className: (node.dataset.className || "").trim(),
+                stream: (node.dataset.streamName || "").trim()
+            };
+
+        });
+
+
+    function filterSubjects(){
+
+        const selectedStudent =
+            studentData[studentSelect.value];
+
+        const options =
+            Array.from(subjectSelect.options);
+
+        /*
+         * No learner selected:
+         * show all subjects already allowed for this teacher.
+         */
+        if(!selectedStudent){
+
+            options.forEach(function(option){
+
+                if(!option.value){
+                    option.hidden = false;
+                    return;
+                }
+
+                option.hidden = false;
+
+            });
+
+            return;
+        }
+
+
+        const learnerClass =
+            selectedStudent.className.toLowerCase();
+
+        const learnerStream =
+            selectedStudent.stream.toLowerCase();
+
+
+        let currentSubjectVisible = false;
+
+
+        options.forEach(function(option){
+
+            if(!option.value){
+
+                option.hidden = false;
+                return;
+
+            }
+
+            const classes =
+                (option.dataset.assignmentClasses || "")
+                .split("|")
+                .map(function(value){
+                    return value.trim().toLowerCase();
+                })
+                .filter(Boolean);
+
+            const streams =
+                (option.dataset.assignmentStreams || "")
+                .split("|")
+                .map(function(value){
+                    return value.trim().toLowerCase();
+                });
+
+
+            let allowed = false;
+
+
+            for(let i = 0; i < classes.length; i++){
+
+                const assignedClass = classes[i];
+                const assignedStream = streams[i] || "";
+
+                if(
+                    assignedClass === learnerClass &&
+                    (
+                        !assignedStream ||
+                        assignedStream === learnerStream
+                    )
+                ){
+
+                    allowed = true;
+                    break;
+
+                }
+
+            }
+
+
+            option.hidden = !allowed;
+
+            if(allowed && option.selected){
+                currentSubjectVisible = true;
+            }
+
+        });
+
+
+        /*
+         * If the previously selected subject does not belong
+         * to the new learner, clear it.
+         */
+        if(!currentSubjectVisible){
+
+            const selectedOption =
+                subjectSelect.options[
+                    subjectSelect.selectedIndex
+                ];
+
+            if(
+                selectedOption &&
+                selectedOption.value &&
+                selectedOption.hidden
+            ){
+                subjectSelect.value = "";
+            }
+
+        }
+
+    }
+
+
+    studentSelect.addEventListener(
+        "change",
+        filterSubjects
+    );
+
+    filterSubjects();
+
+})();
+</script>
+{% endif %}
+
+</body>
+</html>
+
+
+
+
+
+

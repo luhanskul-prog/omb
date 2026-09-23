@@ -1,0 +1,494 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>
+    Payslip {{ payslip.payslip_number }}
+</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        background: #eef3f8;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+    }
+
+    .toolbar {
+        background: #0b3d91;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .toolbar a {
+        display: inline-block;
+        padding: 10px 16px;
+        margin: 3px;
+        border-radius: 8px;
+        text-decoration: none;
+        color: white;
+        font-weight: 800;
+        font-size: 13px;
+    }
+
+    .back {
+        background: #475569;
+    }
+
+    .pdf {
+        background: #dc2626;
+    }
+
+    .print-button {
+        background: #7c3aed;
+        border: 0;
+        cursor: pointer;
+    }
+
+    .paper {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 20px auto;
+        background: white;
+        box-shadow: 0 8px 30px rgba(15,23,42,.15);
+    }
+
+    .header {
+        background: #082f6b;
+        color: white;
+        text-align: center;
+        padding: 25px 25px 18px;
+    }
+
+    .logo {
+        width: 92px;
+        height: 92px;
+        object-fit: contain;
+        background: white;
+        border-radius: 50%;
+        padding: 5px;
+        margin-bottom: 10px;
+    }
+
+    .school-name {
+        font-size: 27px;
+        font-weight: 900;
+        margin: 0;
+    }
+
+    .motto {
+        margin: 7px 0;
+        font-style: italic;
+        font-size: 13px;
+    }
+
+    .contacts {
+        font-size: 11px;
+    }
+
+    .banner {
+        margin: 16px auto 10px;
+        max-width: 350px;
+        padding: 10px;
+        border-radius: 8px;
+        background: #0f9f9a;
+        font-size: 17px;
+        font-weight: 900;
+    }
+
+    .payslip-number {
+        font-size: 11px;
+    }
+
+    .content {
+        padding: 20px 25px 30px;
+    }
+
+    .section {
+        margin-bottom: 20px;
+    }
+
+    .section-heading {
+        padding: 10px 13px;
+        border-radius: 7px 7px 0 0;
+        color: white;
+        font-weight: 900;
+        font-size: 14px;
+    }
+
+    .employee-heading {
+        background: #0b3d91;
+    }
+
+    .earnings-heading {
+        background: #0891b2;
+    }
+
+    .deductions-heading {
+        background: #dc6b19;
+    }
+
+    .net-heading {
+        background: #15803d;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #d5dfeb;
+        padding: 9px 11px;
+        font-size: 11px;
+    }
+
+    th {
+        width: 38%;
+        background: #eff6ff;
+        text-align: left;
+    }
+
+    .money {
+        text-align: right;
+        font-weight: 800;
+    }
+
+    .total th,
+    .total td {
+        background: #e0f2fe;
+        font-weight: 900;
+    }
+
+    .deduction th,
+    .deduction td {
+        background: #fff7ed;
+    }
+
+    .net th,
+    .net td {
+        background: #ecfdf5;
+        font-weight: 900;
+        font-size: 15px;
+        color: #15803d;
+    }
+
+    .footer {
+        border-top: 2px solid #0b3d91;
+        padding: 12px;
+        text-align: center;
+        color: #64748b;
+        font-size: 10px;
+    }
+
+    @media print {
+
+        @page {
+            size: A4;
+            margin: 10mm;
+        }
+
+        body {
+            background: white;
+        }
+
+        .toolbar {
+            display: none !important;
+        }
+
+        .paper {
+            width: 100%;
+            min-height: auto;
+            margin: 0;
+            box-shadow: none;
+        }
+
+        .header,
+        .section-heading,
+        th,
+        .total th,
+        .total td,
+        .deduction th,
+        .deduction td,
+        .net th,
+        .net td {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="toolbar">
+
+    <a class="back"
+       href="{% url 'hr_payroll:staff_payslip_view' payslip.pk %}">
+        ← Back to Payslip
+    </a>
+
+    <a class="pdf"
+       href="{% url 'hr_payroll:staff_payslip_pdf' payslip.pk %}"
+       target="_blank">
+        📄 PDF
+    </a>
+
+    <a class="print-button"
+       href="javascript:window.print();">
+        🖨 Print
+    </a>
+
+</div>
+
+
+<div class="paper">
+
+    <div class="header">
+
+        {% if branding and branding.logo %}
+            <img class="logo"
+                 src="{{ branding.logo.url }}"
+                 alt="{{ branding.school_name }}">
+        {% endif %}
+
+        <h1 class="school-name">
+            {% if branding and branding.school_name %}
+                {{ branding.school_name }}
+            {% else %}
+                School
+            {% endif %}
+        </h1>
+
+        {% if branding and branding.motto %}
+            <div class="motto">
+                {{ branding.motto }}
+            </div>
+        {% endif %}
+
+        <div class="contacts">
+
+            {% if branding.phone %}
+                {{ branding.phone }}
+            {% endif %}
+
+            {% if branding.alternative_phone %}
+                | {{ branding.alternative_phone }}
+            {% endif %}
+
+            {% if branding.email %}
+                | {{ branding.email }}
+            {% endif %}
+
+            {% if branding.website %}
+                | {{ branding.website }}
+            {% endif %}
+
+        </div>
+
+        <div class="banner">
+            STAFF PAYSLIP
+        </div>
+
+        <div class="payslip-number">
+            Payslip No:
+            <strong>{{ payslip.payslip_number }}</strong>
+        </div>
+
+    </div>
+
+
+    <div class="content">
+
+        <div class="section">
+
+            <div class="section-heading employee-heading">
+                EMPLOYEE INFORMATION
+            </div>
+
+            <table>
+
+                <tr>
+                    <th>Employee Number</th>
+                    <td>{{ employee.employee_number|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Employee Name</th>
+                    <td>{{ employee.full_name|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Department</th>
+                    <td>{{ employee.department|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Position</th>
+                    <td>{{ employee.position|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Payroll Period</th>
+                    <td>{{ period|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Generated</th>
+                    <td>{{ payslip.generated_at|date:"d M Y H:i" }}</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div class="section">
+
+            <div class="section-heading earnings-heading">
+                EARNINGS
+            </div>
+
+            <table>
+
+                <tr>
+                    <th>Basic Salary</th>
+                    <td class="money">
+                        KSh {{ record.basic_salary|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Total Allowances</th>
+                    <td class="money">
+                        KSh {{ record.total_allowances|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="total">
+                    <th>Gross Salary</th>
+                    <td class="money">
+                        KSh {{ record.gross_salary|floatformat:2 }}
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div class="section">
+
+            <div class="section-heading deductions-heading">
+                DEDUCTIONS
+            </div>
+
+            <table>
+
+                <tr class="deduction">
+                    <th>PAYE</th>
+                    <td class="money">
+                        KSh {{ record.paye|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="deduction">
+                    <th>Personal Relief</th>
+                    <td class="money">
+                        KSh {{ personal_relief|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="deduction">
+                    <th>NSSF</th>
+                    <td class="money">
+                        KSh {{ record.nssf|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="deduction">
+                    <th>SHA</th>
+                    <td class="money">
+                        KSh {{ record.sha|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="deduction">
+                    <th>Housing Levy</th>
+                    <td class="money">
+                        KSh {{ record.housing_levy|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="deduction">
+                    <th>
+                        Loan Deduction
+                        <small style="display:block;font-weight:normal;">
+                            Balance Remaining:
+                            KSh {{ loan_remaining_balance|floatformat:2 }}
+                        </small>
+                    </th>
+                    <td class="money">
+                        KSh {{ record.loan_deductions|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="deduction">
+                    <th>Other Deductions</th>
+                    <td class="money">
+                        KSh {{ record.other_deductions|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr class="total">
+                    <th>Total Deductions</th>
+                    <td class="money">
+                        KSh {{ record.total_deductions|floatformat:2 }}
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div class="section">
+
+            <div class="section-heading net-heading">
+                NET SALARY
+            </div>
+
+            <table>
+
+                <tr class="net">
+                    <th>NET PAY</th>
+                    <td class="money">
+                        KSh {{ record.net_salary|floatformat:2 }}
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+
+        This payslip is generated electronically by the school payroll system.
+
+        {% if branding.additional_information %}
+            <br>{{ branding.additional_information }}
+        {% endif %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

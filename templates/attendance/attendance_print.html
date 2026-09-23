@@ -1,0 +1,771 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<title>Attendance Report</title>
+
+<style>
+
+@page {
+    size: A4 portrait;
+    margin: 8mm 8mm 10mm 8mm;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #111;
+    background: white;
+    font-size: 10px;
+}
+
+/* =====================================================
+   REPORT CONTAINER
+   ===================================================== */
+
+.report {
+    width: 100%;
+    max-width: 194mm;
+    margin: 0 auto;
+}
+
+/* =====================================================
+   SCHOOL HEADER
+   ===================================================== */
+
+.school-header {
+    border: 1.5px solid #111;
+    padding: 7px 10px;
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.school-name {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.school-motto {
+    font-size: 9px;
+    font-style: italic;
+    margin-top: 2px;
+}
+
+.report-title {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px solid #777;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+}
+
+/* =====================================================
+   REPORT INFORMATION
+   ===================================================== */
+
+.report-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    border: 1px solid #222;
+    margin-bottom: 6px;
+}
+
+.info-item {
+    padding: 5px 7px;
+    border-right: 1px solid #aaa;
+}
+
+.info-item:last-child {
+    border-right: none;
+}
+
+.info-label {
+    font-size: 7.5px;
+    text-transform: uppercase;
+    color: #555;
+    font-weight: 700;
+}
+
+.info-value {
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+/* =====================================================
+   STATISTICS
+   ===================================================== */
+
+.statistics {
+    display: grid;
+    grid-template-columns:
+        1fr
+        1fr
+        1fr
+        1fr
+        1.2fr;
+
+    gap: 4px;
+    margin-bottom: 7px;
+}
+
+.stat-box {
+    border: 1px solid #222;
+    min-height: 45px;
+    padding: 5px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.stat-label {
+    font-size: 7.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #444;
+}
+
+.stat-number {
+    font-size: 17px;
+    font-weight: 800;
+    margin-top: 2px;
+}
+
+.attendance-box {
+    border: 2px solid #111;
+}
+
+.attendance-box .stat-number {
+    font-size: 20px;
+}
+
+/* =====================================================
+   ANALYSIS BAR
+   ===================================================== */
+
+.analysis {
+    border: 1px solid #222;
+    padding: 5px 7px;
+    margin-bottom: 7px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.analysis-title {
+    font-weight: 800;
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+.analysis-text {
+    font-size: 9px;
+}
+
+/* =====================================================
+   ATTENDANCE TABLE
+   ===================================================== */
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.attendance-table th {
+    background: #222;
+    color: white;
+    border: 1px solid #222;
+    padding: 5px 3px;
+    font-size: 8px;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.attendance-table td {
+    border: 1px solid #999;
+    padding: 4px 3px;
+    font-size: 8.5px;
+    height: 22px;
+}
+
+.attendance-table tbody tr:nth-child(even) {
+    background: #f5f5f5;
+}
+
+.col-no {
+    width: 6%;
+    text-align: center;
+}
+
+.col-admission {
+    width: 12%;
+    text-align: center;
+}
+
+.col-name {
+    width: 28%;
+}
+
+.col-class {
+    width: 10%;
+    text-align: center;
+}
+
+.col-stream {
+    width: 9%;
+    text-align: center;
+}
+
+.col-date {
+    width: 12%;
+    text-align: center;
+}
+
+.col-status {
+    width: 11%;
+    text-align: center;
+}
+
+.col-remarks {
+    width: 12%;
+}
+
+/* =====================================================
+   STATUS
+   ===================================================== */
+
+.status {
+    font-weight: 800;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.status-present {
+    color: #111;
+}
+
+.status-absent {
+    color: #111;
+}
+
+.status-late {
+    color: #111;
+}
+
+.status-excused {
+    color: #111;
+}
+
+/* =====================================================
+   FOOTER
+   ===================================================== */
+
+.footer {
+    margin-top: 12px;
+    border-top: 1px solid #222;
+    padding-top: 7px;
+}
+
+.signature-area {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-top: 12px;
+}
+
+.signature {
+    border-top: 1px solid #222;
+    padding-top: 4px;
+    font-size: 8px;
+}
+
+.generated {
+    text-align: right;
+    font-size: 7px;
+    color: #666;
+    margin-top: 8px;
+}
+
+/* =====================================================
+   EMPTY REPORT
+   ===================================================== */
+
+.empty {
+    border: 1px solid #999;
+    padding: 20px;
+    text-align: center;
+    font-size: 11px;
+}
+
+/* =====================================================
+   PRINT
+   ===================================================== */
+
+.no-print {
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+.print-button {
+    border: none;
+    background: #222;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+@media print {
+
+    body {
+        background: white;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .report {
+        max-width: none;
+    }
+
+    .attendance-table thead {
+        display: table-header-group;
+    }
+
+    .attendance-table tr {
+        page-break-inside: avoid;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="report">
+
+    <!-- PRINT BUTTON -->
+    <div class="no-print">
+        <button
+            class="print-button"
+            onclick="window.print()"
+        >
+            PRINT REPORT
+        </button>
+    </div>
+
+
+    <!-- =================================================
+         SCHOOL HEADER
+         ================================================= -->
+
+    <div class="school-header">
+
+        {% if branding and branding.logo %}
+            <div style="margin-bottom:5px;">
+                <img
+                    src="{{ branding.logo.url }}"
+                    alt="{{ branding.school_name }}"
+                    style="max-height:55px; max-width:180px; object-fit:contain;"
+                >
+            </div>
+        {% endif %}
+
+        <div class="school-name">
+            {% if branding and branding.school_name %}
+                {{ branding.school_name }}
+            {% else %}
+                School
+            {% endif %}
+        </div>
+
+        {% if branding and branding.motto %}
+            <div class="school-motto">
+                {{ branding.motto }}
+            </div>
+        {% endif %}
+
+        <div class="report-title">
+            ATTENDANCE ANALYSIS REPORT
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         REPORT INFORMATION
+         ================================================= -->
+
+    <div class="report-info">
+
+        <div class="info-item">
+
+            <div class="info-label">
+                Class
+            </div>
+
+            <div class="info-value">
+
+                {% if selected_class %}
+                    {{ selected_class }}
+                {% else %}
+                    Whole School
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+            <div class="info-label">
+                Stream
+            </div>
+
+            <div class="info-value">
+
+                {% if selected_stream %}
+                    {{ selected_stream }}
+                {% else %}
+                    All Streams
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        <div class="info-item">
+
+            <div class="info-label">
+                Reporting Period
+            </div>
+
+            <div class="info-value">
+
+                {% if date_from and date_to %}
+
+                    {{ date_from }} — {{ date_to }}
+
+                {% elif date_from %}
+
+                    From {{ date_from }}
+
+                {% elif date_to %}
+
+                    Up to {{ date_to }}
+
+                {% else %}
+
+                    All Dates
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         TOP STATISTICS
+         ================================================= -->
+
+    <div class="statistics">
+
+
+        <div class="stat-box">
+
+            <div class="stat-label">
+                Total Records
+            </div>
+
+            <div class="stat-number">
+                {{ total_records }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div class="stat-label">
+                Present
+            </div>
+
+            <div class="stat-number">
+                {{ present_count }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div class="stat-label">
+                Absent
+            </div>
+
+            <div class="stat-number">
+                {{ absent_count }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-box">
+
+            <div class="stat-label">
+                Late
+            </div>
+
+            <div class="stat-number">
+                {{ late_count }}
+            </div>
+
+        </div>
+
+
+        <div class="stat-box attendance-box">
+
+            <div class="stat-label">
+                Attendance Rate
+            </div>
+
+            <div class="stat-number">
+                {{ attendance_percentage }}%
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ANALYSIS
+         ================================================= -->
+
+    <div class="analysis">
+
+        <div class="analysis-title">
+            Attendance Summary
+        </div>
+
+        <div class="analysis-text">
+
+            Present:
+            <strong>{{ present_count }}</strong>
+
+            &nbsp; | &nbsp;
+
+            Absent:
+            <strong>{{ absent_count }}</strong>
+
+            &nbsp; | &nbsp;
+
+            Late:
+            <strong>{{ late_count }}</strong>
+
+            &nbsp; | &nbsp;
+
+            Excused:
+            <strong>{{ excused_count }}</strong>
+
+            &nbsp; | &nbsp;
+
+            Attendance:
+            <strong>{{ attendance_percentage }}%</strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ATTENDANCE TABLE
+         ================================================= -->
+
+    {% if records %}
+
+    <table class="attendance-table">
+
+        <thead>
+
+            <tr>
+
+                <th class="col-no">
+                    #
+                </th>
+
+                <th class="col-admission">
+                    Admission
+                </th>
+
+                <th class="col-name">
+                    Learner Name
+                </th>
+
+                <th class="col-class">
+                    Class
+                </th>
+
+                <th class="col-stream">
+                    Stream
+                </th>
+
+                <th class="col-date">
+                    Date
+                </th>
+
+                <th class="col-status">
+                    Status
+                </th>
+
+                <th class="col-remarks">
+                    Remarks
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for record in records %}
+
+            <tr>
+
+                <td class="col-no">
+                    {{ forloop.counter }}
+                </td>
+
+
+                <td class="col-admission">
+
+                    {{ record.student.admission_no }}
+
+                </td>
+
+
+                <td class="col-name">
+
+                    {{ record.student.first_name }}
+
+                    {% if record.student.middle_name %}
+                        {{ record.student.middle_name }}
+                    {% endif %}
+
+                    {{ record.student.last_name }}
+
+                </td>
+
+
+                <td class="col-class">
+
+                    {{ record.student.class_name }}
+
+                </td>
+
+
+                <td class="col-stream">
+
+                    {{ record.student.stream }}
+
+                </td>
+
+
+                <td class="col-date">
+
+                    {{ record.date|date:"d/m/Y" }}
+
+                </td>
+
+
+                <td class="status">
+
+                    {{ record.get_status_display }}
+
+                </td>
+
+
+                <td class="col-remarks">
+
+                    {{ record.remarks|default:"—" }}
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    {% else %}
+
+    <div class="empty">
+
+        No attendance records were found
+        for the selected criteria.
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- =================================================
+         FOOTER
+         ================================================= -->
+
+    <div class="footer">
+
+        <div class="signature-area">
+
+            <div class="signature">
+                Class Teacher / Attendance Officer
+            </div>
+
+            <div class="signature">
+                School Administrator
+            </div>
+
+        </div>
+
+
+        <div class="generated">
+
+            Generated on
+            {% now "d/m/Y H:i" %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

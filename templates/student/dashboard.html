@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Portal - Eluhan ERP</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Eluhan ERP | Student Portal</a>
+            <span class="text-light">Welcome, <strong>{{ student.first_name }} {{ student.last_name }}</strong> ({{ student.class_name }} {{ student.stream }})</span>
+        </div>
+    </nav>
+    <div class="container my-4">
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm border-0 p-3 bg-white">
+                    <h2>Dashboard Overview</h2>
+                    <p class="text-muted mb-0">Student ID: {{ student.student_id }} | Admission No: {{ student.admission_number }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">Academic Assessments</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for a in assessments %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ a.subject.name }} ({{ a.assessment_type.name }})
+                                <span class="badge bg-success rounded-pill">Score: {{ a.score }}/100</span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-muted">No assessments recorded.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">Fee Summary & Records</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for f in fee_records %}
+                            <li class="list-group-item">
+                                <strong>{{ f }}</strong><br>
+                                Charged: ${{ f.amount_charged }} | Paid: ${{ f.amount_paid }} | <span class="text-danger">Balance: ${{ f.balance }}</span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-muted">No fee records available.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-info text-dark">Timetable Slots</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for t in timetable %}
+                            <li class="list-group-item">
+                                <strong>{{ t.day }} ({{ t.period }})</strong>: {{ t.subject.name }} at Room {{ t.room.name|default:"TBA" }}
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-muted">No timetable entries found.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-warning text-dark">Noticeboard</div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            {% for n in notices %}
+                            <li class="list-group-item">
+                                <strong>{{ n.title }}</strong><br>
+                                <small class="text-muted">{{ n.content|truncatechars:100 }}</small>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-muted">No active announcements.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

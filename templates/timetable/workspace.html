@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Timetable Workspace</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f3f6fb;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172033;
+}
+
+.header {
+    background: #063b91;
+    color: white;
+    padding: 24px 30px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.header p {
+    margin: 6px 0 0;
+    opacity: .9;
+}
+
+.toolbar {
+    background: white;
+    padding: 15px 25px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #dce3ed;
+}
+
+.btn {
+    display: inline-block;
+    padding: 9px 14px;
+    border-radius: 7px;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.btn-blue {
+    background: #063b91;
+    color: white;
+}
+
+.btn-green {
+    background: #198754;
+    color: white;
+}
+
+.btn-light {
+    background: #eef3f9;
+    color: #063b91;
+}
+
+.btn-orange {
+    background: #f59f00;
+    color: white;
+}
+
+.btn-red {
+    background: #dc3545;
+    color: white;
+}
+
+.message {
+    margin: 15px 25px;
+    padding: 12px 15px;
+    background: white;
+    border-left: 5px solid #063b91;
+    border-radius: 6px;
+}
+
+.term-box {
+    margin: 18px 25px;
+    padding: 15px 18px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+
+.term-box strong {
+    color: #063b91;
+}
+
+.grid-title {
+    margin: 22px 25px 10px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #063b91;
+}
+
+.grid-container {
+    margin: 0 25px 40px;
+    background: white;
+    border-radius: 10px;
+    overflow-x: auto;
+    box-shadow: 0 3px 16px rgba(0,0,0,.08);
+}
+
+.timetable {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.timetable th {
+    background: #063b91;
+    color: white;
+    padding: 14px 8px;
+    text-align: center;
+    border-right: 1px solid rgba(255,255,255,.25);
+}
+
+.timetable th.period-header {
+    width: 125px;
+}
+
+.timetable td {
+    border: 1px solid #dce3ed;
+    vertical-align: top;
+    height: 125px;
+    padding: 5px;
+}
+
+.period-cell {
+    background: #eef3f9;
+    text-align: center;
+    font-weight: 700;
+    color: #063b91;
+    padding: 12px 5px !important;
+}
+
+.period-name {
+    font-size: 14px;
+}
+
+.period-time {
+    display: block;
+    margin-top: 5px;
+    font-size: 11px;
+    color: #667085;
+    font-weight: normal;
+}
+
+.break-cell {
+    background: #fff8e6 !important;
+    text-align: center;
+    vertical-align: middle !important;
+    color: #946200;
+    font-weight: 700;
+}
+
+.lunch-cell {
+    background: #f1f3f5 !important;
+    text-align: center;
+    vertical-align: middle !important;
+    color: #495057;
+    font-weight: 700;
+}
+
+.activity-cell {
+    background: #eef7ff !important;
+    text-align: center;
+    vertical-align: middle !important;
+    color: #075985;
+    font-weight: 700;
+}
+
+.lesson {
+    background: #f7faff;
+    border: 1px solid #c7d5e8;
+    border-left: 5px solid #063b91;
+    border-radius: 7px;
+    padding: 8px;
+    margin: 2px;
+    min-height: 105px;
+}
+
+.lesson.locked {
+    border-left-color: #198754;
+    background: #f3fff8;
+}
+
+.subject {
+    color: #063b91;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.meta {
+    color: #475467;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.actions {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 7px;
+}
+
+.actions .btn {
+    padding: 5px 7px;
+    font-size: 10px;
+}
+
+.empty {
+    padding: 70px 30px;
+    text-align: center;
+    background: white;
+    margin: 25px;
+    border-radius: 10px;
+}
+
+.empty h2 {
+    color: #063b91;
+}
+
+.count {
+    margin-left: auto;
+    font-weight: 700;
+    color: #063b91;
+}
+
+.debug-box {
+    margin: 10px 25px;
+    padding: 10px 14px;
+    background: #e8f4ff;
+    border: 1px solid #b6d7f5;
+    border-radius: 7px;
+    font-size: 12px;
+    color: #075985;
+}
+
+/* TIMETABLE GRID */
+
+.grid-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);
+}
+
+.timetable {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.timetable th,
+.timetable td {
+    border: 1px solid #d9e1ec;
+    vertical-align: top;
+}
+
+.day-header {
+    width: 130px;
+    min-width: 130px;
+    background: #123b82;
+    color: white;
+    padding: 14px;
+    text-align: center;
+    position: sticky;
+    left: 0;
+    z-index: 5;
+}
+
+.period-header {
+    min-width: 145px;
+    background: #123b82;
+    color: white;
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.period-header .time {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    margin-top: 5px;
+    opacity: .85;
+}
+
+.day-cell {
+    width: 130px;
+    min-width: 130px;
+    background: #eef4ff;
+    color: #123b82;
+    text-align: center;
+    padding: 16px 8px;
+    font-size: 15px;
+    position: sticky;
+    left: 0;
+    z-index: 4;
+}
+
+.lesson-cell {
+    min-width: 145px;
+    height: 105px;
+    padding: 6px;
+    background: #fff;
+}
+
+.lesson-card {
+    height: 100%;
+    min-height: 88px;
+    border-radius: 8px;
+    padding: 8px;
+    background: #f1f6ff;
+    border-left: 4px solid #123b82;
+    box-sizing: border-box;
+}
+
+.lesson-subject {
+    font-weight: 800;
+    font-size: 13px;
+    color: #123b82;
+    margin-bottom: 4px;
+}
+
+.lesson-class {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.lesson-teacher,
+.lesson-room {
+    font-size: 11px;
+    margin-top: 3px;
+    color: #555;
+}
+
+.lesson-actions {
+    margin-top: 7px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.lesson-actions a {
+    font-size: 10px;
+    text-decoration: none;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: #e4ebf7;
+    color: #123b82;
+}
+
+.special-period {
+    height: 100%;
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    color: #777;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 1px;
+}
+
+@media print {
+    .grid-container {
+        overflow: visible;
+        box-shadow: none;
+    }
+
+    .timetable {
+        width: 100%;
+    }
+
+    .lesson-actions {
+        display: none;
+    }
+
+    .day-cell,
+    .day-header {
+        position: static;
+    }
+}
+
+
+/* COMPACT TIMETABLE NAVIGATION */
+.timetable-nav-compact a{
+    font-size:11px !important;
+    padding:6px 9px !important;
+    border-radius:6px !important;
+    line-height:1.1 !important;
+}
+
+</style>
+
+<style>
+
+.day-header,
+.class-header,
+.period-header {
+    background: #123b82;
+    color: white;
+    text-align: center;
+    padding: 12px 8px;
+    font-weight: 800;
+    border: 1px solid #d5deeb;
+}
+
+.day-header {
+    min-width: 120px;
+}
+
+.class-header {
+    min-width: 140px;
+}
+
+.period-header {
+    min-width: 145px;
+}
+
+.period-header .time {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    margin-top: 4px;
+}
+
+.day-cell {
+    background: #e9f1ff;
+    color: #123b82;
+    text-align: center;
+    vertical-align: middle !important;
+    font-size: 15px;
+    font-weight: 800;
+    border: 1px solid #d5deeb;
+}
+
+.class-cell {
+    background: #f5f8fc;
+    color: #123b82;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle !important;
+    border: 1px solid #d5deeb;
+}
+
+.class-cell span {
+    display: block;
+    font-size: 11px;
+    color: #666;
+    margin-top: 3px;
+}
+
+.lesson-cell {
+    min-width: 145px;
+    height: 105px;
+    padding: 5px;
+    vertical-align: top;
+    border: 1px solid #d5deeb;
+    background: white;
+}
+
+.lesson-card {
+    min-height: 85px;
+    height: 100%;
+    padding: 8px;
+    border-left: 4px solid #123b82;
+    border-radius: 7px;
+    background: #f1f6ff;
+    box-sizing: border-box;
+}
+
+.lesson-subject {
+    font-size: 13px;
+    font-weight: 800;
+    color: #123b82;
+}
+
+.lesson-teacher,
+.lesson-room {
+    font-size: 11px;
+    color: #555;
+    margin-top: 4px;
+}
+
+.lesson-actions {
+    margin-top: 7px;
+    display: flex;
+    gap: 4px;
+}
+
+.lesson-actions a {
+    font-size: 9px;
+    padding: 3px 5px;
+    background: #e1e9f7;
+    color: #123b82;
+    text-decoration: none;
+    border-radius: 3px;
+}
+
+.special-period {
+    min-height: 85px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #777;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.empty-timetable {
+    padding: 40px;
+    text-align: center;
+    color: #777;
+}
+
+.grid-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.timetable {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+}
+
+</style>
+
+
+<style>
+.lesson-cell[colspan="2"] .lesson-card {
+    min-width: 285px;
+}
+
+.lesson-cell[colspan="3"] .lesson-card {
+    min-width: 430px;
+}
+
+.lesson-cell[colspan="4"] .lesson-card {
+    min-width: 575px;
+}
+
+.lesson-card {
+    overflow: hidden;
+}
+
+.lesson-duration {
+    font-size: 10px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: #666;
+}
+</style>
+
+
+<style>
+.no-lessons {
+    color: #999;
+    font-size: 11px;
+    font-style: italic;
+}
+</style>
+
+<style>
+.publish-status-panel {
+    margin: 18px 25px;
+    padding: 16px 18px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #dce3ed;
+    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+}
+
+.publish-status-grid {
+    display: flex;
+    gap: 18px;
+    align-items: stretch;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.publish-status-card {
+    flex: 1;
+    min-width: 220px;
+    padding: 13px;
+    border-radius: 8px;
+    background: #f7f9fc;
+    border: 1px solid #dce3ed;
+}
+
+.publish-status-card strong {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.status-draft {
+    color: #946200;
+}
+
+.status-published {
+    color: #198754;
+}
+
+.status-review {
+    color: #dc3545;
+}
+
+.publish-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+</style>
+
+</head>
+
+<body>
+
+<div style="padding:10px 18px;background:#ffffff;border-bottom:1px solid #ddd;">
+    <div class="timetable-nav-compact" style="display:flex;gap:5px;flex-wrap:wrap;">
+
+        <a href="{% url 'timetable:dashboard' %}">
+            Dashboard
+        </a>
+
+        <a href="{% url 'timetable:requirements' %}">
+            Requirements
+        </a>
+
+        <a href="{% url 'timetable:generation_control' %}">
+            Generate / Regenerate
+        </a>
+
+        <a href="{% url 'timetable:smart_conflicts' %}">
+            Conflict Intelligence
+        </a>
+
+        <a href="{% url 'timetable:control_centre' %}">
+            Control Centre
+        </a>
+
+    </div>
+</div>
+
+
+<div class="header">
+    <h1>Timetable Workspace</h1>
+
+    <p>
+        {% if term %}
+            {{ term }}
+        {% else %}
+            No timetable term selected
+        {% endif %}
+    </p>
+</div>
+
+<div class="toolbar">
+
+    <a class="btn btn-blue"
+       href="{% url 'timetable:setup' %}">
+        Academic Setup
+    </a>
+
+    <a class="btn btn-light"
+       href="{% url 'timetable:requirement_builder' %}">
+        Lesson Requirements
+    </a>
+
+    <form method="post"
+          action="{% url 'timetable:generate' %}"
+          style="display:inline;">
+        {% csrf_token %}
+
+        <button type="submit"
+                class="btn btn-green"
+                onclick="return confirm('Generate timetable for the selected term? Unlocked lessons will be regenerated.')">
+            Generate Timetable
+        </button>
+    </form>
+
+    {% if lessons %}
+        <span class="count">
+            {{ lessons|length }} lesson{{ lessons|length|pluralize }} scheduled
+        </span>
+    {% endif %}
+
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="message">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if term %}
+
+<div class="term-box">
+    <strong>Active Timetable:</strong>
+    {{ term }}
+</div>
+
+{% endif %}
+
+{% if not term %}
+
+<div class="empty">
+    <h2>Select Academic Year &amp; Term</h2>
+
+    <p>
+        Choose the academic year and term before generating the timetable.
+    </p>
+
+    <a class="btn btn-blue"
+       href="{% url 'timetable:setup' %}">
+        Open Academic Setup
+    </a>
+</div>
+
+{% elif not lessons %}
+
+<div class="empty">
+    <h2>No Timetable Lessons Yet</h2>
+
+    <p>
+        Create Lesson Requirements and then generate the timetable.
+    </p>
+
+    <a class="btn btn-blue"
+       href="{% url 'timetable:requirement_builder' %}">
+        Add Lesson Requirements
+    </a>
+</div>
+
+{% else %}
+
+<div class="debug-box">
+    {% if draft_version %}
+        Showing {{ lessons|length }} draft lesson{{ lessons|length|pluralize }}
+        for {{ term }}.
+    {% elif published_version %}
+        Showing {{ lessons|length }} published lesson{{ lessons|length|pluralize }}
+        for {{ term }}.
+    {% else %}
+        Showing {{ lessons|length }} lesson{{ lessons|length|pluralize }}
+        for {{ term }}.
+    {% endif %}
+    Across {{ days|length }} school days and {{ periods|length }} timetable periods.
+</div>
+
+<div class="grid-title">
+    {% if draft_version %}
+        Draft Timetable
+    {% elif published_version %}
+        Published Timetable
+    {% else %}
+        Timetable Workspace
+    {% endif %}
+</div>
+
+
+
+<div class="grid-container">
+<table class="timetable">
+
+<thead>
+<tr>
+    <th class="day-header">DAY</th>
+    <th class="class-header">GRADE / CLASS</th>
+
+    {% for period in periods %}
+    <th class="period-header">
+        {{ period.name }}
+        <span class="time">
+            {{ period.start_time|time:"H:i" }} - {{ period.end_time|time:"H:i" }}
+        </span>
+    </th>
+    {% endfor %}
+</tr>
+</thead>
+
+<tbody>
+
+{% for row in master_rows %}
+
+<tr>
+
+    {% if row.first_day_row %}
+    <td class="day-cell" rowspan="{{ row.day_rowspan }}">
+        <strong>{{ row.day.name }}</strong>
+    </td>
+    {% endif %}
+
+    <td class="class-cell">
+        {% if row.class_group %}
+            <strong>{{ row.class_group.name }}</strong>
+            {% if row.class_group.stream %}
+            <span>{{ row.class_group.stream }}</span>
+            {% endif %}
+        {% else %}
+            <span class="no-lessons">No lessons</span>
+        {% endif %}
+    </td>
+
+    {% for cell in row.cells %}
+
+    <td class="lesson-cell" colspan="{{ cell.colspan }}">
+
+        {% if cell.period.is_break %}
+            <div class="special-period">BREAK</div>
+
+        {% elif cell.period.is_lunch %}
+            <div class="special-period">LUNCH</div>
+
+        {% elif cell.period.is_activity %}
+            <div class="special-period">ACTIVITY</div>
+
+        {% elif cell.lesson %}
+
+            <div class="lesson-card">
+
+                <div class="lesson-subject">
+                    {{ cell.lesson.subject.name }}
+                </div>
+
+                {% if cell.lesson.duration_periods > 1 %}
+                <div class="lesson-duration">
+                    {{ cell.lesson.duration_periods }} PERIOD LESSON
+                </div>
+                {% endif %}
+
+                {% if cell.lesson.teacher %}
+                <div class="lesson-teacher">
+                    {{ cell.lesson.teacher.name }}
+                </div>
+                {% endif %}
+
+                {% if cell.lesson.room %}
+                <div class="lesson-room">
+                    {{ cell.lesson.room.name }}
+                </div>
+                {% endif %}
+
+                <div class="lesson-actions">
+                    <a href="{% url 'timetable:timetable_lesson_edit' cell.lesson.id %}">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'timetable:timetable_lesson_lock' cell.lesson.id %}">
+                        {% if cell.lesson.locked %}Unlock{% else %}Lock{% endif %}
+                    </a>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </td>
+
+    {% endfor %}
+
+</tr>
+
+{% empty %}
+
+<tr>
+    <td colspan="{{ periods|length|add:2 }}" class="empty-timetable">
+        No lessons have been generated for this term.
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+</div>
+
+
+
+{% endif %}
+
+</body>
+</html>

@@ -1,0 +1,330 @@
+﻿{% extends "professional_documents/base.html" %}
+
+{% block professional_content %}
+
+<div class="card">
+    <div class="card-body">
+
+        <h2>Create Professional Document</h2>
+
+        <p class="text-muted">
+            Select the academic period and one of your assigned
+            classes and subjects.
+        </p>
+
+        <form method="post" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="row g-3">
+
+                <!-- DOCUMENT TYPE -->
+                <div class="col-md-4">
+                    <label class="form-label">Document Type</label>
+
+                    <select name="document_type"
+                            id="documentType"
+                            class="form-select"
+                            required>
+
+                        <option value="">Select document</option>
+
+                        {% for value,label in document_types %}
+                        <option value="{{ value }}">
+                            {{ label }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <!-- ACADEMIC YEAR -->
+                <div class="col-md-4">
+                    <label class="form-label">Academic Year</label>
+
+                    <select name="academic_year"
+                            class="form-select"
+                            required>
+
+                        <option value="">Select year</option>
+
+                        {% for year in academic_years %}
+                        <option value="{{ year.pk }}">
+                            {{ year.year }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <!-- TERM -->
+                <div class="col-md-4">
+                    <label class="form-label">Term</label>
+
+                    <select name="term"
+                            class="form-select"
+                            required>
+
+                        <option value="">Select term</option>
+
+                        {% for term in terms %}
+                        <option value="{{ term.pk }}">
+                            {{ term.name }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <!-- ASSIGNMENT -->
+                <div class="col-md-12">
+                    <label class="form-label">
+                        Assigned Class / Stream / Subject
+                    </label>
+
+                    <select name="class_assignment"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Select assigned teaching assignment
+                        </option>
+
+                        {% for item in assignments %}
+                        <option value="{{ item.value }}">
+                            {{ item.label }}
+                        </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <!-- ================================================= -->
+                <!-- SCHEME OF WORK DATE RANGE -->
+                <!-- ================================================= -->
+
+                <div class="col-md-6"
+                     id="schemeFromDateBox"
+                     style="display:none;">
+
+                    <label class="form-label">
+                        From Date
+                    </label>
+
+                    <input type="date"
+                           name="from_date"
+                           id="fromDate"
+                           class="form-control">
+
+                </div>
+
+                <div class="col-md-6"
+                     id="schemeToDateBox"
+                     style="display:none;">
+
+                    <label class="form-label">
+                        To Date
+                    </label>
+
+                    <input type="date"
+                           name="to_date"
+                           id="toDate"
+                           class="form-control">
+
+                </div>
+
+                <!-- ================================================= -->
+                <!-- LESSON DATE -->
+                <!-- ================================================= -->
+
+                <div class="col-md-4"
+                     id="lessonDateBox">
+
+                    <label class="form-label">
+                        Lesson Date
+                    </label>
+
+                    <input type="date"
+                           name="lesson_date"
+                           class="form-control">
+
+                </div>
+
+                <!-- START TIME -->
+
+                <div class="col-md-4"
+                     id="startTimeBox">
+
+                    <label class="form-label">
+                        Start Time
+                    </label>
+
+                    <input type="time"
+                           name="start_time"
+                           class="form-control">
+
+                </div>
+
+                <!-- END TIME -->
+
+                <div class="col-md-4"
+                     id="endTimeBox">
+
+                    <label class="form-label">
+                        End Time
+                    </label>
+
+                    <input type="time"
+                           name="end_time"
+                           class="form-control">
+
+                </div>
+
+                <!-- TITLE -->
+
+                <div class="col-12">
+                    <label class="form-label">
+                        Title
+                    </label>
+
+                    <input type="text"
+                           name="title"
+                           class="form-control"
+                           placeholder="Document title">
+                </div>
+
+                <!-- CONTENT -->
+
+                <div class="col-12"
+                     id="contentBox">
+
+                    <label class="form-label">
+                        Content
+                    </label>
+
+                    <textarea name="content"
+                              class="form-control"
+                              rows="14"
+                              placeholder="Enter your professional document here..."></textarea>
+
+                </div>
+
+                <!-- FILE -->
+
+                <div class="col-12"
+                     id="uploadBox">
+
+                    <label class="form-label">
+                        Upload PDF / Word
+                    </label>
+
+                    <input type="file"
+                           name="uploaded_file"
+                           class="form-control"
+                           accept=".pdf,.doc,.docx">
+
+                    <small class="text-muted">
+                        Schemes of Work require a PDF or Word upload.
+                        Lesson Plans may be typed or uploaded.
+                    </small>
+
+                </div>
+
+                <!-- BUTTONS -->
+
+                <div class="col-12">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Save Draft
+
+                    </button>
+
+                    <a href="{% url 'professional_documents:portal' %}"
+                       class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const type =
+        document.getElementById("documentType");
+
+    const schemeFrom =
+        document.getElementById("schemeFromDateBox");
+
+    const schemeTo =
+        document.getElementById("schemeToDateBox");
+
+    const lessonDate =
+        document.getElementById("lessonDateBox");
+
+    const startTime =
+        document.getElementById("startTimeBox");
+
+    const endTime =
+        document.getElementById("endTimeBox");
+
+    const content =
+        document.getElementById("contentBox");
+
+    function updateDocumentFields() {
+
+        const selected =
+            type.value;
+
+        if (selected === "SCHEME") {
+
+            // Scheme = termly date range
+            schemeFrom.style.display = "block";
+            schemeTo.style.display = "block";
+
+            // No lesson timing for schemes
+            lessonDate.style.display = "none";
+            startTime.style.display = "none";
+            endTime.style.display = "none";
+
+            // Scheme is uploaded, not typed
+            content.style.display = "none";
+
+        } else {
+
+            // Records and Lesson Plans
+            schemeFrom.style.display = "none";
+            schemeTo.style.display = "none";
+
+            lessonDate.style.display = "block";
+            startTime.style.display = "block";
+            endTime.style.display = "block";
+
+            content.style.display = "block";
+        }
+    }
+
+    type.addEventListener(
+        "change",
+        updateDocumentFields
+    );
+
+    updateDocumentFields();
+
+});
+
+</script>
+
+{% endblock %}

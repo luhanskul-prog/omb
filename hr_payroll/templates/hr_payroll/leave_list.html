@@ -1,0 +1,295 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 25px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 0;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .btn-primary {
+        background: #1769e0;
+        color: #fff;
+    }
+
+    .btn-success {
+        background: #198754;
+        color: #fff;
+    }
+
+    .btn-warning {
+        background: #f0ad00;
+        color: #111;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    .btn-info {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e8e8e8;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f5f7fa;
+        font-weight: 700;
+    }
+
+    tr:hover td {
+        background: #fafafa;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #eef2f7;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.07);
+    }
+
+    .stat-card .label {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+        font-size: 28px;
+        font-weight: 800;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Leave Management</h1>
+        </div>
+
+        <div class="actions">
+
+            <a class="btn btn-primary"
+               href="{% url 'hr_payroll:leave_add' %}">
+                + Apply for Leave
+            </a>
+
+            <a class="btn btn-secondary"
+               href="{% url 'hr_payroll:leave_type_list' %}">
+                Leave Types
+            </a>
+
+        </div>
+
+    </div>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Employee</th>
+                    <th>Leave Type</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Days</th>
+                    <th>Status</th>
+                    <th>Approved By</th>
+                    <th>Actions</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for leave in leave_applications %}
+
+                <tr>
+
+                    <td>{{ leave.employee.full_name }}</td>
+
+                    <td>{{ leave.leave_type.name }}</td>
+
+                    <td>{{ leave.start_date }}</td>
+
+                    <td>{{ leave.end_date }}</td>
+
+                    <td>{{ leave.days }}</td>
+
+                    <td>
+                        <span class="badge">
+                            {{ leave.get_status_display }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if leave.approved_by %}
+                            {{ leave.approved_by.full_name }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+
+                        <div class="actions">
+
+                            {% if leave.status == "PENDING" %}
+
+                                <form method="post"
+                                      action="{% url 'hr_payroll:leave_approve' leave.pk %}"
+                                      class="inline-form">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-success">
+                                        Approve
+                                    </button>
+
+                                </form>
+
+                                <form method="post"
+                                      action="{% url 'hr_payroll:leave_reject' leave.pk %}"
+                                      class="inline-form">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-danger"
+                                            onclick="return confirm('Reject this leave application?');">
+                                        Reject
+                                    </button>
+
+                                </form>
+
+                            {% elif leave.status == "APPROVED" %}
+
+                                <form method="post"
+                                      action="{% url 'hr_payroll:leave_cancel' leave.pk %}"
+                                      class="inline-form">
+
+                                    {% csrf_token %}
+
+                                    <button type="submit"
+                                            class="btn btn-warning"
+                                            onclick="return confirm('Cancel this approved leave?');">
+                                        Cancel
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="8" class="empty">
+                        No leave applications found.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

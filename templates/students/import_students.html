@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                📥 Import Students
+            </h2>
+
+            <p class="text-muted mb-0">
+                Bulk-upload learner records using CSV or Excel.
+            </p>
+        </div>
+
+        <a href="{% url 'student_management' %}"
+           class="btn btn-outline-secondary">
+            ← Student Management
+        </a>
+
+    </div>
+
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    {% if errors %}
+
+        <div class="alert alert-danger">
+
+            <h5 class="fw-bold">
+                Import not completed
+            </h5>
+
+            <p>
+                The file contains validation errors.
+                No students were imported.
+            </p>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-danger text-white">
+                <strong>
+                    Validation Errors
+                </strong>
+            </div>
+
+            <div class="card-body">
+
+                <p>
+                    File:
+                    <strong>{{ filename }}</strong>
+                </p>
+
+                <p>
+                    Total rows:
+                    <strong>{{ total_rows }}</strong>
+                    &nbsp; | &nbsp;
+                    Valid rows:
+                    <strong>{{ valid_rows }}</strong>
+                </p>
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered">
+
+                        <thead>
+                            <tr>
+                                <th>Row</th>
+                                <th>Errors</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for item in errors %}
+
+                            <tr>
+
+                                <td>
+                                    {{ item.row }}
+                                </td>
+
+                                <td>
+                                    {% for error in item.errors %}
+                                        <div>• {{ error }}</div>
+                                    {% endfor %}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="row g-4">
+
+        <div class="col-lg-7">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-3">
+                        Upload Student File
+                    </h5>
+
+                    <form method="post"
+                          enctype="multipart/form-data">
+
+                        {% csrf_token %}
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Student File
+                            </label>
+
+                            <input type="file"
+                                   name="student_file"
+                                   class="form-control"
+                                   accept=".csv,.xlsx"
+                                   required>
+
+                            <div class="form-text">
+                                Supported formats: CSV and Excel (.xlsx)
+                            </div>
+
+                        </div>
+
+
+                        <button type="submit"
+                                class="btn btn-primary">
+                            📥 Validate & Import Students
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-5">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+                        📄 Import Template
+                    </h5>
+
+                    <p class="text-muted">
+                        Download the official template before preparing
+                        your student records.
+                    </p>
+
+                    <a href="{% url 'student_import_template' %}"
+                       class="btn btn-outline-primary">
+                        📥 Download Template
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="card shadow-sm border-0 mt-4">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold">
+                        Required Information
+                    </h5>
+
+                    <ul class="mb-0">
+
+                        <li>First name</li>
+                        <li>Last name</li>
+                        <li>Gender</li>
+                        <li>Date of birth</li>
+                        <li>Class</li>
+                        <li>Stream</li>
+                        <li>Parent name</li>
+                        <li>Parent phone</li>
+
+                    </ul>
+
+                    <hr>
+
+                    <p class="small text-muted mb-0">
+                        Admission number is optional.
+                        If it is blank, the ERP automatically generates
+                        the next LUH admission number.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,148 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Rooms{% endblock %}
+{% block heading %}Rooms{% endblock %}
+{% block subheading %}Manage hostel rooms and capacity{% endblock %}
+
+{% block content %}
+
+<div class="card-box">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Hostel Rooms</h2>
+            <div class="card-sub">Room structure and bed capacity</div>
+        </div>
+
+        {% if erp_permission.add_room %}
+        <a href="{% url 'hostel:room_create' %}" class="btn-main">
+            + Add Room
+        </a>
+        {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="search-box">
+
+            <div class="row g-2">
+
+                <div class="col-md-5">
+                    <input
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search room or hostel..."
+                    >
+                </div>
+
+                <div class="col-md-5">
+
+                    <select name="hostel" class="form-select">
+
+                        <option value="">All Hostels</option>
+
+                        {% for hostel in hostels %}
+
+                        <option value="{{ hostel.id }}"
+                            {% if hostel_id == hostel.id|stringformat:"s" %}selected{% endif %}>
+                            {{ hostel.name }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn-main w-100">
+                        Filter
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                <tr>
+                    <th>Hostel</th>
+                    <th>Room</th>
+                    <th>Type</th>
+                    <th>Floor</th>
+                    <th>Capacity</th>
+                    <th>Beds</th>
+                    <th>Occupied</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for room in rooms %}
+
+                <tr>
+
+                    <td><strong>{{ room.hostel.name }}</strong></td>
+
+                    <td>{{ room.room_number }}</td>
+
+                    <td>{{ room.get_room_type_display }}</td>
+
+                    <td>{{ room.floor|default:"—" }}</td>
+
+                    <td>{{ room.capacity }}</td>
+
+                    <td>{{ room.beds.count }}</td>
+
+                    <td>
+                        {{ room.beds.all|length }}
+                    </td>
+
+                    <td>
+                        {% if room.is_active %}
+                            <span class="badge-soft green">Active</span>
+                        {% else %}
+                            <span class="badge-soft red">Inactive</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if erp_permission.change_room %}
+                        <a href="{% url 'hostel:room_edit' room.pk %}" class="btn-lightx">
+                            Edit
+                        </a>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="9" class="text-center text-muted p-5">
+                        No rooms found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

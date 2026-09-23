@@ -1,0 +1,1256 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timetable Print Preview</title>
+
+<style>
+
+/* DYNAMIC SCHOOL BRANDING PRINT CSS */
+.school-branding-print {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto 10px auto;
+    padding: 0;
+    color: #000;
+    line-height: 1.15;
+}
+
+.school-logo-print {
+    display: block;
+    margin: 0 auto 5px auto;
+    max-width: 95px;
+    max-height: 65px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+}
+
+.school-name-print {
+    font-size: 20px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+.school-motto-print {
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.school-contact-print,
+.school-address-print {
+    font-size: 9px;
+    font-weight: 500;
+    margin-top: 2px;
+}
+
+@media print {
+    .school-branding-print {
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    .school-logo-print {
+        max-width: 90px;
+        max-height: 60px;
+    }
+
+    .school-name-print {
+        font-size: 18px;
+    }
+
+    .school-motto-print {
+        font-size: 11px;
+    }
+
+    .school-contact-print,
+    .school-address-print {
+        font-size: 8px;
+    }
+}
+/* END DYNAMIC SCHOOL BRANDING PRINT CSS */
+
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f3f6fb;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172033;
+}
+
+.header {
+    background: #063b91;
+    color: white;
+    padding: 20px 25px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.header p {
+    margin: 5px 0 0;
+}
+
+.toolbar {
+    background: white;
+    padding: 12px 25px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #dce3ed;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.btn-blue {
+    background: #063b91;
+    color: white;
+}
+
+.btn-light {
+    background: #eef3f9;
+    color: #063b91;
+}
+
+.preview-types {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.preview-type {
+    display: inline-block;
+    padding: 7px 10px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 11px;
+    font-weight: 700;
+    background: #eef3f9;
+    color: #063b91;
+}
+
+.preview-type.active {
+    background: #063b91;
+    color: white;
+}
+
+.filters {
+    background: white;
+    margin: 15px 25px;
+    padding: 12px 15px;
+    border-radius: 8px;
+    display: flex;
+    gap: 10px;
+    align-items: end;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filter-group label {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.filter-group select {
+    min-width: 150px;
+    padding: 7px 9px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font-size: 12px;
+}
+
+.grid-title {
+    margin: 22px 25px 10px;
+    font-size: 20px;
+    font-weight: 800;
+    color: #063b91;
+}
+
+.grid-container {
+    width: 100%;
+    overflow-x: auto;
+    margin: 0 0 40px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);
+}
+
+.timetable {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.timetable th,
+.timetable td {
+    border: 1px solid #d9e1ec;
+    vertical-align: top;
+}
+
+.day-header {
+    width: 130px;
+    min-width: 130px;
+    background: #063b91;
+    color: white;
+    padding: 14px;
+    text-align: center;
+}
+
+.class-header {
+    width: 140px;
+    min-width: 140px;
+    background: #063b91;
+    color: white;
+    padding: 14px 8px;
+    text-align: center;
+}
+
+.period-header {
+    width: 145px;
+    min-width: 145px;
+    background: #063b91;
+    color: white;
+    padding: 10px 8px;
+    text-align: center;
+    font-weight: 700;
+}
+
+.period-header .time {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    margin-top: 5px;
+    opacity: .85;
+}
+
+.day-cell {
+    width: 130px;
+    min-width: 130px;
+    background: #eef4ff;
+    color: #123b82;
+    text-align: center;
+    padding: 16px 8px;
+    font-size: 15px;
+}
+
+.class-cell {
+    width: 140px;
+    min-width: 140px;
+    background: #fafcff;
+    text-align: center;
+    padding: 12px 6px;
+    font-size: 12px;
+}
+
+.class-cell span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    color: #555;
+}
+
+.lesson-cell {
+    min-width: 145px;
+    height: 105px;
+    padding: 6px;
+    background: #fff;
+}
+
+.lesson-card {
+    height: 100%;
+    min-height: 88px;
+    border-radius: 8px;
+    padding: 8px;
+    background: #f1f6ff;
+    border-left: 4px solid #123b82;
+}
+
+.lesson-subject {
+    font-weight: 800;
+    font-size: 13px;
+    color: #123b82;
+    margin-bottom: 4px;
+}
+
+.lesson-duration {
+    font-size: 10px;
+    font-weight: 700;
+    margin-bottom: 3px;
+}
+
+.lesson-teacher,
+.lesson-room {
+    font-size: 11px;
+    margin-top: 3px;
+    color: #555;
+}
+
+.lesson-actions {
+    margin-top: 7px;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.lesson-actions a {
+    font-size: 10px;
+    text-decoration: none;
+    padding: 3px 6px;
+    border-radius: 4px;
+    background: #e4ebf7;
+    color: #123b82;
+}
+
+.special-period {
+    height: 100%;
+    min-height: 88px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 12px;
+    color: #777;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 1px;
+}
+
+.empty-timetable {
+    padding: 40px;
+    text-align: center;
+    color: #777;
+}
+
+.teacher-section {
+    margin-bottom: 35px;
+}
+
+.teacher-heading {
+    margin: 20px 25px 10px;
+    font-size: 18px;
+    font-weight: 800;
+    color: #063b91;
+}
+
+.no-lessons {
+    color: #777;
+    font-style: italic;
+}
+
+@media print {
+
+    @page {
+        size: A4 landscape;
+        margin: 5mm;
+    }
+
+    body {
+        margin: 0;
+        background: #fff !important;
+        color: #000 !important;
+        font-size: 12px !important;
+    }
+
+    .header,
+    .toolbar,
+    .filters,
+    .preview-types {
+        display: none !important;
+    }
+
+    .grid-title,
+    .teacher-heading {
+        color: #000 !important;
+        margin: 2px 0 4px !important;
+        font-size: 12px !important;
+    }
+
+    .grid-container {
+        width: 100% !important;
+        margin: 0 0 6px !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    .timetable {
+        width: 100% !important;
+        min-width: 0 !important;
+        table-layout: fixed !important;
+        border-collapse: collapse !important;
+        font-size: 12px !important;
+    }
+
+    .timetable th,
+    .timetable td {
+        color: #000 !important;
+        background: #fff !important;
+        border: 1px solid #000 !important;
+        font-size: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .timetable th {
+        height: 24px !important;
+        padding: 1px !important;
+        font-weight: bold !important;
+        line-height: 1 !important;
+    }
+
+    .timetable td {
+        height: 42px !important;
+        padding: 1px !important;
+        vertical-align: top !important;
+        line-height: 1.05 !important;
+    }
+
+    .day-header,
+    .day-cell {
+        width: 35px !important;
+    }
+
+    .class-header,
+    .class-cell {
+        width: 60px !important;
+    }
+
+    .period-header {
+        width: auto !important;
+    }
+
+    .lesson-cell {
+        width: auto !important;
+        height: 42px !important;
+        padding: 1px !important;
+    }
+
+    .period-header .time {
+        display: block !important;
+        font-size: 8px !important;
+        line-height: 1 !important;
+    }
+
+    .class-cell {
+        font-size: 12px !important;
+        padding: 1px !important;
+    }
+
+    .lesson-card {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-width: none !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 1px !important;
+        overflow: visible !important;
+        background: #fff !important;
+        color: #000 !important;
+        border: 1px solid #000 !important;
+        border-left: 1px solid #000 !important;
+        border-radius: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    .lesson-subject,
+    .lesson-teacher,
+    .lesson-room,
+    .lesson-duration,
+    .special-period,
+    .class-cell span {
+        font-size: 12px !important;
+        line-height: 1.05 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+
+    .lesson-actions {
+        display: none !important;
+    }
+
+    .special-period {
+        writing-mode: horizontal-tb !important;
+        transform: none !important;
+        text-align: center !important;
+    }
+
+    .teacher-section {
+        page-break-inside: avoid !important;
+    }
+}
+
+@media print {
+    .special-period {
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+        text-align: center !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+@media print {
+    .day-cell {
+        font-weight: 900 !important;
+        font-size: 12px !important;
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        padding: 1px !important;
+    }
+
+    .day-cell strong {
+        font-weight: 900 !important;
+        font-size: 12px !important;
+    }
+}
+
+@media print {
+    .timetable .day-cell {
+        border: 1px solid #000 !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 1px !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+        writing-mode: initial !important;
+        transform: none !important;
+        box-sizing: border-box !important;
+    }
+
+    .timetable .day-cell strong {
+        display: inline-block !important;
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        font-weight: 900 !important;
+        font-size: 12px !important;
+        color: #000 !important;
+        text-align: center !important;
+    }
+}
+@media print {
+    .timetable .special-cell {
+        height: auto !important;
+        min-height: 0 !important;
+        padding: 1px !important;
+        border: 1px solid #000 !important;
+        background: #fff !important;
+        color: #000 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    .timetable .special-period {
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        min-height: 80px !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+        line-height: 1 !important;
+        color: #000 !important;
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+}
+
+
+@media print {
+    .timetable .special-cell {
+        padding: 1px !important;
+        border: 1px solid #000 !important;
+        background: #fff !important;
+        color: #000 !important;
+        text-align: center !important;
+        vertical-align: middle !important;
+    }
+
+    .timetable .special-cell .special-period {
+        writing-mode: vertical-rl !important;
+        transform: rotate(180deg) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        height: 100% !important;
+        font-size: 12px !important;
+        font-weight: 900 !important;
+        line-height: 1 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+}
+
+
+
+/* ALL TEACHERS BRANDING PAGE CSS */
+
+@media print {
+
+    /* Each teacher gets a separate printed page */
+    .teacher-section {
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Do not create a blank page before the first teacher */
+    .teacher-section:first-of-type {
+        page-break-before: auto !important;
+        break-before: auto !important;
+    }
+
+    .teacher-page-branding {
+        display: block !important;
+        width: 100% !important;
+        text-align: center !important;
+        margin: 0 0 5px 0 !important;
+        padding: 0 !important;
+        color: #000 !important;
+        background: #fff !important;
+        line-height: 1.05 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    .teacher-page-branding .school-logo-print {
+        display: block !important;
+        margin: 0 auto 3px auto !important;
+        max-width: 75px !important;
+        max-height: 50px !important;
+        width: auto !important;
+        height: auto !important;
+        object-fit: contain !important;
+    }
+
+    .teacher-page-branding .school-name-print {
+        font-size: 16px !important;
+        line-height: 1.05 !important;
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        margin: 1px 0 !important;
+    }
+
+    .teacher-page-branding .school-motto-print {
+        font-size: 9px !important;
+        line-height: 1.05 !important;
+        font-style: italic !important;
+        font-weight: 700 !important;
+        margin: 1px 0 !important;
+    }
+
+    .teacher-page-branding .school-contact-print,
+    .teacher-page-branding .school-address-print {
+        font-size: 7px !important;
+        line-height: 1.05 !important;
+        margin: 1px 0 !important;
+    }
+
+    .teacher-page-title {
+        text-align: center !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        margin: 3px 0 5px 0 !important;
+        color: #000 !important;
+    }
+
+    .teacher-heading {
+        text-align: center !important;
+        margin: 0 0 5px 0 !important;
+        font-size: 13px !important;
+        font-weight: 900 !important;
+        color: #000 !important;
+    }
+
+    .teacher-section .grid-container {
+        margin: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* END ALL TEACHERS BRANDING PAGE CSS */
+
+
+@media print {
+    .global-print-branding {
+        display: block;
+    }
+
+    body:has(.teacher-section) > .global-print-branding {
+        display: none !important;
+    }
+}
+
+</style>
+</head>
+
+<body>
+<!-- DYNAMIC SCHOOL BRANDING HEADER -->
+<div class="school-branding-print global-print-branding">
+
+    {% if branding.logo %}
+        <img src="{{ branding.logo.url }}"
+             alt="{{ branding.school_name|default:'School Logo' }}"
+             class="school-logo-print">
+    {% endif %}
+
+    {% if branding.school_name %}
+        <div class="school-name-print">
+            {{ branding.school_name }}
+        </div>
+    {% endif %}
+
+    {% if branding.motto %}
+        <div class="school-motto-print">
+            {{ branding.motto }}
+        </div>
+    {% endif %}
+
+    <div class="school-contact-print">
+        {% if branding.phone %}
+            <span>{{ branding.phone }}</span>
+        {% endif %}
+
+        {% if branding.alternative_phone %}
+            <span> | {{ branding.alternative_phone }}</span>
+        {% endif %}
+
+        {% if branding.email %}
+            <span> | {{ branding.email }}</span>
+        {% endif %}
+
+        {% if branding.website %}
+            <span> | {{ branding.website }}</span>
+        {% endif %}
+    </div>
+
+    {% if branding.physical_address or branding.school_code %}
+        <div class="school-address-print">
+            {% if branding.physical_address %}
+                {{ branding.physical_address }}
+            {% endif %}
+
+            {% if branding.school_code %}
+                {% if branding.physical_address %} | {% endif %}
+                Code: {{ branding.school_code }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+</div>
+<!-- END DYNAMIC SCHOOL BRANDING HEADER -->
+
+
+<div class="header">
+    <h1>Timetable Print Preview</h1>
+    <p>
+        {% if selected_term %}
+            {{ selected_term.academic_year }} — {{ selected_term.term_name }}
+        {% endif %}
+    </p>
+</div>
+
+<div class="toolbar">
+
+    <div class="preview-types">
+
+        <a href="?year={{ selected_year }}&term={{ selected_term_name }}&type=school"
+           class="preview-type {% if preview_type == 'school' %}active{% endif %}">
+            WHOLE SCHOOL
+        </a>
+
+        <a href="?year={{ selected_year }}&term={{ selected_term_name }}&type=class"
+           class="preview-type {% if preview_type == 'class' %}active{% endif %}">
+            CLASS / GRADE
+        </a>
+
+        <a href="?year={{ selected_year }}&term={{ selected_term_name }}&type=teacher"
+           class="preview-type {% if preview_type == 'teacher' %}active{% endif %}">
+            TEACHER
+        </a>
+
+        <a href="?year={{ selected_year }}&term={{ selected_term_name }}&type=all_teachers"
+           class="preview-type {% if preview_type == 'all_teachers' %}active{% endif %}">
+            ALL TEACHERS
+        </a>
+
+    </div>
+
+    <button class="btn btn-blue" onclick="window.print()">
+        PRINT
+    </button>
+
+</div>
+
+<form method="get" class="filters">
+
+    <input type="hidden" name="type" value="{{ preview_type }}">
+
+    <div class="filter-group">
+        <label>ACADEMIC YEAR</label>
+        <select name="year">
+            {% for year in academic_years %}
+            <option value="{{ year }}"
+                {% if selected_year|stringformat:"s" == year|stringformat:"s" %}selected{% endif %}>
+                {{ year }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="filter-group">
+        <label>TERM</label>
+        <select name="term">
+            {% for term in terms %}
+            <option value="{{ term.term_name }}"
+                {% if selected_term_name == term.term_name and selected_year|stringformat:"s" == term.academic_year|stringformat:"s" %}selected{% endif %}>
+                {{ term.term_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if preview_type == "class" %}
+
+    <div class="filter-group">
+        <label>CLASS / GRADE</label>
+        <select name="class">
+            <option value="">Select Class</option>
+            {% for class_group in classes %}
+            <option value="{{ class_group.id }}"
+                {% if selected_class and selected_class.id == class_group.id %}selected{% endif %}>
+                {{ class_group.name }}
+                {% if class_group.stream %} — {{ class_group.stream }}{% endif %}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% elif preview_type == "teacher" %}
+
+    <div class="filter-group">
+        <label>TEACHER</label>
+        <select name="teacher">
+            <option value="">Select Teacher</option>
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}"
+                {% if selected_teacher and selected_teacher.id == teacher.id %}selected{% endif %}>
+                {{ teacher.name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% endif %}
+
+    <button type="submit" class="btn btn-blue">
+        VIEW PREVIEW
+    </button>
+
+</form>
+
+{% if preview_type == "all_teachers" %}
+
+    {% for preview in teacher_previews %}
+
+    <div class="teacher-section">
+
+        <div class="teacher-page-branding">
+
+            {% if branding.logo %}
+                <img src="{{ branding.logo.url }}"
+                     alt="{{ branding.school_name|default:'School Logo' }}"
+                     class="school-logo-print">
+            {% endif %}
+
+            {% if branding.school_name %}
+                <div class="school-name-print">
+                    {{ branding.school_name }}
+                </div>
+            {% endif %}
+
+            {% if branding.motto %}
+                <div class="school-motto-print">
+                    {{ branding.motto }}
+                </div>
+            {% endif %}
+
+            <div class="school-contact-print">
+                {% if branding.phone %}
+                    <span>{{ branding.phone }}</span>
+                {% endif %}
+
+                {% if branding.alternative_phone %}
+                    <span> | {{ branding.alternative_phone }}</span>
+                {% endif %}
+
+                {% if branding.email %}
+                    <span> | {{ branding.email }}</span>
+                {% endif %}
+
+                {% if branding.website %}
+                    <span> | {{ branding.website }}</span>
+                {% endif %}
+            </div>
+
+            {% if branding.physical_address or branding.school_code %}
+                <div class="school-address-print">
+                    {% if branding.physical_address %}
+                        {{ branding.physical_address }}
+                    {% endif %}
+
+                    {% if branding.school_code %}
+                        {% if branding.physical_address %} | {% endif %}
+                        Code: {{ branding.school_code }}
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            <div class="teacher-page-title">
+                TEACHER TIMETABLE
+            </div>
+
+        </div>
+
+        <div class="teacher-heading">
+            Teacher: {{ preview.teacher.name }}
+        </div>
+
+        <div class="grid-container">
+
+        <table class="timetable">
+
+        <thead>
+        <tr>
+            <th class="day-header">DAY</th>
+            <th class="class-header">GRADE / CLASS</th>
+
+            {% for period in periods %}
+            <th class="period-header">
+                {{ period.name }}
+                <span class="time">
+                    {{ period.start_time|time:"H:i" }} - {{ period.end_time|time:"H:i" }}
+                </span>
+            </th>
+            {% endfor %}
+
+        </tr>
+        </thead>
+
+        <tbody>
+
+        {% for row in preview.master_rows %}
+
+        <tr>
+
+            {% if row.first_day_row %}
+            <td class="day-cell" rowspan="{{ row.day_rowspan }}">
+                <strong>{{ row.day.name }}</strong>
+            </td>
+            {% endif %}
+
+            <td class="class-cell">
+
+                {% if row.class_group %}
+                    <strong>{{ row.class_group.name }}</strong>
+
+                    {% if row.class_group.stream %}
+                    <span>{{ row.class_group.stream }}</span>
+                    {% endif %}
+
+                {% else %}
+                    <span class="no-lessons">No lessons</span>
+                {% endif %}
+
+            </td>
+
+            {% for cell in row.cells %}
+
+            <td class="lesson-cell" colspan="{{ cell.colspan }}">
+
+                {% if cell.period.is_break %}
+                    <div class="special-period">BREAK</div>
+
+                {% elif cell.period.is_lunch %}
+                    <div class="special-period">LUNCH</div>
+
+                {% elif cell.period.is_activity %}
+                    <div class="special-period">ACTIVITY</div>
+
+                {% elif cell.lesson %}
+
+                    <div class="lesson-card">
+
+                        <div class="lesson-subject">{% if cell.lesson.subject.name|upper == "RELIGIOUS EDUCATION" %}RE{% else %}{{ cell.lesson.subject.name|slice:":4"|upper }}{% endif %}</div>
+
+                        {% if cell.lesson.duration_periods > 1 %}
+                        <div class="lesson-duration">
+                            {{ cell.lesson.duration_periods }} PERIOD LESSON
+                        </div>
+                        {% endif %}
+
+                        {% if cell.lesson.teacher %}
+                        <div class="lesson-teacher">
+                            {{ cell.lesson.teacher.name }}
+                        </div>
+                        {% endif %}
+
+                        {% if cell.lesson.room %}
+                        <div class="lesson-room">
+                            {{ cell.lesson.room.name }}
+                        </div>
+                        {% endif %}
+
+                        <div class="lesson-actions">
+
+                            <a href="{% url 'timetable:timetable_lesson_edit' cell.lesson.id %}">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'timetable:timetable_lesson_lock' cell.lesson.id %}">
+                                {% if cell.lesson.locked %}Unlock{% else %}Lock{% endif %}
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </td>
+
+            {% endfor %}
+
+        </tr>
+
+        {% empty %}
+
+        <tr>
+            <td colspan="{{ periods|length|add:2 }}" class="empty-timetable">
+                No lessons have been generated for this teacher.
+            </td>
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+        </table>
+
+        </div>
+
+    </div>
+
+    {% empty %}
+
+    <div class="empty-timetable">
+        No teachers have generated lessons for this term.
+    </div>
+
+    {% endfor %}
+
+{% else %}
+
+<div class="grid-title">
+
+    {% if preview_type == "class" and selected_class %}
+        Class Timetable — {{ selected_class.name }}
+        {% if selected_class.stream %} {{ selected_class.stream }}{% endif %}
+
+    {% elif preview_type == "teacher" and selected_teacher %}
+        Teacher Timetable — {{ selected_teacher.name }}
+
+    {% else %}
+        Whole School Timetable
+    {% endif %}
+
+</div>
+
+<div class="grid-container">
+
+<table class="timetable">
+
+<thead>
+<tr>
+
+    <th class="day-header">DAY</th>
+
+    <th class="class-header">GRADE / CLASS</th>
+
+    {% for period in periods %}
+    <th class="period-header">
+
+        {{ period.name }}
+
+        <span class="time">
+            {{ period.start_time|time:"H:i" }} - {{ period.end_time|time:"H:i" }}
+        </span>
+
+    </th>
+    {% endfor %}
+
+</tr>
+</thead>
+
+<tbody>
+
+{% for row in master_rows %}
+
+<tr>
+
+    {% if row.first_day_row %}
+    <td class="day-cell" rowspan="{{ row.day_rowspan }}">
+        <strong>{{ row.day.name }}</strong>
+    </td>
+    {% endif %}
+
+    <td class="class-cell">
+
+        {% if row.class_group %}
+
+            <strong>{{ row.class_group.name }}</strong>
+
+            {% if row.class_group.stream %}
+            <span>{{ row.class_group.stream }}</span>
+            {% endif %}
+
+        {% else %}
+
+            <span class="no-lessons">No lessons</span>
+
+        {% endif %}
+
+    </td>
+
+    {% for cell in row.cells %}
+
+    <td class="lesson-cell" colspan="{{ cell.colspan }}">
+
+        {% if cell.period.is_break %}
+
+            <div class="special-period">BREAK</div>
+
+        {% elif cell.period.is_lunch %}
+
+            <div class="special-period">LUNCH</div>
+
+        {% elif cell.period.is_activity %}
+
+            <div class="special-period">ACTIVITY</div>
+
+        {% elif cell.lesson %}
+
+            <div class="lesson-card">
+
+                <div class="lesson-subject">{% if cell.lesson.subject.name|upper == "RELIGIOUS EDUCATION" %}RE{% else %}{{ cell.lesson.subject.name|slice:":4"|upper }}{% endif %}</div>
+
+                {% if cell.lesson.duration_periods > 1 %}
+                <div class="lesson-duration">
+                    {{ cell.lesson.duration_periods }} PERIOD LESSON
+                </div>
+                {% endif %}
+
+                {% if cell.lesson.teacher %}
+                <div class="lesson-teacher">
+                    {{ cell.lesson.teacher.name }}
+                </div>
+                {% endif %}
+
+                {% if cell.lesson.room %}
+                <div class="lesson-room">
+                    {{ cell.lesson.room.name }}
+                </div>
+                {% endif %}
+
+                <div class="lesson-actions">
+
+                    <a href="{% url 'timetable:timetable_lesson_edit' cell.lesson.id %}">
+                        Edit
+                    </a>
+
+                    <a href="{% url 'timetable:timetable_lesson_lock' cell.lesson.id %}">
+                        {% if cell.lesson.locked %}Unlock{% else %}Lock{% endif %}
+                    </a>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    </td>
+
+    {% endfor %}
+
+</tr>
+
+{% empty %}
+
+<tr>
+    <td colspan="{{ periods|length|add:2 }}" class="empty-timetable">
+        No lessons have been generated for this term.
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+{% endif %}
+
+</body>
+</html>
+
+
+
+
+
+

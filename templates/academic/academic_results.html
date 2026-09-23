@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Academic Results | Luhan School</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f5f7fa;
+        }
+
+        .page-header {
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+            margin-bottom: 25px;
+        }
+
+        .filter-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            padding: 20px;
+        }
+
+        .results-card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+
+        .summary-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 18px;
+            height: 100%;
+        }
+
+        .summary-number {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .table th {
+            white-space: nowrap;
+            vertical-align: middle;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .learner-name {
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .subject-result {
+            min-width: 130px;
+            padding: 8px;
+            border: 1px solid #e1e5ea;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .grade-badge {
+            font-weight: 700;
+            padding: 5px 8px;
+            border-radius: 6px;
+            background: #eef2f7;
+            display: inline-block;
+        }
+
+        .no-results {
+            padding: 50px;
+            text-align: center;
+        }
+
+        .sticky-header th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #212529;
+            color: white;
+        }
+
+        .table-responsive {
+            max-height: 650px;
+            overflow: auto;
+        }
+
+        .result-count {
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="page-header">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between
+                    align-items-center flex-wrap gap-3">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    📊 Academic Results
+                </h2>
+
+                <p class="text-muted mb-0">
+                    View learner examination and assessment results
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'academic:dashboard' %}"
+                class="btn btn-outline-secondary"
+            >
+                ← Academic Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="container pb-5">
+
+
+<!-- =========================================================
+     FILTERS
+========================================================= -->
+
+<div class="filter-card shadow-sm mb-4">
+
+    <h5 class="fw-bold mb-3">
+        🔎 Select Results
+    </h5>
+
+    <form
+        method="GET"
+        action="{% url 'academic:academic_results' %}"
+    >
+
+        <div class="row g-3">
+
+
+            <!-- ACADEMIC YEAR -->
+
+            <div class="col-md-2">
+
+                <label class="form-label fw-semibold">
+                    Academic Year
+                </label>
+
+                <select
+                    name="year"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Select Year
+                    </option>
+
+                    {% for year in academic_years %}
+
+                        <option
+                            value="{{ year.id }}"
+                            {% if selected_year and selected_year.id == year.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ year.year }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- TERM -->
+
+            <div class="col-md-2">
+
+                <label class="form-label fw-semibold">
+                    Term
+                </label>
+
+                <select
+                    name="term"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Select Term
+                    </option>
+
+                    {% for term in terms %}
+
+                        <option
+                            value="{{ term.id }}"
+                            {% if selected_term and selected_term.id == term.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ term }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- ASSESSMENT TYPE -->
+
+            <div class="col-md-2">
+
+                <label class="form-label fw-semibold">
+                    Examination / Assessment
+                </label>
+
+                <select
+                    name="assessment_type"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Select Assessment
+                    </option>
+
+                    {% for assessment in assessment_types %}
+
+                        <option
+                            value="{{ assessment.id }}"
+                            {% if selected_assessment_type and selected_assessment_type.id == assessment.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ assessment.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- CLASS -->
+
+            <div class="col-md-2">
+
+                <label class="form-label fw-semibold">
+                    Class
+                </label>
+
+                <select
+                    name="class_name"
+                    class="form-select"
+                    required
+                >
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                    {% for class_name in class_names %}
+
+                        <option
+                            value="{{ class_name }}"
+                            {% if selected_class == class_name %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ class_name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- STREAM -->
+
+            <div class="col-md-2">
+
+                <label class="form-label fw-semibold">
+                    Stream
+                </label>
+
+                <select
+                    name="stream"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Streams
+                    </option>
+
+                    {% for stream in streams %}
+
+                        <option
+                            value="{{ stream.name }}"
+                            {% if selected_stream == stream.name %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ stream.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBJECT -->
+
+            <div class="col-md-2">
+
+                <label class="form-label fw-semibold">
+                    Subject
+                </label>
+
+                <select
+                    name="subject"
+                    class="form-select"
+                >
+
+                    <option value="">
+                        All Subjects
+                    </option>
+
+                    {% for subject in subjects %}
+
+                        <option
+                            value="{{ subject.id }}"
+                            {% if selected_subject and selected_subject.id == subject.id %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ subject.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex gap-2 mt-4">
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                🔎 Load Results
+            </button>
+
+            <a
+                href="{% url 'academic:academic_results' %}"
+                class="btn btn-outline-secondary"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+<!-- =========================================================
+     SELECTED INFORMATION
+========================================================= -->
+
+{% if selected_year and selected_term and selected_assessment_type and selected_class %}
+
+<div class="alert alert-primary">
+
+    <strong>Results loaded for:</strong>
+
+    {{ selected_class }}
+
+    {% if selected_stream %}
+        — {{ selected_stream }}
+    {% endif %}
+
+    |
+
+    {{ selected_year }}
+
+    |
+
+    {{ selected_term }}
+
+    |
+
+    {{ selected_assessment_type.name }}
+
+    {% if selected_subject %}
+        | {{ selected_subject.name }}
+    {% endif %}
+
+</div>
+
+{% endif %}
+
+
+<!-- =========================================================
+     RESULTS
+========================================================= -->
+
+{% if results %}
+
+
+<!-- SUMMARY -->
+
+<div class="row g-3 mb-4">
+
+
+    <!-- LEARNERS -->
+
+    <div class="col-md-4">
+
+        <div class="summary-card shadow-sm">
+
+            <div class="text-muted">
+                Learners
+            </div>
+
+            <div class="summary-number text-primary">
+                {{ results|length }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- LEARNERS WITH RESULTS -->
+
+    <div class="col-md-4">
+
+        <div class="summary-card shadow-sm">
+
+            <div class="text-muted">
+                Learners With Results
+            </div>
+
+            <div class="summary-number text-success">
+                {{ results|length }}
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- SELECTION -->
+
+    <div class="col-md-4">
+
+        <div class="summary-card shadow-sm">
+
+            <div class="text-muted">
+                Examination
+            </div>
+
+            <div class="fw-bold mt-2">
+
+                {{ selected_assessment_type.name }}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RESULTS TABLE
+========================================================= -->
+
+<div class="results-card shadow-sm">
+
+    <div class="p-3 border-bottom">
+
+        <div class="d-flex justify-content-between
+                    align-items-center flex-wrap gap-2">
+
+            <h5 class="fw-bold mb-0">
+                Learner Results
+            </h5>
+
+            <span class="result-count">
+                {{ results|length }} learner(s)
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="table-responsive">
+
+        <table class="table table-bordered table-hover mb-0">
+
+            <thead class="sticky-header">
+
+                <tr>
+
+                    <th>
+                        Position
+                    </th>
+
+                    <th>
+                        Admission No.
+                    </th>
+
+                    <th>
+                        Learner
+                    </th>
+
+                    <th>
+                        Subject Results
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                    <th>
+                        Average
+                    </th>
+
+                    <th>
+                        Subjects
+                    </th>
+
+                    <th>
+                        Report
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for result in results %}
+
+                <tr>
+
+
+                    <!-- POSITION -->
+
+                    <td class="text-center fw-bold">
+
+                        {% if result.assessments %}
+                            {{ result.position }}
+                        {% else %}
+                            -
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- ADMISSION NUMBER -->
+
+                    <td>
+
+                        <strong>
+                            {{ result.student.admission_no }}
+                        </strong>
+
+                    </td>
+
+
+                    <!-- LEARNER -->
+
+                    <td class="learner-name">
+
+                        {{ result.student.first_name }}
+
+                        {% if result.student.middle_name %}
+                            {{ result.student.middle_name }}
+                        {% endif %}
+
+                        {% if result.student.last_name %}
+                            {{ result.student.last_name }}
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- SUBJECT RESULTS -->
+
+                    <td>
+
+                        {% if result.assessments %}
+
+                            <div class="d-flex flex-wrap gap-2">
+
+                                {% for assessment in result.assessments %}
+
+                                    <div class="subject-result">
+
+                                        <div class="fw-bold">
+                                            {{ assessment.subject.code }}
+                                        </div>
+
+                                        <div class="small text-muted">
+                                            {{ assessment.subject.name }}
+                                        </div>
+
+                                        <div class="mt-1">
+
+                                            <strong>
+                                                {{ assessment.score|floatformat:2 }}
+                                            </strong>
+
+                                            /100
+
+                                        </div>
+
+                                        <div class="mt-1">
+
+                                            <span class="grade-badge">
+                                                {{ assessment.grade }}
+                                            </span>
+
+                                        </div>
+
+                                        <div class="small text-muted mt-1">
+
+                                            {{ assessment.points }}
+                                            points
+
+                                        </div>
+
+                                    </div>
+
+                                {% endfor %}
+
+                            </div>
+
+                        {% else %}
+
+                            <span class="text-danger">
+                                No result uploaded
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- TOTAL -->
+
+                    <td class="text-center fw-bold">
+
+                        {% if result.assessments %}
+
+                            {{ result.total|floatformat:2 }}
+
+                        {% else %}
+
+                            -
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- AVERAGE -->
+
+                    <td class="text-center fw-bold">
+
+                        {% if result.assessments %}
+
+                            {{ result.average|floatformat:2 }}
+
+                        {% else %}
+
+                            -
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <!-- SUBJECT COUNT -->
+
+                    <td class="text-center">
+
+                        {{ result.assessments|length }}
+
+                    </td>
+
+
+                    <!-- REPORT CARD -->
+
+                    <td class="text-center">
+
+                        {% if selected_year and selected_term %}
+
+                            <a
+                                href="{% url 'academic:report_card' result.student.id selected_year.id selected_term.id %}"
+                                class="btn btn-sm btn-outline-primary"
+                                target="_blank"
+                            >
+                                📄 Report
+                            </a>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+
+            {% empty %}
+
+                <tr>
+
+                    <td colspan="8" class="no-results">
+
+                        <h5>
+                            No learners found
+                        </h5>
+
+                        <p class="text-muted mb-0">
+                            Check the selected class and stream.
+                        </p>
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% elif selected_year and selected_term and selected_assessment_type and selected_class %}
+
+
+<!-- =========================================================
+     NO RESULTS
+========================================================= -->
+
+<div class="results-card shadow-sm">
+
+    <div class="no-results">
+
+        <div style="font-size: 50px;">
+            📭
+        </div>
+
+        <h4 class="mt-3">
+            No Results Found
+        </h4>
+
+        <p class="text-muted">
+            No learners/results were found for the selected criteria.
+        </p>
+
+        <p class="fw-semibold">
+
+            {{ selected_class }}
+
+            {% if selected_stream %}
+                — {{ selected_stream }}
+            {% endif %}
+
+            |
+
+            {{ selected_year }}
+
+            |
+
+            {{ selected_term }}
+
+            |
+
+            {{ selected_assessment_type.name }}
+
+        </p>
+
+        <p class="text-muted">
+
+            Confirm that learners exist in the selected class and
+            stream and that marks have been entered using the same
+            academic year, term and assessment type.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+{% else %}
+
+
+<!-- =========================================================
+     INITIAL MESSAGE
+========================================================= -->
+
+<div class="results-card shadow-sm">
+
+    <div class="no-results">
+
+        <div style="font-size: 55px;">
+            📊
+        </div>
+
+        <h4 class="mt-3">
+            Select Results Criteria
+        </h4>
+
+        <p class="text-muted">
+
+            Select the academic year, term, examination/assessment,
+            class and optionally stream or subject.
+
+        </p>
+
+        <p class="text-muted">
+
+            Then click
+            <strong>Load Results</strong>.
+
+        </p>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

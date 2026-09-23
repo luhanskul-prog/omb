@@ -1,0 +1,318 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta http-equiv="refresh" content="20">
+<title>Alternate Payment Requests</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    margin:0;
+    background:#f4f7fb;
+    color:#172033;
+}
+.container{
+    max-width:1400px;
+    margin:30px auto;
+    padding:20px;
+}
+.card{
+    background:#fff;
+    padding:24px;
+    border-radius:16px;
+    box-shadow:0 5px 25px rgba(0,0,0,.08);
+    margin-bottom:18px;
+}
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+h1{
+    margin:0 0 8px;
+}
+.subtitle{
+    color:#667085;
+}
+.pending-count{
+    background:#c40000;
+    color:white;
+    padding:12px 18px;
+    border-radius:12px;
+    font-weight:800;
+    font-size:18px;
+}
+.filters{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+.filters a{
+    text-decoration:none;
+    padding:10px 16px;
+    border-radius:8px;
+    background:#eef2f7;
+    color:#172033;
+    font-weight:700;
+}
+.filters a.active{
+    background:#c40000;
+    color:white;
+}
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+th,td{
+    padding:13px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+    vertical-align:top;
+}
+th{
+    background:#f8fafc;
+    font-size:13px;
+}
+tr.pending-row{
+    background:#fffafa;
+}
+.badge{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:20px;
+    font-weight:700;
+    font-size:12px;
+}
+.pending{
+    background:#fff7ed;
+    color:#c2410c;
+}
+.confirmed{
+    background:#ecfdf5;
+    color:#047857;
+}
+.rejected{
+    background:#fef2f2;
+    color:#b91c1c;
+}
+input{
+    width:180px;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #d0d5dd;
+    border-radius:7px;
+    margin-bottom:7px;
+}
+button{
+    padding:10px 14px;
+    border:0;
+    border-radius:7px;
+    background:#16a34a;
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+}
+.reject{
+    background:#dc2626;
+}
+.small{
+    color:#667085;
+    font-size:12px;
+}
+.empty{
+    text-align:center;
+    padding:35px;
+    color:#667085;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+    <div class="header">
+        <div>
+            <h1>Alternate Payment Requests</h1>
+            <div class="subtitle">
+                Review learner PayBill, Till and Bank payment requests.
+                This page refreshes automatically every 20 seconds.
+            </div>
+        </div>
+
+        <div class="pending-count">
+            Pending: {{ payments|length }}
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="filters">
+
+        <a href="{% url 'fees:alternate_payment_management' %}"
+           class="{% if not status %}active{% endif %}">
+            All
+        </a>
+
+        <a href="?status=PENDING"
+           class="{% if status == 'PENDING' %}active{% endif %}">
+            Pending
+        </a>
+
+        <a href="?status=CONFIRMED"
+           class="{% if status == 'CONFIRMED' %}active{% endif %}">
+            Confirmed
+        </a>
+
+        <a href="?status=REJECTED"
+           class="{% if status == 'REJECTED' %}active{% endif %}">
+            Rejected
+        </a>
+
+    </div>
+</div>
+
+<div class="card">
+
+<table>
+<thead>
+<tr>
+    <th>Learner</th>
+    <th>Admission</th>
+    <th>Amount</th>
+    <th>Method</th>
+    <th>Request Reference</th>
+    <th>Status</th>
+    <th>Date / Time</th>
+    <th>Admin Action</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for payment in payments %}
+
+<tr class="{% if payment.status == 'PENDING' %}pending-row{% endif %}">
+
+<td>
+    <strong>
+        {{ payment.student.first_name }}
+        {{ payment.student.middle_name }}
+        {{ payment.student.last_name }}
+    </strong>
+</td>
+
+<td>
+    <strong>{{ payment.student.admission_no }}</strong>
+</td>
+
+<td>
+    <strong>KSh {{ payment.amount|floatformat:2 }}</strong>
+</td>
+
+<td>
+    {{ payment.payment_method|upper }}
+</td>
+
+<td>
+    {{ payment.reference }}
+</td>
+
+<td>
+    <span class="badge {{ payment.status|lower }}">
+        {{ payment.status }}
+    </span>
+
+    {% if payment.external_reference %}
+        <div class="small">
+            Transaction: {{ payment.external_reference }}
+        </div>
+    {% endif %}
+</td>
+
+<td>
+    {{ payment.created_at|date:"d M Y" }}<br>
+    <span class="small">{{ payment.created_at|date:"H:i" }}</span>
+</td>
+
+<td>
+
+{% if payment.status == "PENDING" %}
+
+<form method="post"
+      action="{% url 'fees:alternate_payment_confirm' payment.id %}">
+
+{% csrf_token %}
+
+<input
+    type="text"
+    name="external_reference"
+    placeholder="Actual M-Pesa/Bank Ref"
+    required
+>
+
+<br>
+
+<button type="submit">
+    CONFIRM PAYMENT
+</button>
+
+</form>
+
+<br>
+
+<form method="post"
+      action="{% url 'fees:alternate_payment_reject' payment.id %}">
+
+{% csrf_token %}
+
+<input
+    type="text"
+    name="notes"
+    placeholder="Reason for rejection"
+>
+
+<br>
+
+<button type="submit" class="reject">
+    REJECT
+</button>
+
+</form>
+
+{% else %}
+
+<span class="small">
+    No action required
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="8" class="empty">
+    No alternate payment requests found.
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</body>
+</html>

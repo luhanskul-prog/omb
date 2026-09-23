@@ -1,0 +1,1515 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Compose Message | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #202938;
+        }
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 225px;
+            background: #111827;
+            color: #fff;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            height: 65px;
+            display: flex;
+            align-items: center;
+            padding: 0 18px;
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #2563eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            margin-right: 10px;
+            font-weight: 700;
+        }
+
+        .brand-text {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            display: block;
+            font-size: 9px;
+            color: #9ca3af;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        .menu-title {
+            color: #6b7280;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .8px;
+            padding: 18px 18px 7px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 15px;
+            margin: 2px 9px;
+            border-radius: 7px;
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 12px;
+            transition: .2s;
+        }
+
+        .side-link:hover,
+        .side-link.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        .side-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main {
+            margin-left: 225px;
+            min-height: 100vh;
+        }
+
+        /* =====================================================
+           TOPBAR
+        ===================================================== */
+
+        .topbar {
+            height: 65px;
+            background: #fff;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 25px;
+        }
+
+        .page-heading {
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            color: #172033;
+        }
+
+        .page-subtitle {
+            font-size: 11px;
+            color: #8a94a6;
+            margin-top: 3px;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 34px;
+            height: 34px;
+            background: #2563eb;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            font-size: 11px;
+            color: #dc3545;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 25px;
+        }
+
+        .compose-card {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #fff;
+            border: 1px solid #d9e1ec;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px rgba(15,23,42,.05);
+            overflow: hidden;
+        }
+
+        .compose-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .compose-title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+            color: #172033;
+        }
+
+        .compose-subtitle {
+            font-size: 10px;
+            color: #667085;
+            margin-top: 4px;
+        }
+
+        .back-btn {
+            background: #f1f5f9;
+            color: #475467;
+            text-decoration: none;
+            border-radius: 7px;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #e2e8f0;
+            color: #172033;
+        }
+
+        .compose-body {
+            padding: 22px;
+        }
+
+        .form-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #344054;
+            margin-bottom: 6px;
+        }
+
+        .form-control,
+        .form-select {
+            font-size: 11px;
+            border: 1px solid #d5dce7;
+            border-radius: 7px;
+            padding: 10px 11px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,.10);
+        }
+
+        textarea.form-control {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .form-help {
+            font-size: 9px;
+            color: #8a94a6;
+            margin-top: 5px;
+        }
+
+        .button-area {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid #edf0f4;
+        }
+
+        .cancel-btn {
+            background: #fff;
+            border: 1px solid #d5dce7;
+            color: #475467;
+            border-radius: 7px;
+            padding: 9px 15px;
+            font-size: 11px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .cancel-btn:hover {
+            background: #f8fafc;
+        }
+
+        .send-btn {
+            background: #2563eb;
+            border: none;
+            color: #fff;
+            border-radius: 7px;
+            padding: 9px 17px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .send-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .approval-notice {
+    margin-top: 10px;
+    padding: 11px 14px;
+    border-radius: 8px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #9a3412;
+    font-size: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.approval-icon {
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.footer {
+    text-align: center;
+    margin-top: 20px;
+    color: #8a94a6;
+    font-size: 9px;
+}
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .sidebar {
+                width: 65px;
+            }
+
+            .brand {
+                justify-content: center;
+                padding: 0;
+            }
+
+            .brand-text,
+            .brand-subtitle,
+            .menu-title,
+            .side-link span:not(.side-icon) {
+                display: none;
+            }
+
+            .side-link {
+                justify-content: center;
+                padding: 11px 5px;
+            }
+
+            .main {
+                margin-left: 65px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .compose-body {
+                padding: 15px;
+            }
+
+            .compose-header {
+                padding: 15px;
+            }
+
+            .button-area {
+                flex-direction: column;
+            }
+
+            .cancel-btn,
+            .send-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     SIDEBAR
+========================================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            LS
+        </div>
+
+        <div class="brand-text">
+
+            Luhan ERP
+
+            <span class="brand-subtitle">
+                School Management System
+            </span>
+
+        </div>
+
+    </div>
+
+
+    {% if is_admin %}
+
+    <div class="menu-title">
+        Main
+    </div>
+
+    <a href="{% url 'admin_dashboard' %}" class="side-link">
+        <span class="side-icon">⌂</span>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="/students/" class="side-link">
+        <span class="side-icon">🎓</span>
+        <span>Students</span>
+    </a>
+
+    <a href="/academic/" class="side-link">
+        <span class="side-icon">📚</span>
+        <span>Academic</span>
+    </a>
+
+    <a href="/attendance/" class="side-link">
+        <span class="side-icon">✓</span>
+        <span>Attendance</span>
+    </a>
+
+    <div class="menu-title">
+        Administration
+    </div>
+
+    <a href="{% url 'accounts:staff_management' %}" class="side-link">
+        <span class="side-icon">👥</span>
+        <span>Staff</span>
+    </a>
+
+    <a href="{% url 'fees:dashboard' %}" class="side-link">
+        <span class="side-icon">💳</span>
+        <span>Fees</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:dashboard' %}" class="side-link">
+        <span class="side-icon">💼</span>
+        <span>HR & Payroll</span>
+    </a>
+
+    <a href="{% url 'timetable:dashboard' %}" class="side-link">
+        <span class="side-icon">▣</span>
+        <span>Timetabling</span>
+    </a>
+
+    <a href="{% url 'transport:dashboard' %}" class="side-link">
+        <span class="side-icon">🚌</span>
+        <span>Transport</span>
+    </a>
+
+    <a href="{% url 'hostel:dashboard' %}" class="side-link">
+        <span class="side-icon">🏠</span>
+        <span>Hostel</span>
+    </a>
+
+    <a href="/inventory/" class="side-link">
+        <span class="side-icon">📦</span>
+        <span>Inventory</span>
+    </a>
+
+    <a href="/library/" class="side-link">
+        <span class="side-icon">📖</span>
+        <span>Library</span>
+    </a>
+
+    <a href="/noticeboard/" class="side-link">
+        <span class="side-icon">📢</span>
+        <span>Notice Board</span>
+    </a>
+
+    <a href="{% url 'messaging:dashboard' %}" class="side-link active">
+        <span class="side-icon">💬</span>
+        <span>Messaging</span>
+    </a>
+
+    <div class="menu-title">
+        System
+    </div>
+
+    <a href="/admin/" class="side-link">
+        <span class="side-icon">⚙</span>
+        <span>System Admin</span>
+    </a>
+
+    <a href="{% url 'logout' %}" class="side-link">
+        <span class="side-icon">↪</span>
+        <span>Logout</span>
+    </a>
+
+{% else %}
+
+    <div class="menu-title">
+        Main
+    </div>
+
+    <a href="{% url 'staff_dashboard' %}" class="side-link">
+        <span class="side-icon">⌂</span>
+        <span>Dashboard</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:staff_attendance' %}" class="side-link">
+        <span class="side-icon">✓</span>
+        <span>Attendance</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:staff_leave_list' %}" class="side-link">
+        <span class="side-icon">◷</span>
+        <span>Leave</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:staff_payslip_list' %}" class="side-link">
+        <span class="side-icon">💰</span>
+        <span>Payslips</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:staff_loan_list' %}" class="side-link">
+        <span class="side-icon">💳</span>
+        <span>Loans</span>
+    </a>
+
+    <a href="{% url 'hr_payroll:staff_document_list' %}" class="side-link">
+        <span class="side-icon">📁</span>
+        <span>Documents</span>
+    </a>
+
+    <div class="menu-title">
+        Communication
+    </div>
+
+    <a href="{% url 'noticeboard:dashboard' %}" class="side-link">
+        <span class="side-icon">📢</span>
+        <span>Notice Board</span>
+    </a>
+
+    <a href="{% url 'messaging:dashboard' %}" class="side-link active">
+        <span class="side-icon">💬</span>
+        <span>Messaging</span>
+    </a>
+
+    {% if is_teaching_staff %}
+    <div class="menu-title">
+        Teaching
+    </div>
+
+    <a href="{% url 'accounts:staff_academic_portal' %}" class="side-link">
+        <span class="side-icon">🎓</span>
+        <span>Academic Portal</span>
+    </a>
+
+    <a href="#teaching" class="side-link">
+        <span class="side-icon">📖</span>
+        <span>Teaching</span>
+    </a>
+    {% endif %}
+
+    <div class="menu-title">
+        Account
+    </div>
+
+    <a href="{% url 'accounts:profile_settings' %}" class="side-link">
+        <span class="side-icon">⚙</span>
+        <span>My Profile</span>
+    </a>
+
+    <a href="{% url 'logout' %}" class="side-link">
+        <span class="side-icon">↪</span>
+        <span>Logout</span>
+    </a>
+
+{% endif %}
+</aside>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main">
+
+
+    <!-- TOPBAR -->
+
+    <header class="topbar">
+
+        <div>
+
+            <h1 class="page-heading">
+                Compose Message
+            </h1>
+
+            <div class="page-subtitle">
+                Send an internal message to another system user
+            </div>
+
+        </div>
+
+
+        <div class="user-area">
+
+            <div class="user-avatar">
+
+                {{ request.user.username|slice:":1"|upper }}
+
+            </div>
+
+            <div>
+
+                <div class="user-name">
+
+                    {{ request.user.get_full_name|default:request.user.username }}
+
+                </div>
+
+                <a href="{% url 'logout' %}"
+                   class="logout-btn">
+
+                    Sign out
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+
+        <div class="compose-card">
+
+
+            <!-- HEADER -->
+
+            <div class="compose-header">
+
+                <div>
+
+                    <h2 class="compose-title">
+                        âœŽ New Message
+                    </h2>
+
+                    <div class="compose-subtitle">
+    Complete the form below and send your message.
+</div>
+
+{% if requires_approval %}
+<div class="approval-notice">
+    <span class="approval-icon">&#9888;</span>
+    <span>
+        Messages sent by Teaching Staff require
+        <strong>Admin approval</strong> before delivery.
+    </span>
+</div>
+{% endif %}
+
+                </div>
+
+
+                <a href="{% url 'messaging:dashboard' %}"
+                   class="back-btn">
+
+                    â† Back to Messaging
+
+                </a>
+
+            </div>
+
+
+            <!-- FORM -->
+
+            <div class="compose-body">
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <!-- RECIPIENT -->
+
+                    <div class="mb-3">
+
+                        <label for="recipient_type"
+                               class="form-label">
+
+                            Recipient Type
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <select
+                            name="recipient_type"
+                            id="recipient_type"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="individual">
+                                Individual
+                            </option>
+
+                            <option value="group">
+                                Group
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- INDIVIDUAL RECIPIENT -->
+
+<div
+    class="mb-3"
+    id="individual-recipient-section"
+>
+
+    <label for="individual-recipient-mode"
+           class="form-label">
+
+        Delivery To
+        <span class="required">*</span>
+
+    </label>
+
+    <select
+        name="individual_recipient_mode"
+        id="individual-recipient-mode"
+        class="form-select mb-3"
+    >
+        <option value="learner">
+            Learner Only
+        </option>
+
+        <option value="learner_parent">
+            Learner + Parent
+        </option>
+
+        <option value="parent_only">
+            Parent Only
+        </option>
+    </select>
+
+    <div
+        class="form-help mb-3"
+        id="recipient-mode-help"
+    >
+        Enter an employee number or learner admission number.
+    </div>
+
+    <label for="recipient-search"
+           class="form-label">
+
+        Individual Recipient
+        <span class="required">*</span>
+
+    </label>
+
+    <input
+        type="text"
+        id="recipient-search"
+        class="form-control"
+        placeholder="Enter employee number or admission number"
+        autocomplete="off"
+    >
+
+    <div class="form-help">
+        Enter an employee number such as EMPLUH010 or a learner admission number such as LUH006.
+    </div>
+
+    <div
+        id="recipient-search-results"
+        class="list-group mt-2"
+        style="display: none;"
+    ></div>
+
+    <div
+        id="selected-recipient"
+        class="alert alert-primary mt-2"
+        style="display: none;"
+    ></div>
+
+    <input
+        type="hidden"
+        name="recipient"
+        id="recipient"
+        value=""
+    >
+
+</div>
+
+
+<!-- GROUP RECIPIENT -->
+
+                    <div
+                        class="mb-3"
+                        id="group-recipient-section"
+                        style="display: none;"
+                    >
+
+                        <label for="group_type"
+                               class="form-label">
+
+                            Group
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <select
+                            name="group_type"
+                            id="group_type"
+                            class="form-select"
+                        >
+
+                                                        <option value="">
+                                Select group
+                            </option>
+
+                            {% if is_admin %}
+
+                            <option value="teaching">
+                                Teaching Staff
+                            </option>
+
+                            <option value="support">
+                                Support Staff
+                            </option>
+
+                            {% endif %}
+
+                            {% if is_admin or is_teaching_staff %}
+
+                            <option value="parents">
+                                Parents
+                            </option>
+
+                            <option value="students">
+                                Students
+                            </option>
+
+                            <option value="grade">
+                                Grade / Class
+                            </option>
+
+                            {% endif %}
+
+                        </select>
+
+                        <div class="form-help">
+                            Select a group to send the same message to all matching recipients.
+                        </div>
+
+                    </div>
+
+
+                    <!-- GRADE / CLASS -->
+
+                    <div
+                        class="mb-3"
+                        id="grade-section"
+                        style="display: none;"
+                    >
+
+                        <label for="class_name"
+                               class="form-label">
+
+                            Grade / Class
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <select
+                            name="class_name"
+                            id="class_name"
+                            class="form-select"
+                        >
+
+                            <option value="">
+                                Select grade / class
+                            </option>
+
+                            {% for grade in grade_options %}
+
+                                <option value="{{ grade }}">
+                                    {{ grade }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                        <div class="form-help">
+                            All active student accounts belonging to the selected grade/class will receive the message.
+                        </div>
+
+                    </div>
+
+
+                    <!-- MESSAGE TYPE -->
+
+                    <div class="mb-3">
+
+                        <label for="message_type"
+                               class="form-label">
+
+                            Message Type
+
+                        </label>
+
+                        <select
+                            name="message_type"
+                            id="message_type"
+                            class="form-select"
+                        >
+
+                            {% for value, label in message_types %}
+
+                                <option value="{{ value }}">
+
+                                    {{ label }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- SUBJECT -->
+
+                    <div class="mb-3">
+
+                        <label for="subject"
+                               class="form-label">
+
+                            Subject
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="subject"
+                            id="subject"
+                            class="form-control"
+                            placeholder="Enter message subject"
+                            maxlength="255"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- MESSAGE -->
+
+                    <div class="mb-3">
+
+                        <label for="message"
+                               class="form-label">
+
+                            Message
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <textarea
+                            name="message"
+                            id="message"
+                            class="form-control"
+                            placeholder="Write your message here..."
+                            required
+                        ></textarea>
+
+                        <div class="form-help">
+                            Please write a clear and professional message.
+                        </div>
+
+                    </div>
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="button-area">
+
+                        <a
+                            href="{% url 'messaging:dashboard' %}"
+                            class="cancel-btn"
+                        >
+
+                            Cancel
+
+                        </a>
+
+
+                        <button
+                            type="submit"
+                            class="send-btn"
+                        >
+
+                            âœ‰ Send Message
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+        <div class="footer">
+
+            Luhan School ERP Â· Messaging
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const recipientType = document.getElementById("recipient_type");
+
+    const individualSection =
+        document.getElementById("individual-recipient-section");
+
+    const groupSection =
+        document.getElementById("group-recipient-section");
+
+    const gradeSection =
+        document.getElementById("grade-section");
+
+    const recipient =
+        document.getElementById("recipient");
+
+    const groupType =
+        document.getElementById("group_type");
+
+    const className =
+        document.getElementById("class_name");
+
+    const individualRecipientMode =
+        document.getElementById(
+            "individual-recipient-mode"
+        );
+
+    const recipientModeHelp =
+        document.getElementById(
+            "recipient-mode-help"
+        );
+
+    const recipientSearch =
+        document.getElementById("recipient-search");
+
+    const recipientResults =
+        document.getElementById("recipient-search-results");
+
+    const selectedRecipient =
+        document.getElementById("selected-recipient");
+
+
+    function updateRecipientSections() {
+
+        if (recipientType.value === "group") {
+
+            individualSection.style.display = "none";
+            groupSection.style.display = "block";
+
+            recipient.removeAttribute("required");
+            groupType.setAttribute("required", "required");
+
+            updateGradeSection();
+
+        } else {
+
+            individualSection.style.display = "block";
+            groupSection.style.display = "none";
+            gradeSection.style.display = "none";
+
+            recipient.setAttribute("required", "required");
+            groupType.removeAttribute("required");
+            className.removeAttribute("required");
+
+        }
+
+    }
+
+
+    function updateGradeSection() {
+
+        if (
+            recipientType.value === "group"
+            && groupType.value === "grade"
+        ) {
+
+            gradeSection.style.display = "block";
+            className.setAttribute("required", "required");
+
+        } else {
+
+            gradeSection.style.display = "none";
+            className.removeAttribute("required");
+
+        }
+
+    }
+
+
+    function clearRecipientSelection() {
+
+        recipient.value = "";
+
+        selectedRecipient.style.display = "none";
+        selectedRecipient.innerHTML = "";
+
+    }
+
+
+    function showRecipientResults(results) {
+
+        recipientResults.innerHTML = "";
+
+        if (!results.length) {
+
+            recipientResults.style.display = "block";
+
+            recipientResults.innerHTML =
+                '<div class="list-group-item text-muted">' +
+                'No matching employee or learner found.' +
+                '</div>';
+
+            return;
+        }
+
+
+        results.forEach(function (item) {
+
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+            button.className =
+                "list-group-item list-group-item-action";
+
+            button.textContent =
+                item.label + " (" +
+(
+    item.type === "student"
+        ? "Learner"
+        : item.type === "parent"
+            ? "Parent"
+            : "Staff"
+) +
+")";
+
+
+            button.addEventListener(
+                "click",
+                function () {
+
+                    recipient.value = item.id;
+
+                    selectedRecipient.innerHTML =
+                        "<strong>Selected:</strong> " +
+item.label +
+" &mdash; " +
+(
+    item.type === "student"
+        ? "Learner"
+        : item.type === "parent"
+            ? "Parent"
+            : "Staff"
+);
+
+                    selectedRecipient.style.display =
+                        "block";
+
+                    recipientResults.style.display =
+                        "none";
+
+                    recipientResults.innerHTML = "";
+
+                    recipientSearch.value =
+                        item.number;
+
+                }
+            );
+
+
+            recipientResults.appendChild(button);
+
+        });
+
+
+        recipientResults.style.display = "block";
+
+    }
+
+
+    let searchTimer = null;
+
+
+    recipientSearch.addEventListener(
+        "input",
+        function () {
+
+            const query =
+                recipientSearch.value.trim();
+
+            clearRecipientSelection();
+
+            recipientResults.innerHTML = "";
+            recipientResults.style.display = "none";
+
+
+            if (query.length < 2) {
+                return;
+            }
+
+
+            clearTimeout(searchTimer);
+
+
+            searchTimer = setTimeout(
+                function () {
+
+                    fetch(
+                        "{% url 'messaging:compose_recipient_lookup' %}?q=" +
+                        encodeURIComponent(query) +
+                        "&mode=" +
+                        encodeURIComponent(
+                            individualRecipientMode.value
+                        ),
+                        {
+                            headers: {
+                                "X-Requested-With":
+                                    "XMLHttpRequest"
+                            }
+                        }
+                    )
+                    .then(function (response) {
+
+                        if (!response.ok) {
+                            throw new Error(
+                                "Recipient lookup failed."
+                            );
+                        }
+
+                        return response.json();
+
+                    })
+                    .then(function (data) {
+
+                        showRecipientResults(
+                            data.results || []
+                        );
+
+                    })
+                    .catch(function () {
+
+                        recipientResults.style.display =
+                            "block";
+
+                        recipientResults.innerHTML =
+                            '<div class="list-group-item text-danger">' +
+                            'Unable to search recipients. Please try again.' +
+                            '</div>';
+
+                    });
+
+                },
+                250
+            );
+
+        }
+    );
+
+
+    individualRecipientMode.addEventListener(
+        "change",
+        function () {
+
+            clearRecipientSelection();
+
+            recipientResults.innerHTML = "";
+            recipientResults.style.display = "none";
+            recipientSearch.value = "";
+
+            if (
+                individualRecipientMode.value ===
+                "parent_only"
+            ) {
+
+                recipientModeHelp.textContent =
+                    "Enter the learner admission number to find the linked parent.";
+
+                recipientSearch.placeholder =
+                    "Enter learner admission number";
+
+            } else if (
+                individualRecipientMode.value ===
+                "learner_parent"
+            ) {
+
+                recipientModeHelp.textContent =
+                    "Enter the learner admission number to send to the learner and linked parent(s).";
+
+                recipientSearch.placeholder =
+                    "Enter learner admission number";
+
+            } else {
+
+                recipientModeHelp.textContent =
+                    "Enter an employee number or learner admission number.";
+
+                recipientSearch.placeholder =
+                    "Enter employee number or admission number";
+            }
+        }
+    );
+
+    recipientType.addEventListener(
+        "change",
+        updateRecipientSections
+    );
+
+
+    groupType.addEventListener(
+        "change",
+        updateGradeSection
+    );
+
+
+    updateRecipientSections();
+
+});
+
+</script>
+
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == "success" %}
+        <div id="message-success-popup">
+            <div class="success-popup-box">
+                <div class="success-popup-check">&#10003;</div>
+                {% if requires_approval %}
+<div class="success-popup-title">Sent for Approval</div>
+<div class="success-popup-message">{{ message }}</div>
+{% else %}
+<div class="success-popup-title">Sent Successfully</div>
+<div class="success-popup-message">{{ message }}</div>
+{% endif %}
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<div id="send-success-immediate">
+    <div class="success-popup-box">
+        <div class="success-popup-check">&#10003;</div>
+        {% if requires_approval %}
+<div class="success-popup-title">Sent for Approval</div>
+<div class="success-popup-message">
+    Your message has been submitted to Admin for approval.
+</div>
+{% else %}
+<div class="success-popup-title">Sent Successfully</div>
+<div class="success-popup-message">
+    Your message has been sent successfully.
+</div>
+{% endif %}
+    </div>
+</div>
+
+<style>
+#message-success-popup,
+#send-success-immediate {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
+#send-success-immediate {
+    display: none;
+}
+
+.success-popup-box {
+    background: #ffffff;
+    min-width: 340px;
+    max-width: 90%;
+    padding: 32px 42px;
+    border-radius: 18px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,.28);
+    border: 1px solid #dcfce7;
+}
+
+.success-popup-check {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #22c55e;
+    color: #ffffff;
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 76px;
+}
+
+.success-popup-title {
+    color: #15803d;
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 7px;
+}
+
+.success-popup-message {
+    color: #475569;
+    font-size: 14px;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const form = document.querySelector("form");
+    const immediatePopup = document.getElementById("send-success-immediate");
+
+    if (form && immediatePopup) {
+
+        form.addEventListener("submit", function () {
+
+            immediatePopup.style.display = "flex";
+
+        });
+
+    }
+
+});
+</script>
+</html>

@@ -1,0 +1,386 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        Student Library Members
+    </title>
+
+    <style>
+
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #111;
+            background: #fff;
+            margin: 0;
+            font-size: 12px;
+        }
+
+        .print-container {
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #111;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            max-height: 80px;
+            max-width: 150px;
+            object-fit: contain;
+            margin-bottom: 6px;
+        }
+
+        .school-name {
+            font-size: 22px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .motto {
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 4px;
+        }
+
+        .contact {
+            font-size: 10px;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 15px 0 8px;
+        }
+
+        .report-title h1 {
+            font-size: 18px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .filter-info {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #999;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #555;
+            padding: 7px 6px;
+            vertical-align: middle;
+        }
+
+        th {
+            font-weight: bold;
+            text-align: center;
+            background: #eee;
+        }
+
+        td.center {
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 30px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+        }
+
+        .signature {
+            width: 40%;
+            border-top: 1px solid #111;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        .print-button {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .print-button button {
+            padding: 9px 18px;
+            border: none;
+            background: #111;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        @media print {
+
+            .print-button {
+                display: none;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="print-container">
+
+    <div class="print-button">
+        <button onclick="window.print()">
+            Print
+        </button>
+    </div>
+
+
+    <div class="header">
+
+        {% if branding and branding.logo %}
+            <img
+                src="{{ branding.logo.url }}"
+                class="logo"
+                alt="School Logo"
+            >
+        {% endif %}
+
+        <div class="school-name">
+            {% if branding %}
+                {{ branding.school_name }}
+            {% else %}
+                School
+            {% endif %}
+        </div>
+
+        {% if branding and branding.motto %}
+            <div class="motto">
+                {{ branding.motto }}
+            </div>
+        {% endif %}
+
+        <div class="contact">
+
+            {% if branding and branding.physical_address %}
+                {{ branding.physical_address }}
+            {% endif %}
+
+            {% if branding and branding.phone %}
+                &nbsp; | &nbsp; {{ branding.phone }}
+            {% endif %}
+
+            {% if branding and branding.alternative_phone %}
+                &nbsp; | &nbsp; {{ branding.alternative_phone }}
+            {% endif %}
+
+            {% if branding and branding.email %}
+                &nbsp; | &nbsp; {{ branding.email }}
+            {% endif %}
+
+            {% if branding and branding.website %}
+                &nbsp; | &nbsp; {{ branding.website }}
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="report-title">
+
+        <h1>
+            Student Library Members Register
+        </h1>
+
+    </div>
+
+
+    <div class="filter-info">
+
+        {% if class_name %}
+            <strong>Class:</strong>
+            {{ class_name }}
+        {% else %}
+            <strong>All Classes</strong>
+        {% endif %}
+
+        {% if stream %}
+            &nbsp;&nbsp; | &nbsp;&nbsp;
+            <strong>Stream:</strong>
+            {{ stream }}
+        {% endif %}
+
+    </div>
+
+
+    <div class="summary">
+
+        <div>
+            <strong>Total Student Members:</strong>
+            {{ students|length }}
+        </div>
+
+        <div>
+            <strong>Printed:</strong>
+            {% now "d/m/Y H:i" %}
+        </div>
+
+    </div>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th style="width:5%;">
+                    #
+                </th>
+
+                <th style="width:15%;">
+                    Admission No.
+                </th>
+
+                <th style="width:29%;">
+                    Student Name
+                </th>
+
+                <th style="width:12%;">
+                    Class
+                </th>
+
+                <th style="width:12%;">
+                    Stream
+                </th>
+
+                <th style="width:12%;">
+                    Gender
+                </th>
+
+                <th style="width:15%;">
+                    Status
+                </th>
+
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for member in students %}
+
+            <tr>
+
+                <td class="center">
+                    {{ forloop.counter }}
+                </td>
+
+                <td class="center">
+                    {{ member.student.admission_no }}
+                </td>
+
+                <td>
+                    {{ member.student.get_full_name }}
+                </td>
+
+                <td class="center">
+                    {{ member.student.class_name }}
+                </td>
+
+                <td class="center">
+                    {{ member.student.stream }}
+                </td>
+
+                <td class="center">
+                    {{ member.student.gender }}
+                </td>
+
+                <td class="center">
+
+                    {% if member.active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td
+                    colspan="7"
+                    style="text-align:center; padding:25px;"
+                >
+                    No student library members found.
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <div class="footer">
+
+        <div class="signature">
+            Librarian / Library Officer
+        </div>
+
+        <div class="signature">
+            School Administration
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    window.onload = function () {
+        window.print();
+    };
+
+</script>
+
+</body>
+</html>

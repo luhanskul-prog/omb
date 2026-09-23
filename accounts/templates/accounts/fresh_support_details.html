@@ -1,0 +1,179 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Support Staff Details</h2>
+        <p class="text-muted">
+            Enter the support staff member's personal and employment details.
+        </p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header">
+                <h5 class="mb-0">Personal Information</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">First Name *</label>
+                        <input
+                            type="text"
+                            name="first_name"
+                            class="form-control"
+                            required
+                        >
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Last Name *</label>
+                        <input
+                            type="text"
+                            name="last_name"
+                            class="form-control"
+                            required
+                        >
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Email Address</label>
+                        <input
+                            type="email"
+                            name="email"
+                            class="form-control"
+                        >
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Phone Number</label>
+                        <input
+                            type="text"
+                            name="phone"
+                            class="form-control"
+                        >
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header">
+                <h5 class="mb-0">Employment Information</h5>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label">Job Title</label>
+                        <input
+                            type="text"
+                            name="job_title"
+                            class="form-control"
+                            placeholder="Support Staff"
+                        >
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <select
+                            name="department"
+                            class="form-select"
+                        >
+                            <option value="">
+                                Select Department
+                            </option>
+
+                            {% for department in departments %}
+                                <option value="{{ department.id }}">
+                                    {{ department.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-body">
+
+                <div class="alert alert-info mb-0">
+
+                    <strong>Automatic Account Credentials</strong>
+
+                    <br>
+
+                    The system will automatically generate:
+
+                    <br>
+
+                    <strong>
+                        Employee Number = Username
+                    </strong>
+
+                    <br>
+
+                    A separate secure password will also be generated
+                    automatically.
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex justify-content-between">
+
+            <a
+                href="{% url 'accounts:fresh_staff_start' %}"
+                class="btn btn-outline-secondary"
+            >
+                ← Back
+            </a>
+
+            <button
+                type="submit"
+                class="btn btn-primary px-4"
+            >
+                Continue →
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

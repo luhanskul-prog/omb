@@ -1,0 +1,622 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-cash-stack me-2"></i>
+                Fee Payments
+            </h3>
+
+            <p class="text-muted mb-0">
+                Record and manage learner fee payments.
+            </p>
+        </div>
+
+        <a href="{% url 'fees:dashboard' %}"
+           class="btn btn-outline-primary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Fee Dashboard
+        </a>
+
+    </div>
+
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+
+    {% if saved_payment %}
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="text-center">
+
+                <div class="mb-3"
+                     style="font-size:50px;color:#198754;">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+
+                <h4 class="fw-bold text-success">
+                    Payment Recorded Successfully
+                </h4>
+
+                <p class="text-muted">
+                    Receipt {{ saved_payment.receipt_number }}
+                </p>
+
+            </div>
+
+
+            <div class="row g-3 mt-2">
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <small class="text-muted">Learner</small>
+                        <div class="fw-bold">
+                            {{ saved_payment.fee_record.student }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <small class="text-muted">Amount</small>
+                        <div class="fw-bold text-success">
+                            KSh {{ saved_payment.amount|floatformat:2 }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <small class="text-muted">Payment Method</small>
+                        <div class="fw-bold">
+                            {{ saved_payment.payment_method }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="border rounded p-3">
+                        <small class="text-muted">Date</small>
+                        <div class="fw-bold">
+                            {{ saved_payment.payment_date }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-4">
+
+                <a href="{% url 'fees:print_receipt' saved_payment.id %}"
+                   target="_blank"
+                   class="btn btn-primary me-2">
+                    <i class="bi bi-printer me-1"></i>
+                    Print Receipt
+                </a>
+
+                <a href="{% url 'fees:fee_payments_page' %}"
+                   class="btn btn-outline-secondary">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    New Payment
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+    <!-- SEARCH -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-search me-2"></i>
+                Find Learner
+            </h5>
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-md-9">
+
+                        <input type="text"
+                               name="search"
+                               value="{{ search }}"
+                               class="form-control form-control-lg"
+                               placeholder="Search admission number or learner name...">
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <button class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-search me-1"></i>
+                            Search
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            {% if search %}
+
+                {% if students %}
+
+                    <div class="table-responsive mt-4">
+
+                        <table class="table table-hover align-middle">
+
+                            <thead class="table-light">
+
+                                <tr>
+                                    <th>Admission No.</th>
+                                    <th>Learner</th>
+                                    <th>Class</th>
+                                    <th></th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                                {% for student in students %}
+
+                                <tr>
+
+                                    <td class="fw-bold">
+                                        {{ student.admission_number }}
+                                    </td>
+
+                                    <td>
+                                        {{ student }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.class_name }}
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        <a href="?student={{ student.id }}"
+                                           class="btn btn-sm btn-primary">
+                                            Select
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-warning mt-4 mb-0">
+                        No learner found.
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    {% if selected_student %}
+
+    <!-- LEARNER -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <div>
+
+                    <small class="text-muted">
+                        SELECTED LEARNER
+                    </small>
+
+                    <h4 class="fw-bold mb-1">
+                        {{ selected_student }}
+                    </h4>
+
+                    <span class="badge bg-primary">
+                        {{ selected_student.admission_number }}
+                    </span>
+
+                    <span class="badge bg-secondary">
+                        {{ selected_student.class_name }}
+                    </span>
+
+                </div>
+
+                <a href="{% url 'fees:fee_payments_page' %}"
+                   class="btn btn-outline-secondary">
+                    Change Learner
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FEE RECORDS -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body p-4">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-wallet2 me-2"></i>
+                Fee Accounts
+            </h5>
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Academic Year</th>
+                            <th>Term</th>
+                            <th>Opening</th>
+                            <th>Charged</th>
+                            <th>Paid</th>
+                            <th>Balance</th>
+                            <th>Action</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for record in records %}
+
+                        <tr>
+
+                            <td>
+                                {{ record.academic_year.year }}
+                            </td>
+
+                            <td>
+                                {{ record.term.name }}
+                            </td>
+
+                            <td>
+                                KSh {{ record.opening_balance|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                KSh {{ record.amount_charged|floatformat:2 }}
+                            </td>
+
+                            <td class="text-success fw-bold">
+                                KSh {{ record.amount_paid|floatformat:2 }}
+                            </td>
+
+                            <td class="fw-bold">
+                                KSh {{ record.balance|floatformat:2 }}
+                            </td>
+
+                            <td>
+
+                                <a href="?student={{ selected_student.id }}&record={{ record.id }}"
+                                   class="btn btn-sm btn-primary">
+                                    Pay
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7"
+                                class="text-center text-muted py-4">
+                                No fee records found for this learner.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    {% if selected_record %}
+
+    <!-- PAYMENT FORM -->
+
+    <div class="row">
+
+        <div class="col-lg-7">
+
+            <div class="card border-0 shadow-sm mb-4">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-4">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Record Payment
+                    </h5>
+
+                    <div class="alert alert-light border">
+
+                        <div class="row">
+
+                            <div class="col-md-4">
+                                <small class="text-muted">
+                                    YEAR
+                                </small>
+                                <div class="fw-bold">
+                                    {{ selected_record.academic_year.year }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <small class="text-muted">
+                                    TERM
+                                </small>
+                                <div class="fw-bold">
+                                    {{ selected_record.term.name }}
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <small class="text-muted">
+                                    CURRENT BALANCE
+                                </small>
+                                <div class="fw-bold text-danger">
+                                    KSh {{ selected_record.balance|floatformat:2 }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if selected_record.term.is_closed %}
+
+                    <div class="alert alert-danger">
+                        <i class="bi bi-lock-fill me-1"></i>
+                        This term is closed. Payments cannot be posted to it.
+                    </div>
+
+                    {% else %}
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <input type="hidden"
+                               name="action"
+                               value="save_payment">
+
+                        <input type="hidden"
+                               name="student_id"
+                               value="{{ selected_student.id }}">
+
+                        <input type="hidden"
+                               name="record_id"
+                               value="{{ selected_record.id }}">
+
+
+                        <div class="mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Amount Paid
+                            </label>
+
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text">
+                                    KSh
+                                </span>
+
+                                <input type="number"
+                                       name="amount"
+                                       step="0.01"
+                                       min="0.01"
+                                       class="form-control"
+                                       required
+                                       placeholder="0.00">
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Payment Date
+                                </label>
+
+                                <input type="date"
+                                       name="payment_date"
+                                       value="{{ today|date:'Y-m-d' }}"
+                                       class="form-control"
+                                       required>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <label class="form-label fw-semibold">
+                                    Payment Method
+                                </label>
+
+                                <select name="payment_method"
+                                        class="form-select">
+
+                                    <option value="M-Pesa">
+                                        M-Pesa
+                                    </option>
+
+                                    <option value="Cash">
+                                        Cash
+                                    </option>
+
+                                    <option value="Bank">
+                                        Bank
+                                    </option>
+
+                                    <option value="Cheque">
+                                        Cheque
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="mb-4 mt-3">
+
+                            <label class="form-label fw-semibold">
+                                Transaction / Reference No.
+                            </label>
+
+                            <input type="text"
+                                   name="reference"
+                                   class="form-control"
+                                   placeholder="e.g. M-Pesa transaction code">
+
+                        </div>
+
+
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100">
+
+                            <i class="bi bi-check-circle me-2"></i>
+                            Save Payment
+
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SUMMARY -->
+
+        <div class="col-lg-5">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <h5 class="fw-bold mb-4">
+                        Account Summary
+                    </h5>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Opening Balance</span>
+                        <strong>
+                            KSh {{ selected_record.opening_balance|floatformat:2 }}
+                        </strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Term Charges</span>
+                        <strong>
+                            KSh {{ selected_record.amount_charged|floatformat:2 }}
+                        </strong>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Total Paid</span>
+                        <strong class="text-success">
+                            KSh {{ selected_record.amount_paid|floatformat:2 }}
+                        </strong>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between">
+
+                        <span class="fw-bold">
+                            Balance
+                        </span>
+
+                        <span class="fw-bold fs-4 text-danger">
+                            KSh {{ selected_record.balance|floatformat:2 }}
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,472 @@
+﻿
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Write Weekly Assessment Report</h2>
+            <p class="text-muted mb-0">
+                Staff assessment entry
+            </p>
+        </div>
+
+        {% if portal == "admin" %}<a href="{% url 'weekly_reports:admin_reports' %}"{% else %}<a href="{% url 'weekly_reports:staff_reports' %}"{% endif %}
+           class="btn btn-outline-secondary">
+            Back to Reports
+        </a>
+    </div>
+
+
+    {% if not mode %}
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h4>Individual Student</h4>
+
+                    <p class="text-muted">
+                        Write or update a report for one learner.
+                    </p>
+
+                    <a href="?mode=individual"
+                       class="btn btn-primary">
+                        Select Individual Student
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body p-4">
+
+                    <h4>Whole Class</h4>
+
+                    <p class="text-muted">
+                        Load a class and enter reports for multiple
+                        learners at once.
+                    </p>
+
+                    <a href="?mode=class"
+                       class="btn btn-primary">
+                        Select Whole Class
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    {% elif mode == "individual" %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-4">Individual Student Report</h4>
+
+            <form method="get">
+
+                <input type="hidden"
+                       name="mode"
+                       value="individual">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Class / Stream</label>
+
+                        <select name="class"
+                                class="form-select"
+                                required
+                                onchange="this.form.submit()">
+
+                            <option value="">Select class</option>
+
+                            {% for item in classes %}
+                            <option value="{{ item.value }}"
+                                {% if item.class_name == selected_class and item.stream == selected_stream %}
+                                selected
+                                {% endif %}>
+                                {{ item.label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label class="form-label">Assessment Week</label>
+
+                        <select name="week"
+                                class="form-select"
+                                required
+                                onchange="this.form.submit()">
+
+                            <option value="">Select week</option>
+
+                            {% for week in weeks %}
+                            <option value="{{ week.pk }}"
+                                {% if week.pk|stringformat:"s" == selected_week %}
+                                selected
+                                {% endif %}>
+                                Week {{ week.week_number }}
+                                â€” {{ week.week_start }}
+                                to {{ week.week_end }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            {% if selected_class and selected_week %}
+
+            <hr class="my-4">
+
+            <form method="post"
+                  action="{% url 'weekly_reports:staff_write_individual' %}">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="class"
+                       value="{{ selected_class }}||{{ selected_stream }}">
+
+                <input type="hidden"
+                       name="week"
+                       value="{{ selected_week }}">
+
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Student</label>
+
+                        <select name="student"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select student
+                            </option>
+
+                            {% for student in students %}
+                            <option value="{{ student.pk }}">
+                                {{ student.first_name }}
+                                {% if student.middle_name %}
+                                {{ student.middle_name }}
+                                {% endif %}
+                                {{ student.last_name }}
+                                â€” {{ student.admission_no }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label class="form-label">Subject</label>
+
+                        <select name="subject"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select subject
+                            </option>
+
+                            {% for subject in subjects %}
+                            <option value="{{ subject.pk }}">
+                                {{ subject.name }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <label class="form-label">Score</label>
+                        <input type="number"
+                               step="0.01"
+                               min="0"
+                               name="score"
+                               class="form-control"
+                               required>
+                    </div>
+
+
+                    <div class="col-md-2">
+                        <label class="form-label">Max Score</label>
+                        <input type="number"
+                               step="0.01"
+                               min="1"
+                               name="max_score"
+                               value="100"
+                               class="form-control"
+                               required>
+                    </div>
+
+
+                    <div class="col-12">
+                        <label class="form-label">Teacher Report</label>
+
+                        <textarea name="teacher_report"
+                                  class="form-control"
+                                  rows="4"></textarea>
+                    </div>
+
+
+                    <div class="col-12">
+                        <button class="btn btn-primary">
+                            Save Student Report
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+
+    {% elif mode == "class" %}
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <h4 class="mb-4">Whole Class Report Entry</h4>
+
+            <form method="get">
+
+                <input type="hidden"
+                       name="mode"
+                       value="class">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Class / Stream
+                        </label>
+
+                        <select name="class"
+                                class="form-select"
+                                required
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                Select class
+                            </option>
+
+                            {% for item in classes %}
+                            <option value="{{ item.value }}"
+                                {% if item.class_name == selected_class and item.stream == selected_stream %}
+                                selected
+                                {% endif %}>
+                                {{ item.label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Assessment Week
+                        </label>
+
+                        <select name="week"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select week
+                            </option>
+
+                            {% for week in weeks %}
+                            <option value="{{ week.pk }}"
+                                {% if week.pk|stringformat:"s" == selected_week %}
+                                selected
+                                {% endif %}>
+                                Week {{ week.week_number }}
+                                â€” {{ week.week_start }}
+                                to {{ week.week_end }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-md-4">
+                        <label class="form-label">
+                            Subject
+                        </label>
+
+                        <select name="subject"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select subject
+                            </option>
+
+                            {% for subject in subjects %}
+                            <option value="{{ subject.pk }}"
+                                {% if subject.pk|stringformat:"s" == selected_subject %}
+                                selected
+                                {% endif %}>
+                                {{ subject.name }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+                    </div>
+
+
+                    <div class="col-12">
+                        <button class="btn btn-primary">
+                            Load Learners
+                        </button>
+                    </div>
+
+                </div>
+
+            </form>
+
+
+            {% if students %}
+
+            <hr class="my-4">
+
+            <form method="post"
+                  action="{% url 'weekly_reports:staff_write_class' %}">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="class"
+                       value="{{ selected_class }}||{{ selected_stream }}">
+
+                <input type="hidden"
+                       name="week"
+                       value="{{ selected_week }}">
+
+                <input type="hidden"
+                       name="subject"
+                       value="{{ selected_subject }}">
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Admission No.</th>
+                                <th>Learner</th>
+                                <th>Score</th>
+                                <th>Max</th>
+                                <th>Teacher Report</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for student in students %}
+
+                            <tr>
+
+                                <td>{{ forloop.counter }}</td>
+
+                                <td>
+                                    {{ student.admission_no }}
+                                </td>
+
+                                <td>
+                                    {{ student.first_name }}
+                                    {% if student.middle_name %}
+                                    {{ student.middle_name }}
+                                    {% endif %}
+                                    {{ student.last_name }}
+                                </td>
+
+                                <td style="width:110px;">
+                                    <input type="number"
+                                           step="0.01"
+                                           min="0"
+                                           name="score_{{ student.pk }}"
+                                           class="form-control">
+                                </td>
+
+                                <td style="width:100px;">
+                                    <input type="number"
+                                           step="0.01"
+                                           min="1"
+                                           name="max_score_{{ student.pk }}"
+                                           value="100"
+                                           class="form-control">
+                                </td>
+
+                                <td>
+                                    <input type="text"
+                                           name="report_{{ student.pk }}"
+                                           class="form-control">
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <button class="btn btn-success">
+                    Save All Reports
+                </button>
+
+            </form>
+
+            {% elif selected_class and selected_week and selected_subject %}
+
+            <div class="alert alert-info mt-4">
+                No learners were found for the selected class and stream.
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,776 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Report Cards | Luhan School</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f5f7fa;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .search-card,
+        .selection-card,
+        .learner-card {
+            background: white;
+            border-radius: 14px;
+            padding: 25px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, .06);
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .learner-card {
+            border-left: 5px solid #0d6efd;
+        }
+
+        .learner-name {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .learner-info {
+            color: #6c757d;
+        }
+
+        .info-item {
+            margin-bottom: 5px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .btn-load {
+            min-height: 45px;
+            font-weight: 600;
+        }
+
+        .report-card-preview {
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .report-header {
+            background: #0d6efd;
+            color: white;
+            padding: 20px;
+        }
+
+        .report-info {
+            background: #fff;
+            padding: 20px;
+        }
+
+        .status-icon {
+            font-size: 45px;
+        }
+
+        @media print {
+
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .header,
+            .search-card,
+            .selection-card,
+            .learner-card {
+                display: none !important;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="header">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+
+                <h2 class="page-title">
+                    📄 Report Card
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Search for a learner and generate the academic report book.
+                </p>
+
+            </div>
+
+            <div>
+
+                <a
+                    href="{% url 'academic:dashboard' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    ← Academic Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<div class="container pb-5">
+
+
+    <!-- =====================================================
+         STEP 1 — FIND LEARNER
+    ====================================================== -->
+
+    <div class="search-card">
+
+        <h5 class="section-title">
+            1. Find Learner
+        </h5>
+
+        <form method="get">
+
+            <div class="row g-3 align-items-end">
+
+                <div class="col-md-8">
+
+                    <label class="form-label">
+                        Admission Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="admission_no"
+                        class="form-control form-control-lg"
+                        placeholder="Enter learner admission number"
+                        value="{{ admission_no|default:'' }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary btn-lg w-100"
+                    >
+                        🔍 Find Learner
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- =====================================================
+         SEARCH ERROR
+    ====================================================== -->
+
+    {% if search_error %}
+
+        <div class="alert alert-danger">
+
+            <strong>Learner Not Found</strong>
+
+            <br>
+
+            {{ search_error }}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         LEARNER INFORMATION
+    ====================================================== -->
+
+    {% if student %}
+
+        <div class="learner-card">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-8">
+
+                    <div class="learner-name">
+
+                        {{ student.first_name }}
+
+                        {% if student.middle_name %}
+                            {{ student.middle_name }}
+                        {% endif %}
+
+                        {% if student.last_name %}
+                            {{ student.last_name }}
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="learner-info mt-2">
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Admission No:
+                            </span>
+
+                            {{ student.admission_no }}
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Current Class:
+                            </span>
+
+                            {{ student.class_name|default:"Not Assigned" }}
+
+                        </div>
+
+
+                        <div class="info-item">
+
+                            <span class="info-label">
+                                Current Stream:
+                            </span>
+
+                            {% if student.stream %}
+                                {{ student.stream }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                    <span class="badge bg-success fs-6 px-3 py-2">
+                        Learner Found
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             STEP 2 — REPORT DETAILS
+        ================================================== -->
+
+        <div class="selection-card">
+
+            <h5 class="section-title">
+                2. Select Report Details
+            </h5>
+
+
+            <form method="get">
+
+                <input
+                    type="hidden"
+                    name="admission_no"
+                    value="{{ student.admission_no }}"
+                >
+
+
+                <div class="row g-3">
+
+
+                    <!-- CLASS -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Class
+                        </label>
+
+                        <select
+                            name="class_name"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            {% for class_name in class_names %}
+
+                                <option
+                                    value="{{ class_name }}"
+                                    {% if selected_class == class_name %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ class_name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STREAM -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Stream
+                        </label>
+
+                        <select
+                            name="stream"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Stream
+                            </option>
+
+                            {% for stream in streams %}
+
+                                <option
+                                    value="{{ stream.name }}"
+                                    {% if selected_stream == stream.name %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ stream.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ACADEMIC YEAR -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Academic Year
+                        </label>
+
+                        <select
+                            name="year"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Academic Year
+                            </option>
+
+                            {% for year in academic_years %}
+
+                                <option
+                                    value="{{ year.id }}"
+                                    {% if selected_year and selected_year.id == year.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ year.year }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- TERM -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Term
+                        </label>
+
+                        <select
+                            name="term"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Term
+                            </option>
+
+                            {% for term in terms %}
+
+                                <option
+                                    value="{{ term.id }}"
+                                    {% if selected_term and selected_term.id == term.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ term }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- EXAMINATION TYPE -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Examination Type
+                        </label>
+
+                        <select
+                            name="assessment_type"
+                            class="form-select"
+                            required
+                        >
+
+                            <option value="">
+                                Select Examination
+                            </option>
+
+                            {% for assessment_type in assessment_types %}
+
+                                <option
+                                    value="{{ assessment_type.id }}"
+                                    {% if selected_assessment_type and selected_assessment_type.id == assessment_type.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ assessment_type.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- LOAD REPORT -->
+
+                    <div class="col-md-4 d-flex align-items-end">
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100 btn-load"
+                        >
+                            📊 Load Report Book
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             REPORT STATUS
+        ================================================== -->
+
+        {% if report_loaded %}
+
+            {% if report_has_results %}
+
+                <div class="alert alert-success">
+
+                    <strong>
+                        Report Loaded Successfully
+                    </strong>
+
+                    <br>
+
+                    {{ student.first_name }}
+
+                    {% if student.middle_name %}
+                        {{ student.middle_name }}
+                    {% endif %}
+
+                    {% if student.last_name %}
+                        {{ student.last_name }}
+                    {% endif %}
+
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-warning">
+
+                    <strong>
+                        No examination marks have been uploaded yet.
+                    </strong>
+
+                    <br>
+
+                    The report book will still display all available
+                    subjects. Missing marks will appear as
+                    <strong>___</strong>.
+
+                </div>
+
+            {% endif %}
+
+        {% endif %}
+
+
+        <!-- =================================================
+             REPORT BOOK
+        ================================================== -->
+
+        {% if report_loaded and selected_year and selected_term %}
+
+            <div class="card shadow-sm report-card-preview">
+
+                <div class="report-header">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                        <div>
+
+                            <h4 class="mb-1">
+                                📘 Report Book
+                            </h4>
+
+                            <div>
+
+                                {{ student.first_name }}
+
+                                {% if student.middle_name %}
+                                    {{ student.middle_name }}
+                                {% endif %}
+
+                                {% if student.last_name %}
+                                    {{ student.last_name }}
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="no-print">
+
+                            <!-- CORRECT URL NAME -->
+
+                            <a
+                                href="{% url 'academic:report_card' student.id selected_year.id selected_term.id %}{% if selected_assessment_type %}?assessment_type={{ selected_assessment_type.id }}{% endif %}"
+                                class="btn btn-light"
+                                target="_blank"
+                            >
+                                📄 Open Report Card
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-info">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <strong>
+                                Admission Number:
+                            </strong>
+
+                            {{ student.admission_no }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <strong>
+                                Class:
+                            </strong>
+
+                            {{ selected_class }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <strong>
+                                Stream:
+                            </strong>
+
+                            {{ selected_stream }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <strong>
+                                Academic Year:
+                            </strong>
+
+                            {{ selected_year.year }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <strong>
+                                Term:
+                            </strong>
+
+                            {{ selected_term }}
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <strong>
+                                Examination:
+                            </strong>
+
+                            {{ selected_assessment_type }}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- =================================================
+                         QUICK REPORT ACTIONS
+                    ================================================== -->
+
+                    <div class="mt-4 pt-3 border-top no-print">
+
+                        <div class="d-flex gap-2 flex-wrap">
+
+                            <a
+                                href="{% url 'academic:report_card' student.id selected_year.id selected_term.id %}{% if selected_assessment_type %}?assessment_type={{ selected_assessment_type.id }}{% endif %}"
+                                class="btn btn-primary"
+                                target="_blank"
+                            >
+                                📄 View Full Report Card
+                            </a>
+
+
+                            <button
+                                type="button"
+                                onclick="window.print()"
+                                class="btn btn-outline-secondary"
+                            >
+                                🖨️ Print
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% endif %}
+
+    {% endif %}
+
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>
+```

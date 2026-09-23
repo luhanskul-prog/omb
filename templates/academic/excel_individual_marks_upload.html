@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:900px;margin:30px auto;padding:25px;">
+
+    <div style="margin-bottom:25px;">
+        <h2>Individual Learner Excel Upload</h2>
+
+        <p style="color:#666;">
+            Upload a completed Individual Learner Excel mark-entry file.
+        </p>
+    </div>
+
+    <div style="
+        background:#fff;
+        padding:25px;
+        border-radius:12px;
+        box-shadow:0 2px 10px rgba(0,0,0,.08);
+    ">
+
+        <form method="post"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div style="margin-bottom:20px;">
+
+                <label>
+                    <strong>Assessment</strong>
+                </label>
+
+                <select name="assessment"
+                        required
+                        style="
+                            width:100%;
+                            padding:12px;
+                            margin-top:7px;
+                            box-sizing:border-box;
+                        ">
+
+                    <option value="">
+                        Select assessment
+                    </option>
+
+                    {% for window in open_windows %}
+
+                        <option value="{{ window.id }}"
+                            {% if selected_window_id == window.id|stringformat:"s" %}
+                                selected
+                            {% endif %}>
+
+                            {{ window.academic_year }}
+                            -
+                            {{ window.term }}
+                            -
+                            {{ window.assessment_type }}
+                            -
+                            {{ window.deadline|date:"d M Y H:i" }}
+
+                            {% if window.is_reopened %}
+                                - REOPENED
+                            {% endif %}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div style="margin-bottom:20px;">
+
+                <label>
+                    <strong>Completed Excel File</strong>
+                </label>
+
+                <input type="file"
+                       name="excel_file"
+                       accept=".xlsx"
+                       required
+                       style="
+                           width:100%;
+                           padding:10px;
+                           margin-top:7px;
+                           box-sizing:border-box;
+                       ">
+
+            </div>
+
+
+            <div style="
+                background:#e8f4ff;
+                padding:15px;
+                border-radius:8px;
+                margin-bottom:20px;
+            ">
+
+                <strong>Required Excel format</strong>
+
+                <p style="margin-bottom:5px;">
+                    The file must contain the worksheet:
+                    <strong>Marks Upload</strong>
+                </p>
+
+                <p style="margin:0;">
+                    Required columns:
+                    <strong>
+                        Admission No, Learner Name, Subject, Mark
+                    </strong>
+                </p>
+
+            </div>
+
+
+            <div style="
+                background:#fff3cd;
+                padding:15px;
+                border-radius:8px;
+                margin-bottom:20px;
+                color:#664d03;
+            ">
+
+                <strong>Important</strong>
+
+                <ul style="margin-bottom:0;">
+                    <li>Upload an Individual Learner Excel file only.</li>
+                    <li>The file should contain one learner.</li>
+                    <li>Marks must be between 0 and 100.</li>
+                    <li>Only subjects you are authorized to teach can be uploaded.</li>
+                    <li>No marks are saved if any validation error is found.</li>
+                </ul>
+
+            </div>
+
+
+            <button type="submit"
+                    style="
+                        background:#198754;
+                        color:white;
+                        border:0;
+                        padding:13px 24px;
+                        border-radius:8px;
+                        cursor:pointer;
+                        font-weight:bold;
+                    ">
+
+                Upload Individual Marks
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div style="margin-top:20px;">
+
+        <a href="{% url 'academic:excel_individual' %}">
+            Back to Individual Learner Excel
+        </a>
+
+        &nbsp; | &nbsp;
+
+        <a href="{% url 'academic:marks_entry' %}">
+            Back to Mark Entry
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

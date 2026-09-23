@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="utf-8">
+
+<title>{{ title }}</title>
+
+<style>
+
+@page {
+    size: A4 landscape;
+    margin: 8mm;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    color: #111;
+}
+
+.print-header {
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.print-header h1 {
+    margin: 0;
+    font-size: 22px;
+}
+
+.print-header h2 {
+    margin: 4px 0;
+    font-size: 16px;
+}
+
+.print-header p {
+    margin: 3px 0;
+    font-size: 12px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+th,
+td {
+    border: 1px solid #333;
+    padding: 5px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 9px;
+}
+
+th {
+    background: #e9eef5;
+    font-weight: 700;
+}
+
+.period-col {
+    width: 80px;
+}
+
+.lesson {
+    min-height: 38px;
+}
+
+.subject {
+    font-weight: 700;
+}
+
+.teacher {
+    font-size: 8px;
+}
+
+.room {
+    font-size: 8px;
+}
+
+@media print {
+
+    .no-print {
+        display: none !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="no-print" style="
+    padding:10px;
+    background:#f1f4f8;
+    margin-bottom:10px;
+">
+
+    <button onclick="window.print()">
+        Print Timetable
+    </button>
+
+</div>
+
+<div class="print-header">
+
+    <h1>
+        {% if branding %}
+            {{ branding.school_name }}
+        {% else %}
+            Luhan School
+        {% endif %}
+    </h1>
+
+    <h2>{{ title }}</h2>
+
+    {% if class_name %}
+        <p>
+            Class:
+            <strong>{{ class_name }}</strong>
+            {% if stream %}
+                — {{ stream }}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if teacher_name %}
+        <p>
+            Teacher:
+            <strong>{{ teacher_name }}</strong>
+        </p>
+    {% endif %}
+
+    {% if published %}
+        <p>
+            Timetable Version:
+            {{ published.name }}
+        </p>
+    {% endif %}
+
+</div>
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th class="period-col">
+                Period
+            </th>
+
+            {% for day in days %}
+
+                <th>
+                    {{ day }}
+                </th>
+
+            {% endfor %}
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for period in periods %}
+
+            <tr>
+
+                <th>
+
+                    {{ period.name }}
+
+                    <br>
+
+                    {{ period.start_time }}
+                    -
+                    {{ period.end_time }}
+
+                </th>
+
+                {% for day in days %}
+
+                    <td>
+
+                        {% for entry in entries %}
+
+                            {% if entry.day_id == day.id and entry.period_id == period.id %}
+
+                                <div class="lesson">
+
+                                    <div class="subject">
+                                        {{ entry.subject.name }}
+                                    </div>
+
+                                    {% if entry.teacher %}
+                                        <div class="teacher">
+                                            {{ entry.teacher.name }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if entry.room %}
+                                        <div class="room">
+                                            {{ entry.room.name }}
+                                        </div>
+                                    {% endif %}
+
+                                    {% if entry.is_double_period %}
+                                        <strong>
+                                            DOUBLE
+                                        </strong>
+                                    {% endif %}
+
+                                </div>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </td>
+
+                {% endfor %}
+
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% if auto_print %}
+
+<script>
+window.addEventListener(
+    "load",
+    function () {
+        window.print();
+    }
+);
+</script>
+
+{% endif %}
+
+</body>
+</html>

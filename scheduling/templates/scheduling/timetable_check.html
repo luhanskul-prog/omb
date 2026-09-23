@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:1100px;
+    margin:30px auto;
+    padding:20px;
+">
+
+    <h1>CHECK TIMETABLE</h1>
+
+    {% if draft %}
+        <p>
+            Draft Version {{ draft.id }}
+            — {{ draft.name }}
+        </p>
+    {% endif %}
+
+    <div style="
+        display:grid;
+        grid-template-columns:
+            repeat(auto-fit,minmax(200px,1fr));
+        gap:15px;
+        margin:20px 0;
+    ">
+
+        <div>
+            <strong>Required</strong>
+            <div style="font-size:30px">
+                {{ result.required_lessons }}
+            </div>
+        </div>
+
+        <div>
+            <strong>Scheduled</strong>
+            <div style="font-size:30px">
+                {{ result.scheduled_lessons }}
+            </div>
+        </div>
+
+        <div>
+            <strong>Problems</strong>
+            <div style="
+                font-size:30px;
+                color:
+                {% if result.total_problems %}
+                    #c62828
+                {% else %}
+                    #16803c
+                {% endif %}
+            ">
+                {{ result.total_problems }}
+            </div>
+        </div>
+
+    </div>
+
+    {% if result.problems %}
+
+        {% for problem in result.problems %}
+
+            <div style="
+                background:#fff3f3;
+                border-left:5px solid #c62828;
+                padding:12px;
+                margin-bottom:8px;
+            ">
+
+                <strong>
+                    {{ problem.category }}
+                </strong>
+
+                <br>
+
+                {{ problem.message }}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div style="
+            background:#edf9f1;
+            border-left:5px solid #16803c;
+            padding:15px;
+        ">
+            ✓ TIMETABLE READY FOR REVIEW
+        </div>
+
+    {% endif %}
+
+    <br>
+
+    <a
+        href="{% url 'scheduling:complete_timetable_centre' %}"
+    >
+        Back to Timetable Management Centre
+    </a>
+
+</div>
+
+{% endblock %}

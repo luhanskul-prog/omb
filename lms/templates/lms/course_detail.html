@@ -1,0 +1,184 @@
+{% extends "lms/dashboard.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                {{ course.title }}
+            </h2>
+
+            <p class="text-muted mb-0">
+                Course details and enrolled classes.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a href="{% url 'lms:course_list' %}"
+               class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>
+                Back to Courses
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="row g-4">
+
+        <div class="col-lg-8">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-primary text-white py-3">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-book me-2"></i>
+                        Course Information
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <h3 class="fw-bold">
+                        {{ course.title }}
+                    </h3>
+
+                    {% if course.description %}
+
+                        <p class="text-muted mt-3">
+                            {{ course.description }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="text-muted mt-3">
+                            No course description available.
+                        </p>
+
+                    {% endif %}
+
+
+                    <hr>
+
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <div class="p-3 bg-light rounded">
+
+                                <small class="text-muted d-block">
+                                    Subject
+                                </small>
+
+                                <strong>
+                                    {% if course.subject %}
+                                        {{ course.subject }}
+                                    {% else %}
+                                        Not assigned
+                                    {% endif %}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <div class="p-3 bg-light rounded">
+
+                                <small class="text-muted d-block">
+                                    Created By
+                                </small>
+
+                                <strong>
+                                    {% if course.created_by %}
+                                        {{ course.created_by }}
+                                    {% else %}
+                                        System
+                                    {% endif %}
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-4">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-header bg-white py-3">
+
+                    <h5 class="mb-0">
+                        <i class="bi bi-people me-2"></i>
+                        Course Classes
+                    </h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    {% if course.classes.all %}
+
+                        <div class="list-group">
+
+                            {% for course_class in course.classes.all %}
+
+                                <div class="list-group-item">
+
+                                    <i class="bi bi-people me-2 text-primary"></i>
+
+                                    {{ course_class }}
+
+                                </div>
+
+                            {% empty %}
+
+                                <div class="text-center py-3">
+
+                                    <p class="text-muted mb-0">
+                                        No classes assigned.
+                                    </p>
+
+                                </div>
+
+                            {% endfor %}
+
+                        </div>
+
+                    {% else %}
+
+                        <p class="text-muted mb-0">
+                            No classes assigned to this course.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

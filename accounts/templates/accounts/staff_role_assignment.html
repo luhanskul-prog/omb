@@ -1,0 +1,290 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-9">
+
+            <div class="card shadow-lg border-0">
+
+                <div class="card-header bg-primary text-white py-4">
+
+                    <h3 class="mb-1">
+                        <i class="bi bi-person-badge"></i>
+                        Staff Role Assignment
+                    </h3>
+
+                    <p class="mb-0">
+                        Final step — assign the staff member's ERP role.
+                    </p>
+
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <!-- STAFF SUMMARY -->
+
+                    <div class="card bg-light border-0 mb-4">
+
+                        <div class="card-body">
+
+                            <h5 class="text-primary mb-3">
+                                Staff Information
+                            </h5>
+
+                            <div class="row">
+
+                                <div class="col-md-6 mb-2">
+                                    <strong>Name:</strong>
+                                    {{ data.first_name }}
+                                    {{ data.last_name }}
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <strong>Staff Type:</strong>
+
+                                    {% if data.staff_type == "TEACHING" %}
+                                        Teaching Staff
+                                    {% else %}
+                                        Support Staff
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <strong>Email:</strong>
+                                    {{ data.email|default:"Not provided" }}
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <strong>Phone:</strong>
+                                    {{ data.phone|default:"Not provided" }}
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <strong>Job Title:</strong>
+                                    {{ data.job_title|default:"Not specified" }}
+                                </div>
+
+                                <div class="col-md-6 mb-2">
+                                    <strong>Department:</strong>
+
+                                    {% for department in departments %}
+                                        {% if data.department == department.id|stringformat:"s" %}
+                                            {{ department.name }}
+                                        {% endif %}
+                                    {% endfor %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AUTOMATIC CREDENTIALS -->
+
+                    <div class="alert alert-info border-0 shadow-sm mb-4">
+
+                        <h5>
+                            <i class="bi bi-shield-lock"></i>
+                            Automatic Login Credentials
+                        </h5>
+
+                        <p class="mb-2">
+                            The system has automatically generated the
+                            staff login credentials.
+                        </p>
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <strong>Username</strong>
+
+                                <div class="form-control bg-white mt-1">
+                                    {{ data.username }}
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-6">
+
+                                <strong>Initial Password</strong>
+
+                                <div class="form-control bg-white mt-1">
+                                    {{ data.password }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <small class="d-block mt-2">
+                            The username and initial password are generated
+                            automatically by the ERP.
+                        </small>
+
+                    </div>
+
+
+                    <!-- ROLE ASSIGNMENT -->
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <h5 class="text-primary mb-3">
+                            Assign ERP Access
+                        </h5>
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+                                Staff Role <span class="text-danger">*</span>
+                            </label>
+
+                            <select
+                                name="custom_role"
+                                class="form-select form-select-lg"
+                                required
+                            >
+
+                                <option value="">
+                                    -- Select Staff Role --
+                                </option>
+
+                                {% for role in roles %}
+
+                                    <option
+                                        value="{{ role.id }}"
+                                        {% if request.POST.custom_role == role.id|stringformat:"s" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ role.name }}
+
+                                        {% if role.description %}
+                                            — {{ role.description }}
+                                        {% endif %}
+
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <div class="form-text">
+                                This determines the staff member's
+                                permissions and responsibilities within
+                                the ERP.
+                            </div>
+
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <label class="form-label fw-bold">
+                                User Group
+                            </label>
+
+                            <select
+                                name="group"
+                                class="form-select"
+                            >
+
+                                <option value="">
+                                    -- No Group / Optional --
+                                </option>
+
+                                {% for group in groups %}
+
+                                    <option
+                                        value="{{ group.id }}"
+                                        {% if request.POST.group == group.id|stringformat:"s" %}
+                                            selected
+                                        {% endif %}
+                                    >
+                                        {{ group.name }}
+                                    </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                            <div class="form-text">
+                                Optional. You may assign the staff member
+                                to a Django user group.
+                            </div>
+
+                        </div>
+
+
+                        <!-- FINAL WARNING -->
+
+                        <div class="alert alert-warning">
+
+                            <strong>
+                                <i class="bi bi-exclamation-triangle"></i>
+                                Before creating the account
+                            </strong>
+
+                            <p class="mb-0 mt-1">
+                                Please confirm that the selected role is
+                                appropriate. Once the account is created,
+                                the staff member will be able to log in
+                                using the generated credentials.
+                            </p>
+
+                        </div>
+
+
+                        <!-- BUTTONS -->
+
+                        <div class="d-flex justify-content-between mt-4">
+
+                            <a
+                                href="{% url 'accounts:staff_type_selection' %}"
+                                class="btn btn-outline-secondary"
+                            >
+                                <i class="bi bi-arrow-left"></i>
+                                Start Again
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary btn-lg px-5"
+                            >
+                                <i class="bi bi-person-check"></i>
+                                Create Staff Account
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,539 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Alternate Payment</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#f4f6f9;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+}
+
+.wrapper{
+    max-width:950px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.card{
+    background:#ffffff;
+    border-radius:16px;
+    padding:30px;
+    margin-bottom:22px;
+    box-shadow:0 6px 25px rgba(0,0,0,.08);
+}
+
+.title{
+    color:#c40000;
+    font-size:28px;
+    font-weight:800;
+    margin:0 0 10px;
+}
+
+.subtitle{
+    color:#667085;
+    margin-bottom:25px;
+}
+
+label{
+    font-weight:700;
+}
+
+.input{
+    width:100%;
+    padding:14px;
+    margin-top:8px;
+    border:1px solid #ccd2da;
+    border-radius:9px;
+    font-size:16px;
+}
+
+.btn{
+    border:none;
+    border-radius:9px;
+    padding:14px 22px;
+    font-weight:800;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.btn-load{
+    background:#198754;
+    color:#fff;
+}
+
+.btn-proceed{
+    width:100%;
+    background:#c40000;
+    color:#fff;
+    margin-top:25px;
+}
+
+.learner{
+    font-size:21px;
+    font-weight:800;
+}
+
+.admission{
+    color:#667085;
+    margin-top:5px;
+}
+
+.balance-box{
+    margin:25px 0;
+    padding:20px;
+    border-radius:12px;
+    background:#fff3f3;
+    border:1px solid #e3b6b6;
+}
+
+.balance-label{
+    font-size:14px;
+    color:#667085;
+}
+
+.balance{
+    color:#c40000;
+    font-size:32px;
+    font-weight:900;
+    margin-top:5px;
+}
+
+.method-heading{
+    font-size:18px;
+    font-weight:800;
+    margin-bottom:15px;
+}
+
+/* THREE PAYMENT OPTIONS */
+.payment-options{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.payment-option{
+    position:relative;
+    min-height:155px;
+    border:2px solid #d9dde3;
+    border-radius:14px;
+    padding:22px;
+    background:#fff;
+    cursor:pointer;
+    transition:all .2s ease;
+}
+
+.payment-option:hover{
+    border-color:#c40000;
+    box-shadow:0 5px 15px rgba(196,0,0,.10);
+}
+
+.payment-option.active{
+    border:3px solid #c40000;
+    background:#fff4f4;
+    box-shadow:0 5px 18px rgba(196,0,0,.15);
+}
+
+.payment-option input{
+    position:absolute;
+    opacity:0;
+    pointer-events:none;
+}
+
+.radio-circle{
+    width:22px;
+    height:22px;
+    border:2px solid #999;
+    border-radius:50%;
+    display:inline-block;
+    vertical-align:middle;
+    margin-right:9px;
+    position:relative;
+}
+
+.payment-option.active .radio-circle{
+    border-color:#c40000;
+}
+
+.payment-option.active .radio-circle:after{
+    content:"";
+    position:absolute;
+    width:10px;
+    height:10px;
+    background:#c40000;
+    border-radius:50%;
+    top:4px;
+    left:4px;
+}
+
+.payment-icon{width:52px;height:52px;border-radius:12px;background:#fff0f0;color:#c40000;display:flex;align-items:center;justify-content:center;margin-bottom:14px}.payment-icon svg{width:30px;height:30px;fill:currentColor}.option-title{
+    font-size:18px;
+    font-weight:900;
+    vertical-align:middle;
+}
+
+.option-details{
+    margin-top:18px;
+    color:#667085;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.error{
+    display:none;
+    margin-top:12px;
+    padding:12px;
+    background:#ffe5e5;
+    color:#b00000;
+    border-radius:8px;
+    font-weight:700;
+}
+
+@media(max-width:750px){
+    .payment-options{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="card">
+
+<div class="title">
+ALTERNATE PAYMENT
+</div>
+
+<div class="subtitle">
+Enter the child's admission number to view the current school fee balance.
+</div>
+
+<form method="get">
+
+<label>
+Child's Admission Number
+</label>
+
+<input
+    class="input"
+    type="text"
+    name="admission_no"
+    value="{{ admission_no }}"
+    placeholder="e.g. LUH002"
+    required
+>
+
+<br><br>
+
+<button
+    type="submit"
+    class="btn btn-load"
+>
+LOAD FEE BALANCE
+</button>
+
+</form>
+
+</div>
+
+
+{% if student %}
+
+<div class="card">
+
+<div class="learner">
+{{ student.first_name }}
+{{ student.middle_name }}
+{{ student.last_name }}
+</div>
+
+<div class="admission">
+Admission No: {{ student.admission_no }}
+</div>
+
+
+<div class="balance-box">
+
+<div class="balance-label">
+OUTSTANDING FEE BALANCE
+</div>
+
+<div class="balance">
+KSh {{ balance|floatformat:2 }}
+</div>
+
+</div>
+
+
+{% if balance > 0 %}
+
+<form
+    method="post"
+    id="alternatePaymentForm"
+>
+
+{% csrf_token %}
+
+<input
+    type="hidden"
+    name="admission_no"
+    value="{{ student.admission_no }}"
+>
+
+<input
+    type="hidden"
+    name="student"
+    value="{{ student.id }}"
+>
+
+<label>
+Amount to Pay
+</label>
+
+<input
+    class="input"
+    type="number"
+    name="amount"
+    min="1"
+    max="{{ balance }}"
+    step="0.01"
+    placeholder="Enter amount"
+    required
+>
+
+<br><br>
+
+<div class="method-heading">
+CHOOSE PAYMENT METHOD
+</div>
+
+
+<div class="payment-options">
+
+
+<!-- PAYBILL -->
+
+<label
+    class="payment-option"
+    onclick="choosePayment('paybill', this)"
+>
+
+<input
+    type="radio"
+    name="payment_method"
+    value="paybill"
+>
+
+<span class="radio-circle"></span>
+
+<span class="option-title">
+M-Pesa PayBill
+</span>
+
+<div class="option-details">
+
+PayBill Number:<br>
+
+<strong>
+{% if paybill %}
+{{ paybill }}
+{% else %}
+Not configured
+{% endif %}
+</strong>
+
+<br><br>
+
+Use the learner's admission number as the account/reference.
+
+</div>
+
+</label>
+
+
+<!-- TILL -->
+
+<label
+    class="payment-option"
+    onclick="choosePayment('till', this)"
+>
+
+<input
+    type="radio"
+    name="payment_method"
+    value="till"
+>
+
+<span class="radio-circle"></span>
+
+<span class="option-title">
+M-Pesa Till
+</span>
+
+<div class="option-details">
+
+Till Number:<br>
+
+<strong>
+{% if till %}
+{{ till }}
+{% else %}
+Not configured
+{% endif %}
+</strong>
+
+<br><br>
+
+Keep the M-Pesa transaction message for verification.
+
+</div>
+
+</label>
+
+
+<!-- BANK -->
+
+<label
+    class="payment-option"
+    onclick="choosePayment('bank', this)"
+>
+
+<input
+    type="radio"
+    name="payment_method"
+    value="bank"
+>
+
+<span class="radio-circle"></span>
+
+<span class="option-title">
+Bank
+</span>
+
+<div class="option-details">
+
+Bank:<br>
+
+<strong>
+{% if bank_name %}
+{{ bank_name }}
+{% else %}
+Not configured
+{% endif %}
+</strong>
+
+<br>
+
+Account:<br>
+
+<strong>
+{% if bank_account %}
+{{ bank_account }}
+{% else %}
+Not configured
+{% endif %}
+</strong>
+
+</div>
+
+</label>
+
+
+</div>
+
+
+<div
+    id="methodError"
+    class="error"
+>
+Please select PayBill, Till or Bank before proceeding.
+</div>
+
+
+<button
+    type="submit"
+    class="btn btn-proceed"
+    onclick="return validatePayment()"
+>
+PROCEED TO PAYMENT
+</button>
+
+</form>
+
+
+{% else %}
+
+<div class="balance-box">
+This learner has no outstanding fee balance.
+</div>
+
+{% endif %}
+
+</div>
+
+{% endif %}
+
+</div>
+
+
+<script>
+
+function choosePayment(method, card){
+
+    document
+        .querySelectorAll(".payment-option")
+        .forEach(function(option){
+
+            option.classList.remove("active");
+
+        });
+
+    card.classList.add("active");
+
+    card.querySelector(
+        'input[type="radio"]'
+    ).checked = true;
+
+    document.getElementById(
+        "methodError"
+    ).style.display = "none";
+}
+
+
+function validatePayment(){
+
+    const selected =
+        document.querySelector(
+            'input[name="payment_method"]:checked'
+        );
+
+    if(!selected){
+
+        document.getElementById(
+            "methodError"
+        ).style.display = "block";
+
+        return false;
+    }
+
+    return true;
+}
+
+</script>
+
+</body>
+</html>
+

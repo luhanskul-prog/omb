@@ -1,0 +1,385 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4" style="max-width:1200px;">
+
+    <div class="mb-3">
+        <a
+            href="{% url 'fees:automatic_payment_settings' %}"
+            class="btn btn-outline-secondary"
+        >
+            ? Back to Automatic Payments
+        </a>
+    </div>
+
+
+    <h2 class="fw-bold">M-PESA PAYBILL</h2>
+
+    <p class="text-muted">
+        Configure PayBill credentials, C2B callbacks and automation.
+    </p>
+
+
+    <!-- GENERAL -->
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-dark text-white fw-bold">
+                GENERAL AUTOMATIC PAYMENT SETTINGS
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Environment
+                        </label>
+
+                        {{ form.environment }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-check form-switch mt-4">
+
+                            {{ form.is_active }}
+
+                            <label class="form-check-label fw-bold">
+                                ENABLE AUTOMATIC PAYMENTS SYSTEM
+                            </label>
+
+                        </div>
+
+                        <small class="text-muted">
+                            Turn this OFF to temporarily disable all
+                            automatic payment methods.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PAYBILL -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header
+                        d-flex justify-content-between
+                        align-items-center"
+                 style="background:#6f42c1;color:white;">
+
+                <span class="fw-bold">
+                    M-PESA PAYBILL
+                </span>
+
+                <span>
+                    {{ form.mpesa_paybill_enabled }}
+                    <label class="ms-1 fw-bold">
+                        ENABLE
+                    </label>
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="alert alert-warning small">
+
+                    PayBill automation requires the actual payment
+                    provider/bank API integration. Credentials alone do
+                    not activate transaction verification.
+
+                </div>
+
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            PayBill Number
+                        </label>
+                        {{ form.mpesa_paybill_number }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            Account / Reference
+                        </label>
+                        {{ form.mpesa_paybill_account }}
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            Short Code
+                        </label>
+                        {{ form.mpesa_paybill_shortcode }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Consumer Key
+                        </label>
+                        {{ form.mpesa_paybill_consumer_key }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Consumer Secret
+                        </label>
+                        {{ form.mpesa_paybill_consumer_secret }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Passkey
+                        </label>
+                        {{ form.mpesa_paybill_passkey }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Validation URL
+                        </label>
+                        {{ form.mpesa_paybill_validation_url }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Confirmation URL
+                        </label>
+                        {{ form.mpesa_paybill_confirmation_url }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-success btn-lg fw-bold"
+        >
+            SAVE PAYBILL SETTINGS
+        </button>
+
+    </form>
+
+
+    <!-- C2B AUTOMATION -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <h3 class="fw-bold">
+                M-Pesa PayBill C2B Automation
+            </h3>
+
+            <p>
+                Receive PayBill payments automatically, match the learner
+                using the Account / Reference number, verify the amount,
+                create the official FeePayment and make the receipt available.
+            </p>
+
+
+            <div class="d-flex gap-2 flex-wrap mt-3">
+
+                <a
+                    href="{% url 'fees:paybill_c2b_register' %}"
+                    class="btn btn-primary"
+                >
+                    REGISTER PAYBILL C2B URLS
+                </a>
+
+                <a
+                    href="{% url 'fees:paybill_c2b_transactions' %}"
+                    class="btn btn-success"
+                >
+                    VIEW C2B TRANSACTIONS
+                </a>
+
+            </div>
+
+
+            <div class="alert alert-warning mt-3">
+
+                <strong>Callback URLs:</strong><br>
+
+                Validation:
+                <code>/fees/paybill/c2b/validation/</code>
+
+                <br>
+
+                Confirmation:
+                <code>/fees/paybill/c2b/confirmation/</code>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- DARaja PAYBILL AUTOMATION -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <h3 class="fw-bold">
+                M-PESA PAYBILL AUTOMATION
+            </h3>
+
+            <p class="text-muted">
+
+                Enter your actual Daraja C2B credentials below.
+                The ERP automatically generates the Validation and
+                Confirmation URLs. Test the credentials before registering
+                or activating automatic verification.
+
+            </p>
+
+
+            <div class="alert alert-info">
+
+                <strong>ERP callback URLs</strong>
+
+                <div class="mt-3">
+
+                    <label class="form-label fw-bold">
+                        Validation URL
+                    </label>
+
+                    <input
+                        type="text"
+                        value="{{ paybill_validation_url }}"
+                        readonly
+                        class="form-control"
+                        onclick="this.select();"
+                    >
+
+                </div>
+
+
+                <div class="mt-3">
+
+                    <label class="form-label fw-bold">
+                        Confirmation URL
+                    </label>
+
+                    <input
+                        type="text"
+                        value="{{ paybill_confirmation_url }}"
+                        readonly
+                        class="form-control"
+                        onclick="this.select();"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3 mt-2">
+
+                <div class="col-md-4">
+
+                    <form
+                        method="post"
+                        action="{% url 'fees:paybill_admin_test' %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary w-100 fw-bold"
+                        >
+                            TEST PAYBILL CREDENTIALS
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <form
+                        method="post"
+                        action="{% url 'fees:paybill_admin_register' %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100 fw-bold"
+                        >
+                            REGISTER C2B CALLBACKS
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <form
+                        method="post"
+                        action="{% url 'fees:paybill_admin_activate' %}"
+                    >
+
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-success w-100 fw-bold"
+                        >
+                            SAVE & ACTIVATE PAYBILL
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+            <div class="alert alert-warning mt-4">
+
+                <strong>Important:</strong>
+
+                PayBill automation only becomes live after valid
+                Daraja C2B credentials are configured and the C2B
+                callback registration succeeds.
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

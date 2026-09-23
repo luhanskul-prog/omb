@@ -1,0 +1,691 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.cm-page{
+    height:calc(100vh - 80px);
+    min-height:620px;
+    background:#f4f7fb;
+    display:flex;
+    flex-direction:column;
+}
+
+.cm-head{
+    background:linear-gradient(135deg,#063b91,#0b63ce);
+    color:#fff;
+    padding:16px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.cm-title{
+    font-size:21px;
+    font-weight:800;
+}
+
+.cm-sub{
+    font-size:12px;
+    opacity:.85;
+    margin-top:3px;
+}
+
+.cm-body{
+    flex:1;
+    display:grid;
+    grid-template-columns:235px 1fr;
+    gap:14px;
+    padding:14px;
+    min-height:0;
+}
+
+.cm-card{
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(20,40,80,.06);
+    overflow:hidden;
+    min-height:0;
+}
+
+.cm-list{
+    overflow:auto;
+    height:100%;
+    padding:8px;
+}
+
+.cm-item{
+    display:block;
+    padding:6px 9px;
+    border-radius:6px;
+    text-decoration:none;
+    color:#26384d;
+    margin-bottom:2px;
+    font-size:11px;
+    line-height:1.15;
+}
+
+.cm-item strong{
+    font-size:11px;
+    font-weight:700;
+}
+
+.cm-item small{
+    font-size:9px !important;
+    line-height:1;
+    margin-top:2px;
+}
+
+.cm-item:hover,
+.cm-item.active{
+    background:#e7f1ff;
+    color:#0757ad;
+}
+
+.cm-item.active{
+    font-weight:700;
+    border-left:3px solid #0866d8;
+}
+
+.cm-main{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.cm-toolbar{
+    padding:13px 16px;
+    border-bottom:1px solid #e5eaf0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.cm-toolbar strong{
+    font-size:15px;
+}
+
+.cm-count{
+    font-size:11px;
+    color:#64748b;
+}
+
+.cm-table-wrap{
+    overflow:auto;
+    flex:1;
+}
+
+.cm-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+}
+
+.cm-table th,
+.cm-table td{
+    padding:9px 10px;
+    border-bottom:1px solid #edf1f5;
+    text-align:left;
+    white-space:nowrap;
+}
+
+.cm-table th{
+    background:#f7f9fc;
+    font-size:10px;
+    text-transform:uppercase;
+    color:#64748b;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+.cm-table tr:hover td{
+    background:#fafcff;
+}
+
+.badge2{
+    background:#edf4ff;
+    color:#0757ad;
+    border-radius:12px;
+    padding:4px 8px;
+    font-size:10px;
+    font-weight:700;
+}
+
+.edit-btn{
+    display:inline-block;
+    background:#0b63ce;
+    color:#fff;
+    padding:5px 9px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:10px;
+    font-weight:700;
+}
+
+.edit-btn:hover{
+    background:#063b91;
+    color:#fff;
+}
+
+.cm-editor{
+    border-top:1px solid #e2e8f0;
+    background:#f8fafc;
+    padding:14px 16px;
+}
+
+.cm-editor-title{
+    font-size:14px;
+    font-weight:800;
+    margin-bottom:10px;
+    color:#0f172a;
+}
+
+.cm-form{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:9px;
+}
+
+.cm-field label{
+    display:block;
+    font-size:10px;
+    font-weight:700;
+    color:#64748b;
+    margin-bottom:4px;
+}
+
+.cm-field select,
+.cm-field input{
+    width:100%;
+    height:34px;
+    border:1px solid #cbd5e1;
+    border-radius:6px;
+    padding:5px 8px;
+    font-size:12px;
+    background:#fff;
+}
+
+.cm-check{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    height:34px;
+    font-size:11px;
+    font-weight:600;
+}
+
+.cm-check input{
+    width:auto;
+}
+
+.cm-editor-actions{
+    margin-top:10px;
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+}
+
+.cm-save{
+    border:0;
+    background:#198754;
+    color:#fff;
+    padding:7px 15px;
+    border-radius:6px;
+    font-size:11px;
+    font-weight:700;
+}
+
+.cm-cancel{
+    background:#fff;
+    border:1px solid #cbd5e1;
+    color:#475569;
+    padding:7px 15px;
+    border-radius:6px;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:700;
+}
+
+@media(max-width:1000px){
+    .cm-body{
+        grid-template-columns:190px 1fr;
+    }
+
+    .cm-form{
+        grid-template-columns:repeat(2,1fr);
+    }
+}
+
+@media(max-width:700px){
+    .cm-page{
+        height:auto;
+    }
+
+    .cm-body{
+        grid-template-columns:1fr;
+    }
+
+    .cm-form{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+<div class="cm-page">
+
+    <div class="cm-head">
+
+        <div>
+            <div class="cm-title">Class Management</div>
+
+            <div class="cm-sub">
+                {% if selected_class %}
+                    {{ selected_class.name }}
+                    {% if selected_class.stream %} — {{ selected_class.stream }}{% endif %}
+                    · Manage lesson assignments
+                {% else %}
+                    Select a class / grade
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{% url 'timetable:creation_wizard_step' 4 %}"
+           class="btn btn-light btn-sm">
+            ← Step 4
+        </a>
+
+    </div>
+
+
+    <div class="cm-body">
+
+        <!-- CLASS LIST -->
+
+        <div class="cm-card">
+
+            <div class="p-3 border-bottom fw-bold">
+                Classes / Grades
+            </div>
+
+            <div class="cm-list">
+
+                {% for class in classes %}
+
+                <a href="?class={{ class.id }}"
+                   class="cm-item {% if selected_class and selected_class.id == class.id %}active{% endif %}">
+
+                    <strong>{{ class.name }}</strong>
+
+                    {% if class.stream %}
+                    <small class="d-block text-muted">
+                        {{ class.stream }}
+                    </small>
+                    {% endif %}
+
+                </a>
+
+                {% empty %}
+
+                <div class="p-3 text-muted">
+                    No classes found.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- MAIN -->
+
+        <div class="cm-card cm-main">
+
+            {% if selected_class %}
+
+            <div class="cm-toolbar">
+
+                <strong>
+                    {{ selected_class.name }}
+                    {% if selected_class.stream %}
+                        — {{ selected_class.stream }}
+                    {% endif %}
+                    · Lesson Assignments
+                </strong>
+
+                <span class="cm-count">
+                    {{ class_requirements|length }} assignment(s)
+                </span>
+
+            </div>
+
+
+            <div class="cm-table-wrap">
+
+                <table class="cm-table">
+
+                    <thead>
+                        <tr>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Lessons</th>
+                            <th>Doubles</th>
+                            <th>Preferred Day</th>
+                            <th>Room</th>
+                            <th>Type</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for r in class_requirements %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ r.subject.name }}</strong>
+                        </td>
+
+                        <td>
+                            {{ r.teacher.name }}
+                        </td>
+
+                        <td>
+                            <span class="badge2">
+                                {{ r.lessons_per_week }}/week
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ r.double_lessons_per_week|default:"0" }}
+                        </td>
+
+                        <td>
+                            {% if r.preferred_day %}
+                                {{ r.preferred_day.name }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if r.room %}
+                                {{ r.room.name }}
+                            {% else %}
+                                Auto
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if r.practical %}
+                                Practical
+                            {% else %}
+                                Normal
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a class="edit-btn"
+                               href="?class={{ selected_class.id }}&edit={{ r.id }}">
+                                EDIT
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="8"
+                            class="text-center text-muted py-5">
+                            No lesson assignments have been created for this class.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            {% if editing_requirement %}
+
+            <!-- EDITOR -->
+
+            <div class="cm-editor">
+
+                <div class="cm-editor-title">
+                    Edit Lesson Assignment
+                </div>
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    <input type="hidden"
+                           name="action"
+                           value="save_class_lesson">
+
+                    <input type="hidden"
+                           name="requirement_id"
+                           value="{{ editing_requirement.id }}">
+
+
+                    <div class="cm-form">
+
+                        <div class="cm-field">
+
+                            <label>SUBJECT</label>
+
+                            <select name="subject" required>
+
+                                {% for subject in subjects %}
+
+                                <option value="{{ subject.id }}"
+                                    {% if subject.id == editing_requirement.subject_id %}
+                                        selected
+                                    {% endif %}>
+                                    {{ subject.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>TEACHER</label>
+
+                            <select name="teacher" required>
+
+                                {% for teacher in teachers %}
+
+                                <option value="{{ teacher.id }}"
+                                    {% if teacher.id == editing_requirement.teacher_id %}
+                                        selected
+                                    {% endif %}>
+                                    {{ teacher.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>LESSONS / WEEK</label>
+
+                            <input type="number"
+                                   name="lessons_per_week"
+                                   min="0"
+                                   value="{{ editing_requirement.lessons_per_week }}"
+                                   required>
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>DOUBLE LESSONS</label>
+
+                            <input type="number"
+                                   name="double_lessons_per_week"
+                                   min="0"
+                                   value="{{ editing_requirement.double_lessons_per_week|default:'0' }}">
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>PREFERRED DAY</label>
+
+                            <select name="preferred_day">
+
+                                <option value="">
+                                    No preference
+                                </option>
+
+                                {% for day in days %}
+
+                                <option value="{{ day.id }}"
+                                    {% if editing_requirement.preferred_day_id == day.id %}
+                                        selected
+                                    {% endif %}>
+                                    {{ day.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>ROOM</label>
+
+                            <select name="room">
+
+                                <option value="">
+                                    Auto
+                                </option>
+
+                                {% for room in rooms %}
+
+                                <option value="{{ room.id }}"
+                                    {% if editing_requirement.room_id == room.id %}
+                                        selected
+                                    {% endif %}>
+                                    {{ room.name }}
+                                </option>
+
+                                {% endfor %}
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>DURATION / PERIODS</label>
+
+                            <input type="number"
+                                   name="duration_periods"
+                                   min="1"
+                                   value="{{ editing_requirement.duration_periods|default:'1' }}">
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>PRIORITY</label>
+
+                            <input type="number"
+                                   name="priority"
+                                   value="{{ editing_requirement.priority|default:'0' }}">
+
+                        </div>
+
+
+                        <div class="cm-field">
+
+                            <label>LESSON TYPE</label>
+
+                            <label class="cm-check">
+                                <input type="checkbox"
+                                       name="practical"
+                                       value="1"
+                                       {% if editing_requirement.practical %}checked{% endif %}>
+                                Practical lesson
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="cm-editor-actions">
+
+                        <a class="cm-cancel"
+                           href="?class={{ selected_class.id }}">
+                            Cancel
+                        </a>
+
+                        <button class="cm-save"
+                                type="submit">
+                            Save Changes
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            {% endif %}
+
+
+            {% else %}
+
+            <div class="h-100 d-flex align-items-center justify-content-center text-muted">
+
+                <div class="text-center">
+
+                    <div style="font-size:42px;margin-bottom:10px;">
+                        🏫
+                    </div>
+
+                    <strong>Select a class or grade</strong>
+
+                    <div style="font-size:12px;margin-top:4px;">
+                        Its lesson assignments will appear here.
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

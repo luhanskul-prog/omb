@@ -1,0 +1,553 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Parent Timetable</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
+    color: #111;
+}
+
+.page {
+    width: 100%;
+    padding: 10px;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.logo {
+    display: block;
+    margin: 0 auto 3px auto;
+    max-width: 80px;
+    max-height: 45px;
+}
+
+.school-name {
+    font-size: 17px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.motto {
+    font-size: 9px;
+    font-style: italic;
+}
+
+.title {
+    font-size: 13px;
+    font-weight: 800;
+    margin-top: 4px;
+}
+
+.person {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.child-label {
+    font-size: 9px;
+    font-weight: 700;
+    margin-top: 2px;
+}
+
+.controls {
+    width: 90%;
+    margin: 0 auto 10px auto;
+    padding: 7px;
+    border: 1px solid #dfe4ec;
+    border-radius: 10px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.controls label {
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.controls select {
+    height: 28px;
+    min-width: 120px;
+    padding: 2px 6px;
+    border: 1px solid #cfd6e0;
+    border-radius: 6px;
+    font-size: 9px;
+    background: #fff;
+}
+
+.controls button {
+    height: 28px;
+    border: 0;
+    border-radius: 6px;
+    padding: 3px 12px;
+    background: #174ea6;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+.timetable-wrap {
+    width: 90%;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.timetable {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border: 1.5px solid #000;
+    background: #fff;
+}
+
+.timetable th,
+.timetable td {
+    border: 1px solid #000;
+    padding: 2px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.day-column {
+    width: 7%;
+}
+
+.day-header {
+    height: 45px;
+    padding: 0 !important;
+}
+
+.day-header strong {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 900;
+}
+
+.period-header {
+    height: 45px;
+    font-size: 8px;
+    font-weight: 800;
+    line-height: 1.05;
+}
+
+.period-name {
+    font-size: 9px;
+    font-weight: 900;
+}
+
+.period-time {
+    font-size: 6px;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+.lesson-cell {
+    height: 54px;
+    padding: 2px !important;
+}
+
+.lesson-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.05;
+}
+
+.subject {
+    font-size: 9px;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.teacher {
+    font-size: 6.5px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.room {
+    font-size: 6.5px;
+    margin-top: 1px;
+}
+
+.special {
+    font-size: 8px;
+    font-weight: 900;
+}
+
+.empty {
+    min-height: 45px;
+}
+
+.message {
+    width: 90%;
+    margin: 10px auto;
+    padding: 8px;
+    border: 1px solid #d7dde7;
+    border-radius: 8px;
+    background: #fff;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.print-area {
+    width: 90%;
+    margin: 6px auto;
+    text-align: right;
+}
+
+.print-button {
+    border: 0;
+    border-radius: 6px;
+    padding: 6px 12px;
+    background: #174ea6;
+    color: #fff;
+    font-size: 9px;
+    font-weight: 700;
+}
+
+@media print {
+
+    @page {
+        size: A4 landscape;
+        margin: 5mm;
+    }
+
+    html,
+    body {
+        background: #fff;
+    }
+
+    .page {
+        padding: 0;
+    }
+
+    .controls,
+    .print-area {
+        display: none !important;
+    }
+
+    .header {
+        margin-bottom: 4px;
+    }
+
+    .logo {
+        max-width: 65px;
+        max-height: 35px;
+    }
+
+    .school-name {
+        font-size: 14px;
+    }
+
+    .motto {
+        font-size: 7px;
+    }
+
+    .title {
+        font-size: 11px;
+    }
+
+    .person,
+    .child-label {
+        font-size: 7px;
+    }
+
+    .timetable-wrap {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .day-header {
+        height: 38px;
+    }
+
+    .day-header strong {
+        font-size: 8px;
+    }
+
+    .period-header {
+        height: 38px;
+    }
+
+    .period-name {
+        font-size: 8px;
+    }
+
+    .period-time {
+        font-size: 5.5px;
+    }
+
+    .lesson-cell {
+        height: 48px;
+    }
+
+    .subject {
+        font-size: 8px;
+    }
+
+    .teacher,
+    .room {
+        font-size: 6px;
+    }
+
+    .special {
+        font-size: 7px;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="header">
+
+        {% if branding and branding.logo %}
+            <img src="{{ branding.logo.url }}"
+                 class="logo"
+                 alt="{{ branding.school_name }}">
+        {% endif %}
+
+        {% if branding and branding.school_name %}
+            <div class="school-name">
+                {{ branding.school_name }}
+            </div>
+        {% endif %}
+
+        {% if branding and branding.motto %}
+            <div class="motto">
+                {{ branding.motto }}
+            </div>
+        {% endif %}
+
+        <div class="title">
+            CHILD TIMETABLE
+        </div>
+
+        <div class="person">
+            {{ child.first_name }} {{ child.last_name }}
+        </div>
+
+        
+        <div class="child-label">
+            Student: {{ child.first_name }} {{ child.last_name }}
+        </div>
+        
+
+    </div>
+
+    <form method="get" class="controls">
+
+        <label for="academic_year">
+            Academic Year
+        </label>
+
+        <select name="academic_year" id="academic_year">
+            {% for year in academic_years %}
+                <option value="{{ year }}"
+                    {% if selected_year == year %}selected{% endif %}>
+                    {{ year }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="term">
+            Term
+        </label>
+
+        <select name="term" id="term">
+            {% for term in terms %}
+                <option value="{{ term.id }}"
+                    {% if selected_term_id == term.id|stringformat:"s" %}selected{% endif %}>
+                    {{ term.term_name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label for="grade">
+            Grade
+        </label>
+
+        <select name="grade" id="grade">
+            {% for grade in grades %}
+                <option value="{{ grade.id }}"
+                    {% if selected_grade_id == grade.id|stringformat:"s" %}selected{% endif %}>
+                    {{ grade.name }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">
+            View Timetable
+        </button>
+
+    </form>
+
+    {% if timetable_rows %}
+
+    <div class="timetable-wrap">
+
+        <table class="timetable">
+
+            <thead>
+                <tr>
+
+                    <th class="day-column">
+                        DAY
+                    </th>
+
+                    {% for cell in timetable_rows.0.cells %}
+
+                        <th class="period-header">
+
+                            <div class="period-name">
+                                {{ cell.period.name }}
+                            </div>
+
+                            {% if cell.period.start_time and cell.period.end_time %}
+                                <div class="period-time">
+                                    {{ cell.period.start_time|time:"H:i" }}
+                                    -
+                                    {{ cell.period.end_time|time:"H:i" }}
+                                </div>
+                            {% endif %}
+
+                        </th>
+
+                    {% endfor %}
+
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for row in timetable_rows %}
+
+                    <tr>
+
+                        <td class="day-header day-column">
+                            <strong>{{ row.day.name }}</strong>
+                        </td>
+
+                        {% for cell in row.cells %}
+
+                            <td class="lesson-cell">
+
+                                {% if cell.period.is_break %}
+
+                                    <div class="special">
+                                        BREAK
+                                    </div>
+
+                                {% elif cell.period.is_lunch %}
+
+                                    <div class="special">
+                                        LUNCH
+                                    </div>
+
+                                {% elif cell.period.is_activity %}
+
+                                    <div class="special">
+                                        ACTIVITY
+                                    </div>
+
+                                {% elif cell.lesson %}
+
+                                    <div class="lesson-card">
+
+                                        <div class="subject">
+                                            {% if cell.lesson.subject.name == "Religious Education" %}
+                                                RE
+                                            {% else %}
+                                                {{ cell.lesson.subject.name|slice:":4" }}
+                                            {% endif %}
+                                        </div>
+
+                                        {% if cell.lesson.teacher %}
+                                            <div class="teacher">
+                                                {{ cell.lesson.teacher.name }}
+                                            </div>
+                                        {% endif %}
+
+                                        {% if cell.lesson.room %}
+                                            <div class="room">
+                                                {{ cell.lesson.room.name }}
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                {% else %}
+
+                                    <div class="empty">
+                                        &nbsp;
+                                    </div>
+
+                                {% endif %}
+
+                            </td>
+
+                        {% endfor %}
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="print-area">
+        <button type="button"
+                class="print-button"
+                onclick="window.print()">
+            Print Timetable
+        </button>
+    </div>
+
+    {% elif selected_term and selected_grade %}
+
+        <div class="message">
+            No timetable has been published for the selected
+            academic year, term and grade.
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

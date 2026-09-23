@@ -1,0 +1,122 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.page {
+    max-width: 900px;
+    margin: 35px auto;
+    padding: 25px;
+}
+
+.panel {
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+}
+
+.form-row {
+    margin-bottom: 22px;
+}
+
+.form-row label {
+    display:block;
+    font-weight:600;
+    margin-bottom:7px;
+}
+
+.form-row select {
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:7px;
+}
+
+.btn {
+    border:0;
+    border-radius:7px;
+    padding:12px 20px;
+    background:#0d6efd;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.back {
+    display:inline-block;
+    margin-top:15px;
+}
+</style>
+
+<div class="page">
+
+    <h1>Create a New Timetable</h1>
+
+    <p>
+        Select the active school year and term for the timetable.
+    </p>
+
+    <div class="panel">
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="form-row">
+
+                <label>School Year</label>
+
+                <select name="academic_year" required>
+
+                    <option value="">
+                        -- Select Active School Year --
+                    </option>
+
+                    {% for year in years %}
+                        <option value="{{ year.id }}">
+                            {{ year.year }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="form-row">
+
+                <label>Term</label>
+
+                <select name="term" required>
+
+                    <option value="">
+                        -- Select Active Term --
+                    </option>
+
+                    {% for term in terms %}
+                        <option value="{{ term.id }}">
+                            {{ term.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <button class="btn" type="submit">
+                PROCEED
+            </button>
+
+        </form>
+
+        <a class="back"
+           href="{% url 'scheduling:timetable_management_centre' %}">
+            ← Back to Timetable Management Centre
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

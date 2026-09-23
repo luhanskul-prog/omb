@@ -1,0 +1,304 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}Issue Book{% endblock %}
+
+{% block content %}
+
+<div style="max-width:900px;margin:25px auto;padding:25px;background:#fff;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,.08);">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;">
+        <div>
+            <h2 style="margin:0;">📚 ISSUE BOOK</h2>
+            <p style="margin:6px 0;color:#666;">Search and select a book and library member.</p>
+        </div>
+
+        <div style="display:flex;gap:10px;">
+            <a href="{% url 'library_issues' %}" class="btn btn-secondary">← Back</a>
+            <a href="{% url 'library_returns' %}" class="btn btn-warning">↩ Return Book</a>
+        </div>
+    </div>
+
+    {% if form.non_field_errors %}
+        <div style="padding:12px;background:#fee2e2;color:#991b1b;border-radius:8px;margin-bottom:15px;">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- BOOK -->
+        <div style="margin-bottom:25px;">
+            <label style="font-weight:700;display:block;margin-bottom:8px;">
+                Book
+            </label>
+
+            <input
+                type="text"
+                id="bookSearch"
+                autocomplete="off"
+                placeholder="Search by ISBN or book name..."
+                style="width:100%;padding:12px;border:1px solid #ccc;border-radius:7px;margin-bottom:8px;"
+            >
+
+            <select
+                name="book"
+                id="id_book"
+                required
+                style="width:100%;padding:12px;border:1px solid #ccc;border-radius:7px;"
+            >
+                <option value="">-- Select Book --</option>
+
+                {% for book in form.book.field.queryset %}
+                    {% if book.available_copies > 0 %}
+                    <option
+                        value="{{ book.pk }}"
+                        data-isbn="{{ book.isbn|default:''|escape }}"
+                        data-title="{{ book.title|default:''|escape }}"
+                        data-author="{{ book.author|default:''|escape }}"
+                        {% if form.book.value|stringformat:"s" == book.pk|stringformat:"s" %}selected{% endif %}
+                    >
+                        {% if book.isbn %}{{ book.isbn }} — {% endif %}
+                        {{ book.title }} — {{ book.author }}
+                        ({{ book.available_copies }} available)
+                    </option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+
+            <small id="bookCount" style="display:block;margin-top:6px;color:#666;"></small>
+
+            {% for error in form.book.errors %}
+                <div style="color:#b91c1c;margin-top:5px;">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- MEMBER -->
+        <div style="margin-bottom:25px;">
+            <label style="font-weight:700;display:block;margin-bottom:8px;">
+                Member
+            </label>
+
+            <input
+                type="text"
+                id="memberSearch"
+                autocomplete="off"
+                placeholder="Search by employee number or admission number..."
+                style="width:100%;padding:12px;border:1px solid #ccc;border-radius:7px;margin-bottom:8px;"
+            >
+
+            <select
+                name="member"
+                id="id_member"
+                required
+                style="width:100%;padding:12px;border:1px solid #ccc;border-radius:7px;"
+            >
+                <option value="">-- Select Member --</option>
+
+                {% for member in form.member.field.queryset %}
+
+                    {% if member.student %}
+                        {% with student=member.student %}
+                        <option
+                            value="{{ member.pk }}"
+                            data-admission="{{ student.admission_no|default:''|escape }}"
+                            data-employee=""
+                            data-name="{{ student.first_name }} {{ student.middle_name }} {{ student.last_name }}"
+                            {% if form.member.value|stringformat:"s" == member.pk|stringformat:"s" %}selected{% endif %}
+                        >
+                            {{ student.admission_no }} —
+                            {{ student.first_name }}
+                            {% if student.middle_name %} {{ student.middle_name }}{% endif %}
+                            {{ student.last_name }}
+                        </option>
+                        {% endwith %}
+
+                    {% elif member.employee %}
+                        {% with employee=member.employee %}
+                        <option
+                            value="{{ member.pk }}"
+                            data-admission=""
+                            data-employee="{{ employee.employee_number|default:''|escape }}"
+                            data-name="{{ employee.first_name }} {{ employee.middle_name }} {{ employee.last_name }}"
+                            {% if form.member.value|stringformat:"s" == member.pk|stringformat:"s" %}selected{% endif %}
+                        >
+                            {{ employee.employee_number }} —
+                            {{ employee.first_name }}
+                            {% if employee.middle_name %} {{ employee.middle_name }}{% endif %}
+                            {{ employee.last_name }}
+                        </option>
+                        {% endwith %}
+
+                    {% else %}
+                        <option
+                            value="{{ member.pk }}"
+                            data-admission="{{ member.admission_number|default:''|escape }}"
+                            data-employee=""
+                            data-name="{{ member.name|default:''|escape }}"
+                            {% if form.member.value|stringformat:"s" == member.pk|stringformat:"s" %}selected{% endif %}
+                        >
+                            {% if member.admission_number %}
+                                {{ member.admission_number }} —
+                            {% endif %}
+                            {{ member.name }}
+                        </option>
+                    {% endif %}
+
+                {% endfor %}
+            </select>
+
+            <small id="memberCount" style="display:block;margin-top:6px;color:#666;"></small>
+
+            {% for error in form.member.errors %}
+                <div style="color:#b91c1c;margin-top:5px;">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- DATES / NOTES -->
+        {% for field in form %}
+            {% if field.name != "book" and field.name != "member" %}
+                <div style="margin-bottom:20px;">
+                    <label style="font-weight:700;display:block;margin-bottom:7px;">
+                        {{ field.label }}
+                    </label>
+
+                    {{ field }}
+
+                    {% for error in field.errors %}
+                        <div style="color:#b91c1c;margin-top:5px;">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+
+        <button
+            type="submit"
+            class="btn btn-primary"
+            style="width:100%;padding:13px;font-size:16px;font-weight:700;"
+        >
+            📚 ISSUE BOOK
+        </button>
+
+    </form>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const bookSearch = document.getElementById("bookSearch");
+    const bookSelect = document.getElementById("id_book");
+    const bookCount = document.getElementById("bookCount");
+
+    const memberSearch = document.getElementById("memberSearch");
+    const memberSelect = document.getElementById("id_member");
+    const memberCount = document.getElementById("memberCount");
+
+
+    function filterBooks() {
+
+        const search = bookSearch.value.trim().toLowerCase();
+        let visible = 0;
+        let firstMatch = null;
+
+        Array.from(bookSelect.options).forEach(function(option, index) {
+
+            if (index === 0) {
+                option.hidden = false;
+                return;
+            }
+
+            const isbn = (option.dataset.isbn || "").toLowerCase();
+            const title = (option.dataset.title || "").toLowerCase();
+            const author = (option.dataset.author || "").toLowerCase();
+            const text = option.textContent.toLowerCase();
+
+            const match =
+                !search ||
+                isbn.includes(search) ||
+                title.includes(search) ||
+                author.includes(search) ||
+                text.includes(search);
+
+            option.hidden = !match;
+
+            if (match) {
+                visible++;
+                if (!firstMatch) {
+                    firstMatch = option;
+                }
+            }
+        });
+
+        bookCount.textContent = search
+            ? visible + " matching book" + (visible === 1 ? "" : "s")
+            : visible + " available book" + (visible === 1 ? "" : "s");
+
+        if (search && visible === 1 && firstMatch) {
+            bookSelect.value = firstMatch.value;
+        }
+
+        if (search && visible === 0) {
+            bookSelect.value = "";
+        }
+    }
+
+
+    function filterMembers() {
+
+        const search = memberSearch.value.trim().toLowerCase();
+        let visible = 0;
+        let firstMatch = null;
+
+        Array.from(memberSelect.options).forEach(function(option, index) {
+
+            if (index === 0) {
+                option.hidden = false;
+                return;
+            }
+
+            const admission = (option.dataset.admission || "").toLowerCase();
+            const employee = (option.dataset.employee || "").toLowerCase();
+            const name = (option.dataset.name || "").toLowerCase();
+            const text = option.textContent.toLowerCase();
+
+            const match =
+                !search ||
+                admission.includes(search) ||
+                employee.includes(search) ||
+                name.includes(search) ||
+                text.includes(search);
+
+            option.hidden = !match;
+
+            if (match) {
+                visible++;
+                if (!firstMatch) {
+                    firstMatch = option;
+                }
+            }
+        });
+
+        memberCount.textContent = search
+            ? visible + " matching member" + (visible === 1 ? "" : "s")
+            : visible + " active member" + (visible === 1 ? "" : "s");
+
+        if (search && visible === 1 && firstMatch) {
+            memberSelect.value = firstMatch.value;
+        }
+
+        if (search && visible === 0) {
+            memberSelect.value = "";
+        }
+    }
+
+
+    bookSearch.addEventListener("input", filterBooks);
+    memberSearch.addEventListener("input", filterMembers);
+
+    filterBooks();
+    filterMembers();
+
+});
+</script>
+
+{% endblock %}

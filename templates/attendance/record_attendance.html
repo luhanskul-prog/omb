@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .attendance-page {
+        padding: 20px;
+        background: #f5f7fb;
+        min-height: 100vh;
+    }
+
+    .attendance-card {
+        max-width: 1200px;
+        margin: auto;
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.08);
+        overflow: hidden;
+    }
+
+    .attendance-header {
+        background: linear-gradient(135deg, #17365d, #245b8f);
+        color: white;
+        padding: 22px 28px;
+    }
+
+    .attendance-header h2 {
+        margin: 0;
+        font-size: 25px;
+    }
+
+    .attendance-header p {
+        margin: 6px 0 0;
+        opacity: .9;
+    }
+
+    .filters {
+        padding: 22px 28px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .field label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 7px;
+        color: #374151;
+    }
+
+    .field select,
+    .field input {
+        width: 100%;
+        padding: 11px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+
+    .load-button {
+        margin: 0 28px 20px;
+        padding: 12px 22px;
+        border: none;
+        border-radius: 8px;
+        background: #17365d;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .table-wrapper {
+        padding: 0 28px 28px;
+        overflow-x: auto;
+    }
+
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .attendance-table th {
+        background: #f1f5f9;
+        color: #374151;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 2px solid #dbe2ea;
+    }
+
+    .attendance-table td {
+        padding: 11px 12px;
+        border-bottom: 1px solid #edf0f3;
+    }
+
+    .attendance-table tr:hover {
+        background: #f8fafc;
+    }
+
+    .status-select {
+        padding: 8px;
+        border-radius: 7px;
+        border: 1px solid #d1d5db;
+        min-width: 120px;
+    }
+
+    .remarks {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+    }
+
+    .save-section {
+        padding: 20px 28px;
+        background: #f8fafc;
+        border-top: 1px solid #e5e7eb;
+        text-align: right;
+    }
+
+    .save-button {
+        background: #198754;
+        color: white;
+        border: none;
+        padding: 13px 28px;
+        border-radius: 8px;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .save-button:hover {
+        background: #157347;
+    }
+
+    .empty {
+        padding: 40px;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    @media (max-width: 800px) {
+        .filters {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="attendance-page">
+
+    <div class="attendance-card">
+
+        <div class="attendance-header">
+            <h2>Record Attendance</h2>
+            <p>Select class, stream and date before recording attendance.</p>
+        </div>
+
+        <!-- FILTER FORM -->
+        <form method="GET">
+
+            <div class="filters">
+
+                <div class="field">
+                    <label>Class</label>
+
+                    <select name="class_name" required>
+
+                        <option value="">
+                            Select Class
+                        </option>
+
+                        {% for class_name in classes %}
+                            <option
+                                value="{{ class_name }}"
+                                {% if selected_class == class_name %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ class_name }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+
+                <div class="field">
+
+                    <label>Stream</label>
+
+                    <select name="stream" required>
+
+                        <option value="">
+                            Select Stream
+                        </option>
+
+                        {% for stream in streams %}
+
+                            <option
+                                value="{{ stream }}"
+                                {% if selected_stream == stream %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ stream }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>Date</label>
+
+                    <input
+                        type="date"
+                        name="attendance_date"
+                        value="{{ attendance_date }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+            <button
+                type="submit"
+                class="load-button"
+            >
+                Load Learners
+            </button>
+
+        </form>
+
+
+        {% if students %}
+
+        <!-- SAVE FORM -->
+
+        <form
+            method="POST"
+            action="{% url 'attendance:save_attendance' %}"
+        >
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="attendance_date"
+                value="{{ attendance_date }}"
+            >
+
+            <input
+                type="hidden"
+                name="class_name"
+                value="{{ selected_class }}"
+            >
+
+            <input
+                type="hidden"
+                name="stream"
+                value="{{ selected_stream }}"
+            >
+
+
+            <div class="table-wrapper">
+
+                <table class="attendance-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Admission No.</th>
+
+                            <th>Learner</th>
+
+                            <th>Gender</th>
+
+                            <th>Status</th>
+
+                            <th>Remarks</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for student in students %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                {{ student.admission_no }}
+                            </td>
+
+                            <td>
+                                <strong>
+                                    {{ student.first_name }}
+                                    {{ student.middle_name }}
+                                    {{ student.last_name }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ student.gender }}
+                            </td>
+
+                            <td>
+
+                                <select
+                                    name="status_{{ student.id }}"
+                                    class="status-select"
+                                    required
+                                >
+
+                                    <option value="present">
+                                        Present
+                                    </option>
+
+                                    <option value="absent">
+                                        Absent
+                                    </option>
+
+                                    <option value="late">
+                                        Late
+                                    </option>
+
+                                    <option value="excused">
+                                        Excused
+                                    </option>
+
+                                </select>
+
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="text"
+                                    name="remarks_{{ student.id }}"
+                                    class="remarks"
+                                    placeholder="Optional"
+                                >
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+
+            <div class="save-section">
+
+                <button
+                    type="submit"
+                    class="save-button"
+                >
+                    Save Attendance
+                </button>
+
+            </div>
+
+        </form>
+
+        {% elif selected_class %}
+
+            <div class="empty">
+                No learners found for the selected class and stream.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

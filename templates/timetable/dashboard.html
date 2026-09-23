@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Timetabling Control Centre</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        *{box-sizing:border-box}
+
+        body{
+            margin:0;
+            background:#f4f7fb;
+            font-family:Arial,sans-serif;
+            color:#172033;
+        }
+
+        .header{
+            background:linear-gradient(135deg,#073b8f,#1769ff);
+            color:white;
+            padding:18px 25px;
+        }
+
+        .header-inner{
+            max-width:1500px;
+            margin:auto;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+        }
+
+        .header h1{
+            margin:0 0 4px;
+            font-size:25px;
+        }
+
+        .header p{
+            margin:0;
+            opacity:.9;
+            font-size:12px;
+        }
+
+        .header-actions{
+            display:flex;
+            gap:7px;
+        }
+
+        .header-btn{
+            display:inline-block;
+            text-decoration:none;
+            padding:8px 13px;
+            border-radius:7px;
+            background:white;
+            color:#073b8f;
+            font-size:12px;
+            font-weight:800;
+        }
+
+        .layout{
+            max-width:1500px;
+            margin:auto;
+            display:grid;
+            grid-template-columns:230px 1fr;
+            gap:18px;
+            padding:18px;
+        }
+
+        /* SIDEBAR */
+        .sidebar{
+            background:#0b2f68;
+            border-radius:12px;
+            padding:13px 10px;
+            color:white;
+            height:max-content;
+            position:sticky;
+            top:12px;
+        }
+
+        .sidebar-title{
+            font-size:13px;
+            font-weight:800;
+            padding:7px 9px 10px;
+            opacity:.8;
+        }
+
+        .side-section{
+            margin-bottom:12px;
+        }
+
+        .side-heading{
+            font-size:10px;
+            text-transform:uppercase;
+            letter-spacing:.5px;
+            color:#9fc2ff;
+            padding:6px 9px;
+            font-weight:800;
+        }
+
+        .sidebar a{
+            display:block;
+            color:white;
+            text-decoration:none;
+            padding:7px 9px;
+            border-radius:6px;
+            font-size:11px;
+            margin:2px 0;
+        }
+
+        .sidebar a:hover{
+            background:#1769ff;
+        }
+
+        .sidebar .active{
+            background:#1769ff;
+            font-weight:800;
+        }
+
+        /* MAIN */
+        .main{
+            min-width:0;
+        }
+
+        .welcome{
+            background:white;
+            border-radius:12px;
+            padding:17px 20px;
+            margin-bottom:15px;
+            box-shadow:0 2px 8px rgba(0,0,0,.06);
+        }
+
+        .welcome h2{
+            margin:0 0 4px;
+            font-size:21px;
+        }
+
+        .welcome p{
+            margin:0;
+            color:#68758a;
+            font-size:12px;
+        }
+
+        .main-actions{
+            display:grid;
+            grid-template-columns:repeat(4,1fr);
+            gap:10px;
+            margin-bottom:18px;
+        }
+
+        .action{
+            background:white;
+            border-radius:10px;
+            padding:15px;
+            border-top:4px solid #1769ff;
+            box-shadow:0 2px 8px rgba(0,0,0,.06);
+        }
+
+        .action h3{
+            margin:0 0 5px;
+            font-size:14px;
+        }
+
+        .action p{
+            margin:0 0 10px;
+            color:#68758a;
+            font-size:11px;
+            line-height:1.4;
+        }
+
+        .action a{
+            display:inline-block;
+            background:#1769ff;
+            color:white;
+            text-decoration:none;
+            padding:7px 11px;
+            border-radius:6px;
+            font-size:11px;
+            font-weight:800;
+        }
+
+        .panel{
+            background:white;
+            border-radius:12px;
+            padding:18px;
+            box-shadow:0 2px 8px rgba(0,0,0,.06);
+        }
+
+        .panel h3{
+            margin:0 0 7px;
+            font-size:16px;
+        }
+
+        .panel p{
+            margin:0 0 15px;
+            color:#68758a;
+            font-size:11px;
+        }
+
+        .quick-grid{
+            display:grid;
+            grid-template-columns:repeat(3,1fr);
+            gap:10px;
+        }
+
+        .quick{
+            border:1px solid #e1e7f0;
+            border-radius:8px;
+            padding:12px;
+        }
+
+        .quick strong{
+            display:block;
+            font-size:12px;
+            margin-bottom:4px;
+        }
+
+        .quick span{
+            display:block;
+            color:#68758a;
+            font-size:10px;
+            line-height:1.4;
+            margin-bottom:7px;
+        }
+
+        .quick a{
+            color:#1769ff;
+            text-decoration:none;
+            font-size:10px;
+            font-weight:800;
+        }
+
+        @media(max-width:1050px){
+            .main-actions{
+                grid-template-columns:repeat(2,1fr);
+            }
+
+            .quick-grid{
+                grid-template-columns:repeat(2,1fr);
+            }
+        }
+
+        @media(max-width:750px){
+            .layout{
+                grid-template-columns:1fr;
+            }
+
+            .sidebar{
+                position:static;
+            }
+
+            .main-actions,
+            .quick-grid{
+                grid-template-columns:1fr;
+            }
+
+            .header-inner{
+                flex-direction:column;
+                align-items:flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="header-inner">
+        <div>
+            <h1>Timetabling</h1>
+            <p>School timetable management and automatic timetable generation</p>
+        </div>
+
+        <div class="header-actions">
+            <a class="header-btn"
+               href="{% url 'timetable:creation_wizard' %}">
+                Create Timetable
+            </a>
+
+            <a class="header-btn"
+               href="{% url 'timetable:print_preview' %}">
+                Print Preview
+            </a>
+
+            <a class="header-btn"
+               href="/accounts/admin-dashboard/">
+                Admin Portal
+            </a>
+        </div>
+    </div>
+</div>
+
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="sidebar-title">
+            TIMETABLE NAVIGATION
+        </div>
+
+        <div class="side-section">
+            <div class="side-heading">School Configuration</div>
+
+            <a href="/timetable/setup/">School Setup</a>
+            <a href="/timetable/classes/">Classes & Streams</a>
+            <a href="/timetable/subjects/">Subjects</a>
+            <a href="/timetable/teachers/">Teachers</a>
+            <a href="/timetable/rooms/">Rooms</a>
+        </div>
+
+        <div class="side-section">
+            <div class="side-heading">Lesson Planning</div>
+
+            <a href="/timetable/requirement-builder/">
+                Lesson Requirements
+            </a>
+
+            <a href="/timetable/availability/">
+                Teacher Availability
+            </a>
+
+            <a href="/timetable/conflicts/">
+                Timetable Constraints
+            </a>
+
+            <a href="{% url 'timetable:smart_conflicts' %}">
+                Smart Conflicts
+            </a>
+        </div>
+
+        <div class="side-section">
+            <div class="side-heading">Generation</div>
+
+            <a href="{% url 'timetable:generation_control' %}">
+                Generation Control
+            </a>
+
+            <a href="{% url 'timetable:workspace' %}">
+                Timetable Workspace
+            </a>
+
+            <a href="/timetable/control-centre/">
+                Control Centre
+            </a>
+        </div>
+
+        <div class="side-section">
+            <div class="side-heading">Timetable Views</div>
+
+            <a href="{% url 'timetable:print_preview' %}">
+                Whole School
+            </a>
+
+            <a href="{% url 'timetable:print_preview' %}?type=class">
+                Class Timetables
+            </a>
+
+            <a href="{% url 'timetable:print_preview' %}?type=teacher">
+                Teacher Timetables
+            </a>
+
+            <a href="{% url 'timetable:print_preview' %}?type=all_teachers">
+                All Teachers
+            </a>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <div class="welcome">
+            <h2>Timetabling Control Centre</h2>
+            <p>
+                Manage your school timetable from one compact control centre.
+            </p>
+        </div>
+
+
+        <div class="main-actions">
+
+            <div class="action">
+                <h3>Create Timetable</h3>
+                <p>Set up and build a new timetable step-by-step.</p>
+                <a href="{% url 'timetable:creation_wizard' %}">
+                    Start Creation
+                </a>
+            </div>
+
+            <div class="action">
+                <h3>Timetable Workspace</h3>
+                <p>View and edit the generated timetable.</p>
+                <a href="{% url 'timetable:workspace' %}">
+                    Open Workspace
+                </a>
+            </div>
+
+            <div class="action">
+                <h3>Generation Control</h3>
+                <p>Generate the timetable and manage generation.</p>
+                <a href="{% url 'timetable:generation_control' %}">
+                    Generate
+                </a>
+            </div>
+
+            <div class="action">
+                <h3>Print Preview</h3>
+                <p>View school, class and teacher print layouts.</p>
+                <a href="{% url 'timetable:print_preview' %}">
+                    Open Preview
+                </a>
+            </div>
+
+        </div>
+
+
+        <div class="panel">
+            <h3>Quick Access</h3>
+            <p>Frequently used timetable management functions.</p>
+
+            <div class="quick-grid">
+
+                <div class="quick">
+                    <strong>Lesson Requirements</strong>
+                    <span>Define subjects, classes and lessons per week.</span>
+                    <a href="/timetable/requirement-builder/">
+                        Open Requirements ?
+                    </a>
+                </div>
+
+                <div class="quick">
+                    <strong>Smart Conflicts</strong>
+                    <span>Review teacher, class and room timetable clashes.</span>
+                    <a href="{% url 'timetable:smart_conflicts' %}">
+                        Check Conflicts ?
+                    </a>
+                </div>
+
+                <div class="quick">
+                    <strong>Teacher Timetables</strong>
+                    <span>View individual teacher schedules.</span>
+                    <a href="{% url 'timetable:print_preview' %}?type=teacher">
+                        Teacher View ?
+                    </a>
+                </div>
+
+                <div class="quick">
+                    <strong>Class Timetables</strong>
+                    <span>View individual class schedules.</span>
+                    <a href="{% url 'timetable:print_preview' %}?type=class">
+                        Class View ?
+                    </a>
+                </div>
+
+                <div class="quick">
+                    <strong>All Teachers</strong>
+                    <span>View all teacher schedules together.</span>
+                    <a href="{% url 'timetable:print_preview' %}?type=all_teachers">
+                        All Teachers ?
+                    </a>
+                </div>
+
+                <div class="quick">
+                    <strong>Whole School</strong>
+                    <span>View the complete school timetable.</span>
+                    <a href="{% url 'timetable:print_preview' %}">
+                        Whole School ?
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

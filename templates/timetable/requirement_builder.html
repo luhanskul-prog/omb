@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% load timetable_tags %}
+
+{% block content %}
+
+
+
+                            
+                            </div>
+
+                            <div class="form-check mb-2">
+                                <input class="form-check-input"
+                                       type="checkbox"
+                                       name="practical"
+                                       id="practical">
+                                <label class="form-check-label"
+                                       for="practical">
+                                    Practical / specialist lesson
+                                </label>
+                            </div>
+
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label class="form-label fw-semibold">
+                                Preferred Day
+                            </label>
+
+                            <select name="preferred_day"
+                                    class="form-select">
+                                <option value="">
+                                    No preference
+                                </option>
+
+                                {% for item in days %}
+                                    <option value="{{ item.id }}">
+                                        {{ item.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Notes
+                            </label>
+
+                            <textarea name="notes"
+                                      class="form-control"
+                                      rows="3"
+                                      placeholder="Optional instructions..."></textarea>
+                        </div>
+
+                        <button class="btn btn-primary w-100">
+                            <i class="bi bi-plus-circle"></i>
+                            Add Requirement
+                        </button>
+
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- REQUIREMENTS -->
+        <div class="col-xl-8">
+
+            <div class="card shadow-sm border-0">
+
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        Active Lesson Requirements
+                    </h5>
+
+                    <span class="badge bg-primary">
+                        {{ requirements|length }}
+                    </span>
+                </div>
+
+                <div class="card-body p-0">
+
+                    {% if requirements %}
+
+                        <div class="table-responsive">
+
+                            <table class="table table-hover align-middle mb-0">
+
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Class</th>
+                                        <th>Subject</th>
+                                        <th>Teacher</th>
+                                        <th>Room</th>
+                                        <th>Weekly</th>
+                                        <th>Type</th>
+                                        <th>Day</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    {% for item in requirements %}
+
+                                        <tr>
+
+                                            <td class="fw-semibold">
+                                                {{ item.class_group }}
+                                            </td>
+
+                                            <td>
+                                                {{ item.subject }}
+                                            </td>
+
+                                            <td>
+                                                {{ item.teacher|default:"Any" }}
+                                            </td>
+
+                                            <td>
+                                                {{ item.room|default:"Any" }}
+                                            </td>
+
+                                            <td>
+                                                {{ item.lessons_per_week }}
+                                            </td>
+
+                                            <td>
+                                                {% if item.requires_double %}
+                                                    <span class="badge bg-warning text-dark">
+                                                        Double
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">
+                                                        Single
+                                                    </span>
+                                                {% endif %}
+
+                                                {% if item.practical %}
+                                                    <span class="badge bg-success">
+                                                        Practical
+                                                    </span>
+                                                {% endif %}
+                                            </td>
+
+                                            <td>
+                                                {{ item.preferred_day|default:"Any" }}
+                                            </td>
+
+                                            <td>
+                                                <form method="post"
+                                                      onsubmit="return confirm('Delete this requirement?');">
+                                                    {% csrf_token %}
+<div class="card border-0 shadow-sm mb-3">
+    <div class="card-body">
+        <h6 class="fw-bold mb-3">
+            <i class="bi bi-calendar-week"></i>
+            Weekly Lesson Pattern
+        </h6>
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Single lessons
+                </label>
+                <input
+                    type="number"
+                    name="single_lessons"
+                    class="form-control"
+                    min="0"
+                    value="{{ requirement.single_lessons|default:0 }}"
+                    placeholder="e.g. 4"
+                >
+                <small class="text-muted">
+                    Number of normal single-period lessons per week.
+                </small>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Double lessons
+                </label>
+                <input
+                    type="number"
+                    name="double_lessons"
+                    class="form-control"
+                    min="0"
+                    value="{{ requirement.double_lessons_per_week|default:0 }}"
+                    placeholder="e.g. 2"
+                >
+                <small class="text-muted">
+                    Number of two-period lessons per week.
+                </small>
+            </div>
+
+        </div>
+
+        <div class="alert alert-primary mt-3 mb-0">
+            <strong>Example:</strong>
+            4 single + 2 double = 6 lessons using 8 periods per week.
+        </div>
+    </div>
+</div>
+
+                                                    <input type="hidden"
+                                                           name="action"
+                                                           value="delete">
+
+                                                    <input type="hidden"
+                                                           name="requirement_id"
+                                                           value="{{ item.id }}">
+
+                                                    <button class="btn btn-sm btn-outline-danger">
+                                                        Delete
+                                                    </button>
+                                                </form>
+                                            </td>
+
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-center py-5">
+
+                            <div class="display-6 mb-3">
+                                📚
+                            </div>
+
+                            <h5>No lesson requirements yet</h5>
+
+                            <p class="text-muted mb-0">
+                                Add classes, subjects, teachers and weekly lesson requirements
+                                using the builder.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,150 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Payment Status</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f4f7fb;
+}
+.container{
+    max-width:750px;
+    margin:45px auto;
+    padding:20px;
+}
+.card{
+    background:white;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+.status{
+    padding:18px;
+    border-radius:12px;
+    margin:20px 0;
+    text-align:center;
+    font-size:22px;
+    font-weight:800;
+}
+.pending{
+    background:#fff7ed;
+    color:#c2410c;
+}
+.confirmed{
+    background:#ecfdf5;
+    color:#047857;
+}
+.rejected{
+    background:#fef2f2;
+    color:#b91c1c;
+}
+.info{
+    background:#f8fafc;
+    padding:18px;
+    border-radius:12px;
+}
+.btn{
+    display:inline-block;
+    margin-top:20px;
+    padding:13px 18px;
+    background:#dc2626;
+    color:white;
+    text-decoration:none;
+    border-radius:9px;
+    font-weight:700;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<div class="card">
+
+<h1>ALTERNATE PAYMENT STATUS</h1>
+
+<div class="info">
+
+<p>
+<strong>Learner:</strong>
+{{ student.first_name }}
+{{ student.middle_name }}
+{{ student.last_name }}
+</p>
+
+<p>
+<strong>Admission Number:</strong>
+{{ student.admission_no }}
+</p>
+
+<p>
+<strong>Amount:</strong>
+KSh {{ payment.amount|floatformat:2 }}
+</p>
+
+<p>
+<strong>Method:</strong>
+{{ payment.payment_method|upper }}
+</p>
+
+<p>
+<strong>Reference:</strong>
+{{ payment.reference }}
+</p>
+
+{% if payment.external_reference %}
+<p>
+<strong>Transaction Reference:</strong>
+{{ payment.external_reference }}
+</p>
+{% endif %}
+
+</div>
+
+{% if payment.status == "CONFIRMED" %}
+
+<div class="status confirmed">
+PAYMENT CONFIRMED
+</div>
+
+<p>
+Your payment has been verified and posted to the learner's fee account.
+</p>
+
+{% elif payment.status == "REJECTED" %}
+
+<div class="status rejected">
+PAYMENT REJECTED
+</div>
+
+{% if payment.notes %}
+<p>{{ payment.notes }}</p>
+{% endif %}
+
+{% else %}
+
+<div class="status pending">
+PAYMENT PENDING VERIFICATION
+</div>
+
+<p>
+Your payment has been recorded and is awaiting verification by the school.
+</p>
+
+{% endif %}
+
+<a
+href="{% url 'fees:alternate_payment' %}?admission_no={{ student.admission_no }}"
+class="btn">
+Return to Alternate Payment
+</a>
+
+</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">AUTOMATIC PAYMENT</h2>
+        <p class="text-muted">
+            Enter the learner's admission number to continue
+        </p>
+    </div>
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <div class="card shadow-sm mx-auto" style="max-width:600px;">
+        <div class="card-body p-4">
+
+            <form method="get"
+                  action="{% url 'fees:alternate_payment_auto_method' %}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Admission Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="admission_no"
+                        class="form-control form-control-lg"
+                        placeholder="Enter admission number"
+                        value="{{ admission_no|default:'' }}"
+                        required
+                    >
+                </div>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-lg w-100 fw-bold"
+                >
+                    CONTINUE
+                </button>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a
+            href="{% url 'fees:alternate_payment_gateway' %}"
+            class="btn btn-outline-secondary"
+        >
+            BACK TO PAYMENT OPTIONS
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}

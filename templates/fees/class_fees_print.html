@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        {{ class_name }} Fee Payment List | Luhan School
+    </title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            color: #000;
+        }
+
+        .school-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .school-header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        .school-header h2 {
+            margin: 5px 0;
+            font-size: 20px;
+        }
+
+        .school-header p {
+            margin: 3px 0;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 8px;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: center;
+            background: #eee;
+        }
+
+        .number {
+            text-align: center;
+        }
+
+        .amount {
+            text-align: right;
+        }
+
+        .totals {
+            font-weight: bold;
+            background: #eee;
+        }
+
+        .signature-area {
+            margin-top: 60px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signature {
+            width: 40%;
+            border-top: 1px solid #000;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        .print-button {
+            margin-bottom: 20px;
+        }
+
+        @media print {
+
+            body {
+                margin: 10mm;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+            @page {
+                size: A4 landscape;
+                margin: 10mm;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- PRINT BUTTON -->
+
+<div class="print-button">
+
+    <button onclick="window.print()">
+        🖨 Print
+    </button>
+
+    <button onclick="window.close()">
+        Close
+    </button>
+
+</div>
+
+
+<!-- SCHOOL HEADER -->
+
+<div class="school-header">
+
+    <h1>
+        LUHAN SCHOOL
+    </h1>
+
+    <p>
+        Igniting Curiosity, Fueling Innovation
+    </p>
+
+    <h2>
+        STUDENT FEE PAYMENT REGISTER
+    </h2>
+
+</div>
+
+
+<!-- CLASS INFORMATION -->
+
+<div class="report-title">
+
+    <h2>
+        {{ class_name }}
+    </h2>
+
+    <p>
+        Class Code: {{ class_code }}
+    </p>
+
+    <p>
+        Number of Learners:
+        <strong>{{ total_students }}</strong>
+    </p>
+
+</div>
+
+
+<!-- PAYMENT TABLE -->
+
+<table>
+
+    <thead>
+
+        <tr>
+
+            <th>
+                #
+            </th>
+
+            <th>
+                Admission No.
+            </th>
+
+            <th>
+                Learner Name
+            </th>
+
+            <th>
+                Amount Charged
+            </th>
+
+            <th>
+                Amount Paid
+            </th>
+
+            <th>
+                Balance
+            </th>
+
+            <th>
+                Status
+            </th>
+
+        </tr>
+
+    </thead>
+
+
+    <tbody>
+
+
+    {% for row in rows %}
+
+        <tr>
+
+            <td class="number">
+                {{ forloop.counter }}
+            </td>
+
+            <td>
+                {{ row.student.admission_no }}
+            </td>
+
+            <td>
+
+                {{ row.student.first_name }}
+
+                {{ row.student.middle_name }}
+
+                {{ row.student.last_name }}
+
+            </td>
+
+            <td class="amount">
+                KES {{ row.charged|floatformat:2 }}
+            </td>
+
+            <td class="amount">
+                KES {{ row.paid|floatformat:2 }}
+            </td>
+
+            <td class="amount">
+                KES {{ row.balance|floatformat:2 }}
+            </td>
+
+            <td class="number">
+
+                {% if row.balance <= 0 %}
+
+                    PAID
+
+                {% elif row.paid > 0 %}
+
+                    PARTIAL
+
+                {% else %}
+
+                    NOT PAID
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+    {% empty %}
+
+        <tr>
+
+            <td
+                colspan="7"
+                style="text-align:center;"
+            >
+
+                No learners registered in this class.
+
+            </td>
+
+        </tr>
+
+    {% endfor %}
+
+
+    <!-- TOTALS -->
+
+    <tr class="totals">
+
+        <td colspan="3">
+            CLASS TOTAL
+        </td>
+
+        <td class="amount">
+            KES {{ total_charged|floatformat:2 }}
+        </td>
+
+        <td class="amount">
+            KES {{ total_paid|floatformat:2 }}
+        </td>
+
+        <td class="amount">
+            KES {{ total_balance|floatformat:2 }}
+        </td>
+
+        <td></td>
+
+    </tr>
+
+
+</table>
+
+
+<!-- SIGNATURES -->
+
+<div class="signature-area">
+
+    <div class="signature">
+        Bursar / Accounts
+    </div>
+
+    <div class="signature">
+        Headteacher
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

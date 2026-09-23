@@ -1,0 +1,402 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Staff Library Members Register</title>
+
+    <style>
+
+        @page {
+            size: A4 portrait;
+            margin: 15mm;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #fff;
+            color: #111;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+        }
+
+        .print-container {
+            width: 100%;
+        }
+
+        .print-button {
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .print-button button {
+            border: 0;
+            padding: 9px 20px;
+            background: #111;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #111;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .logo {
+            max-width: 150px;
+            max-height: 80px;
+            object-fit: contain;
+            margin-bottom: 6px;
+        }
+
+        .school-name {
+            font-size: 22px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .motto {
+            margin-top: 4px;
+            font-size: 12px;
+            font-style: italic;
+        }
+
+        .contact {
+            margin-top: 6px;
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        .report-title {
+            text-align: center;
+            margin: 15px 0 8px;
+        }
+
+        .report-title h1 {
+            margin: 0;
+            font-size: 18px;
+            text-transform: uppercase;
+        }
+
+        .filter-info {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 12px;
+        }
+
+        .summary {
+            border: 1px solid #999;
+            padding: 8px 10px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #555;
+            padding: 7px 6px;
+            vertical-align: middle;
+        }
+
+        th {
+            background: #eee;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            font-size: 11px;
+        }
+
+        .signature {
+            width: 40%;
+            border-top: 1px solid #111;
+            padding-top: 5px;
+            text-align: center;
+        }
+
+        @media print {
+
+            .print-button {
+                display: none;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="print-container">
+
+
+    <div class="print-button">
+
+        <button onclick="window.print()">
+            Print
+        </button>
+
+    </div>
+
+
+    <div class="header">
+
+        {% if branding and branding.logo %}
+
+            <img
+                src="{{ branding.logo.url }}"
+                class="logo"
+                alt="School Logo"
+            >
+
+        {% endif %}
+
+
+        <div class="school-name">
+
+            {% if branding %}
+                {{ branding.school_name }}
+            {% else %}
+                School
+            {% endif %}
+
+        </div>
+
+
+        {% if branding and branding.motto %}
+
+            <div class="motto">
+                {{ branding.motto }}
+            </div>
+
+        {% endif %}
+
+
+        <div class="contact">
+
+            {% if branding and branding.physical_address %}
+                {{ branding.physical_address }}
+            {% endif %}
+
+            {% if branding and branding.phone %}
+                &nbsp; | &nbsp; {{ branding.phone }}
+            {% endif %}
+
+            {% if branding and branding.alternative_phone %}
+                &nbsp; | &nbsp; {{ branding.alternative_phone }}
+            {% endif %}
+
+            {% if branding and branding.email %}
+                &nbsp; | &nbsp; {{ branding.email }}
+            {% endif %}
+
+            {% if branding and branding.website %}
+                &nbsp; | &nbsp; {{ branding.website }}
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="report-title">
+
+        <h1>
+            Staff Library Members Register
+        </h1>
+
+    </div>
+
+
+    <div class="filter-info">
+
+        {% if q %}
+
+            <strong>Search:</strong>
+            {{ q }}
+
+        {% else %}
+
+            <strong>Staff Library Members</strong>
+
+        {% endif %}
+
+    </div>
+
+
+    <div class="summary">
+
+        <div>
+
+            <strong>Total Staff Members:</strong>
+            {{ staff|length }}
+
+        </div>
+
+
+        <div>
+
+            <strong>Printed:</strong>
+            {% now "d/m/Y H:i" %}
+
+        </div>
+
+    </div>
+
+
+    <table>
+
+        <thead>
+
+            <tr>
+
+                <th style="width:5%;">
+                    #
+                </th>
+
+                <th style="width:18%;">
+                    Employee No.
+                </th>
+
+                <th style="width:30%;">
+                    Staff Name
+                </th>
+
+                <th style="width:17%;">
+                    Phone
+                </th>
+
+                <th style="width:20%;">
+                    Email
+                </th>
+
+                <th style="width:10%;">
+                    Status
+                </th>
+
+            </tr>
+
+        </thead>
+
+
+        <tbody>
+
+            {% for member in staff %}
+
+            <tr>
+
+                <td class="center">
+                    {{ forloop.counter }}
+                </td>
+
+                <td class="center">
+                    {{ member.employee.employee_number }}
+                </td>
+
+                <td>
+                    {{ member.employee.first_name }}
+
+                    {% if member.employee.last_name %}
+                        {{ member.employee.last_name }}
+                    {% endif %}
+                </td>
+
+                <td>
+                    {{ member.phone }}
+                </td>
+
+                <td>
+                    {{ member.email }}
+                </td>
+
+                <td class="center">
+
+                    {% if member.active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+
+                <td colspan="6"
+                    style="text-align:center;padding:25px;">
+
+                    No staff library members found.
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+
+    <div class="footer">
+
+        <div class="signature">
+            Librarian / Library Officer
+        </div>
+
+        <div class="signature">
+            School Administration
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script>
+
+window.onload = function () {
+    window.print();
+};
+
+</script>
+
+
+</body>
+
+</html>

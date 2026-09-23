@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+
+            <div class="card shadow border-0">
+
+                <div class="card-header bg-success text-white text-center py-3">
+                    <h4 class="mb-1 fw-bold">
+                        M-Pesa PayBill
+                    </h4>
+                    <div>School Fees Payment</div>
+                </div>
+
+                <div class="card-body p-4">
+
+                    {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    {% if student %}
+
+                    <div class="bg-light rounded p-3 mb-4">
+
+                        <div class="fw-bold">
+                            {{ student.first_name }}
+                            {{ student.middle_name }}
+                            {{ student.last_name }}
+                        </div>
+
+                        <div class="text-muted">
+                            Admission No:
+                            <strong>{{ student.admission_no }}</strong>
+                        </div>
+
+                        <div class="mt-2">
+                            Outstanding Balance:
+                            <strong class="text-danger">
+                                KSh {{ balance|floatformat:2 }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="alert alert-success">
+
+                        <div class="fw-bold mb-3">
+                            PAY SCHOOL FEES USING M-PESA PAYBILL
+                        </div>
+
+                        <div>
+                            PAYBILL NUMBER
+                        </div>
+
+                        <div class="fs-3 fw-bold mb-3">
+                            {{ automatic_payment_settings.mpesa_paybill_number }}
+                        </div>
+
+                        <div>
+                            ACCOUNT / REFERENCE
+                        </div>
+
+                        <div class="fs-4 fw-bold">
+                            {{ automatic_payment_settings.mpesa_paybill_account }}
+                        </div>
+
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <input type="hidden"
+                               name="admission_no"
+                               value="{{ admission_no }}">
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Amount to Pay
+                            </label>
+
+                            <input type="number"
+                                   name="amount"
+                                   class="form-control form-control-lg"
+                                   min="1"
+                                   max="{{ balance }}"
+                                   step="1"
+                                   required
+                                   placeholder="Enter amount">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">
+                                M-Pesa Phone Number
+                            </label>
+
+                            <input type="tel"
+                                   name="phone_number"
+                                   class="form-control form-control-lg"
+                                   required
+                                   autocomplete="tel"
+                                   placeholder="e.g. 0712345678">
+
+                            <div class="form-text">
+                                The M-Pesa payment prompt will be sent
+                                to this number.
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-success btn-lg w-100 fw-bold">
+                            SEND M-PESA PAYMENT PROMPT
+                        </button>
+
+                    </form>
+
+                    <div class="text-center text-muted small mt-4">
+                        After the prompt appears on your phone,
+                        enter your M-Pesa PIN to authorize the payment.
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,117 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div style="max-width:1100px;margin:30px auto;padding:25px;">
+
+    <h1>Number Formats</h1>
+    <p style="color:#666;">
+        Configure how automatically generated student admission numbers
+        and employee numbers should look.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;">
+
+            <div style="border:1px solid #ddd;border-radius:12px;padding:25px;">
+                <h2>Student Admission Numbers</h2>
+
+                <p>
+                    <label>Prefix</label><br>
+                    {{ form.student_prefix }}
+                </p>
+
+                <p>
+                    <label>Separator</label><br>
+                    {{ form.student_separator }}
+                </p>
+
+                <p>
+                    <label>Number of digits</label><br>
+                    {{ form.student_digits }}
+                </p>
+
+                <p>
+                    <label>Starting number</label><br>
+                    {{ form.student_start_number }}
+                </p>
+
+                <p>
+                    <label>
+                        {{ form.student_include_year }}
+                        Include academic/calendar year
+                    </label>
+                </p>
+
+                <p>
+                    <label>Year digits</label><br>
+                    {{ form.student_year_digits }}
+                </p>
+
+                <div style="padding:15px;border-radius:8px;background:#f5f7fa;">
+                    <strong>Example:</strong>
+                    <div style="font-size:22px;margin-top:8px;">
+                        {{ student_example }}
+                    </div>
+                </div>
+            </div>
+
+
+            <div style="border:1px solid #ddd;border-radius:12px;padding:25px;">
+                <h2>Employee Numbers</h2>
+
+                <p>
+                    <label>Prefix</label><br>
+                    {{ form.employee_prefix }}
+                </p>
+
+                <p>
+                    <label>Separator</label><br>
+                    {{ form.employee_separator }}
+                </p>
+
+                <p>
+                    <label>Number of digits</label><br>
+                    {{ form.employee_digits }}
+                </p>
+
+                <p>
+                    <label>Starting number</label><br>
+                    {{ form.employee_start_number }}
+                </p>
+
+                <p>
+                    <label>
+                        {{ form.employee_include_year }}
+                        Include year
+                    </label>
+                </p>
+
+                <p>
+                    <label>Year digits</label><br>
+                    {{ form.employee_year_digits }}
+                </p>
+
+                <div style="padding:15px;border-radius:8px;background:#f5f7fa;">
+                    <strong>Example:</strong>
+                    <div style="font-size:22px;margin-top:8px;">
+                        {{ employee_example }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="margin-top:25px;">
+            <button type="submit"
+                    style="padding:12px 25px;border:0;border-radius:8px;
+                           background:#174ea6;color:white;font-size:16px;">
+                Save Number Formats
+            </button>
+        </div>
+
+    </form>
+</div>
+{% endblock %}

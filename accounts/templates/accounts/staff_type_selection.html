@@ -1,0 +1,32 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:1000px;margin:60px auto;padding:20px;">
+
+    <div style="text-align:center;margin-bottom:40px;">
+        <h1>Select Staff Type</h1>
+        <p>Choose the category of staff member you want to add.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;">
+
+        <a href='{% url "accounts:teaching_staff_details" %}'
+           style="text-decoration:none;padding:40px;border-radius:20px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.12);text-align:center;color:inherit;">
+            <h2>Teaching Staff</h2>
+            <p>Teachers and academic staff.</p>
+            <strong>Continue →</strong>
+        </a>
+
+        <a href='{% url "accounts:support_staff_details" %}'
+           style="text-decoration:none;padding:40px;border-radius:20px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.12);text-align:center;color:inherit;">
+            <h2>Support Staff</h2>
+            <p>Administrative and operational support staff.</p>
+            <strong>Continue →</strong>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

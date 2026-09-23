@@ -1,0 +1,280 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}Return Book{% endblock %}
+
+{% block content %}
+
+<style>
+.return-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.return-header {
+    margin-bottom: 22px;
+}
+
+.return-header h1 {
+    margin: 0;
+}
+
+.search-box {
+    background: #fff;
+    padding: 22px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    margin-bottom: 22px;
+}
+
+.search-box label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.search-box input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.search-help {
+    margin-top: 8px;
+    color: #666;
+    font-size: 13px;
+}
+
+.result-area {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    overflow: hidden;
+}
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.result-table th,
+.result-table td {
+    padding: 14px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.result-table th {
+    background: #f5f7fa;
+}
+
+.return-button {
+    background: #198754;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.return-button:hover {
+    opacity: .9;
+}
+
+.empty-message {
+    padding: 35px;
+    text-align: center;
+    color: #666;
+}
+
+.back-button {
+    display: inline-block;
+    margin-top: 18px;
+    padding: 10px 16px;
+    border-radius: 7px;
+    background: #6c757d;
+    color: white;
+    text-decoration: none;
+}
+</style>
+
+<div class="return-page">
+
+    <div class="return-header">
+        <h1>↩️ RETURN BOOK</h1>
+    </div>
+
+    <div class="search-box">
+        <label for="returnSearch">
+            Search Issued Book
+        </label>
+
+        <input
+            type="text"
+            id="returnSearch"
+            placeholder="Enter ISBN, admission number or employee number..."
+            value="{{ query }}"
+            autocomplete="off"
+        >
+
+        <div class="search-help">
+            Enter an ISBN, student admission number, or employee number.
+            The issued book will load automatically.
+        </div>
+    </div>
+
+    <div class="result-area" id="resultArea">
+
+        {% if searched %}
+
+            {% if records %}
+
+                <table class="result-table">
+                    <thead>
+                        <tr>
+                            <th>Book</th>
+                            <th>ISBN</th>
+                            <th>Member</th>
+                            <th>Member No.</th>
+                            <th>Issue Date</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for issue in records %}
+
+                        <tr>
+
+                            <td>
+                                <strong>{{ issue.book.title }}</strong>
+                            </td>
+
+                            <td>
+                                {{ issue.book.isbn }}
+                            </td>
+
+                            <td>
+                                {% if issue.member.student %}
+                                    {{ issue.member.student.first_name }}
+                                    {% if issue.member.student.middle_name %}
+                                        {{ issue.member.student.middle_name }}
+                                    {% endif %}
+                                    {{ issue.member.student.last_name }}
+                                {% elif issue.member.employee %}
+                                    {{ issue.member.employee.first_name }}
+                                    {% if issue.member.employee.middle_name %}
+                                        {{ issue.member.employee.middle_name }}
+                                    {% endif %}
+                                    {{ issue.member.employee.last_name }}
+                                {% else %}
+                                    {{ issue.member.name }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if issue.member.student %}
+                                    {{ issue.member.student.admission_no }}
+                                {% elif issue.member.employee %}
+                                    {{ issue.member.employee.employee_number }}
+                                {% else %}
+                                    {{ issue.member.admission_number }}
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ issue.issue_date }}
+                            </td>
+
+                            <td>
+                                {{ issue.due_date }}
+                            </td>
+
+                            <td>
+                                {{ issue.status|title }}
+                            </td>
+
+                            <td>
+                                <form
+                                    method="post"
+                                    action="{% url 'library_issue_return' issue.pk %}"
+                                >
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="return-button"
+                                    >
+                                        ↩ RETURN BOOK
+                                    </button>
+                                </form>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+
+            {% else %}
+
+                <div class="empty-message">
+                    <strong>No issued book found.</strong>
+                    <br>
+                    Check the ISBN, admission number or employee number.
+                </div>
+
+            {% endif %}
+
+        {% else %}
+
+            <div class="empty-message">
+                Enter an ISBN, admission number or employee number
+                to find the book to return.
+            </div>
+
+        {% endif %}
+
+    </div>
+
+    <a href="{% url 'library_issues' %}" class="back-button">
+        ← Back
+    </a>
+
+</div>
+
+<script>
+const searchInput = document.getElementById("returnSearch");
+
+let searchTimer = null;
+
+searchInput.addEventListener("input", function () {
+
+    clearTimeout(searchTimer);
+
+    const value = this.value.trim();
+
+    searchTimer = setTimeout(function () {
+
+        if (value.length === 0) {
+            window.location.href = "{% url 'library_returns' %}";
+            return;
+        }
+
+        window.location.href =
+            "{% url 'library_returns' %}?q=" +
+            encodeURIComponent(value);
+
+    }, 350);
+
+});
+</script>
+
+{% endblock %}

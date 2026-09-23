@@ -1,0 +1,810 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Payroll | Luhan School Staff Portal</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-dark: #1e3a8a;
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --text: #172033;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+        }
+
+        .portal {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(
+                180deg,
+                var(--primary-dark),
+                var(--primary)
+            );
+            color: white;
+            position: sticky;
+            top: 0;
+        }
+
+        .brand {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,.82);
+            border-radius: 10px;
+            padding: 11px 13px;
+            margin-bottom: 5px;
+            text-decoration: none;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255,255,255,.14);
+            color: white;
+        }
+
+        .topbar {
+            background: white;
+            border-bottom: 1px solid var(--border);
+            padding: 15px 25px;
+        }
+
+        .page-title {
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .muted {
+            color: var(--muted);
+        }
+
+        .main-content {
+            min-height: 100vh;
+        }
+
+        .payroll-page {
+            padding: 24px;
+            background: #f4f7fb;
+            min-height: calc(100vh - 76px);
+        }
+
+        .payroll-header {
+            background: linear-gradient(135deg, #0b3d91, #0066cc);
+            color: white;
+            border-radius: 18px;
+            padding: 28px;
+            margin-bottom: 22px;
+            box-shadow: 0 10px 25px rgba(11,61,145,.16);
+        }
+
+        .payroll-header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .payroll-header p {
+            margin: 8px 0 0;
+            opacity: .92;
+        }
+
+        .period-card {
+            background: white;
+            border: 1px solid #e3eaf3;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 18px rgba(15,23,42,.07);
+        }
+
+        .period-title {
+            color: #0b3d91;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 18px;
+        }
+
+        .period-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(180px, 1fr)) auto;
+            gap: 16px;
+            align-items: end;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 7px;
+        }
+
+        .field select {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 12px;
+            background: white;
+            font-size: 14px;
+        }
+
+        .field select:focus {
+            outline: none;
+            border-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29,78,216,.12);
+        }
+
+        .load-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 20px;
+            background: #0b3d91;
+            color: white;
+            font-weight: 800;
+            cursor: pointer;
+            min-width: 155px;
+        }
+
+        .load-btn:hover {
+            background: #082f70;
+        }
+
+        .result-card {
+            background: white;
+            border: 1px solid #e3eaf3;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 18px rgba(15,23,42,.07);
+        }
+
+        .result-header {
+            padding: 18px 22px;
+            background: #eff6ff;
+            border-bottom: 1px solid #dbeafe;
+            color: #0b3d91;
+            font-weight: 800;
+            font-size: 17px;
+        }
+
+        .payslip-row {
+            padding: 22px;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr 1fr 1fr auto;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .label {
+            display: block;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .value {
+            color: #1e293b;
+            font-weight: 800;
+        }
+
+        .net {
+            color: #15803d;
+            font-size: 17px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 13px;
+            border-radius: 9px;
+            color: white;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .action-btn:hover {
+            color: white;
+            opacity: .9;
+        }
+
+        .view-btn {
+            background: #0ea5e9;
+        }
+
+        .print-btn {
+            background: #7c3aed;
+        }
+
+        .pdf-btn {
+            background: #dc2626;
+        }
+
+        .empty-card {
+            background: white;
+            border: 1px solid #e3eaf3;
+            border-radius: 18px;
+            padding: 45px 20px;
+            text-align: center;
+            color: #64748b;
+            box-shadow: 0 5px 18px rgba(15,23,42,.07);
+        }
+
+        .empty-card .icon {
+            font-size: 42px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .empty-card h3 {
+            color: #334155;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 16px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .footer {
+            text-align: center;
+            color: #6b7280;
+            font-size: 13px;
+            padding: 25px 10px;
+        }
+
+        @media(max-width: 1100px) {
+            .payslip-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .actions {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media(max-width: 900px) {
+            .period-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: relative;
+                min-height: auto;
+            }
+
+            .payslip-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            .payroll-page {
+                padding: 14px;
+            }
+
+            .payroll-header {
+                padding: 21px;
+            }
+
+            .payroll-header h1 {
+                font-size: 23px;
+            }
+
+            .payslip-row {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                grid-column: auto;
+            }
+
+            .topbar {
+                padding: 14px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container-fluid portal">
+    <div class="row g-0">
+
+        <!-- SIDEBAR -->
+        <aside class="col-lg-2 sidebar p-3">
+
+            <div class="mb-4">
+
+                <div class="brand">
+                    {% if branding %}
+                        {{ branding.school_name|default:"Luhan School" }}
+                    {% else %}
+                        Luhan School
+                    {% endif %}
+                </div>
+
+                <div class="small text-white-50 mt-1">
+                    STAFF PORTAL
+                </div>
+
+            </div>
+
+            <nav class="nav flex-column">
+
+                <a class="nav-link"
+                   href="{% url 'accounts:staff_dashboard' %}">
+                    <i class="bi bi-grid-1x2-fill me-2"></i>
+                    Dashboard
+                </a>
+
+                <a class="nav-link" href="{% url 'accounts:staff_dashboard' %}#attendance">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Attendance
+                </a>
+
+                <a class="nav-link" href="{% url 'accounts:staff_dashboard' %}#leave">
+                    <i class="bi bi-calendar2-week me-2"></i>
+                    Leave
+                </a>
+
+                <a class="nav-link active"
+                   href="{% url 'hr_payroll:staff_payslip_list' %}">
+                    <i class="bi bi-cash-stack me-2"></i>
+                    Payroll
+                </a>
+
+                <a class="nav-link" href="{% url 'accounts:staff_dashboard' %}#loans">
+                    <i class="bi bi-wallet2 me-2"></i>
+                    Loans
+                </a>
+
+                <a class="nav-link" href="{% url 'accounts:staff_dashboard' %}#documents">
+                    <i class="bi bi-folder2-open me-2"></i>
+                    Documents
+                </a>
+
+                {% if is_teaching_staff %}
+                <a class="nav-link" href="{% url 'accounts:staff_dashboard' %}#teaching">
+                    <i class="bi bi-easel2 me-2"></i>
+                    Teaching
+                </a>
+                {% endif %}
+
+                <a class="nav-link"
+                   href="{% url 'accounts:profile_settings' %}">
+                    <i class="bi bi-person-gear me-2"></i>
+                    Profile
+                </a>
+
+            </nav>
+
+        </aside>
+
+
+        <!-- MAIN -->
+        <main class="col-lg-10 main-content">
+
+            <!-- TOPBAR -->
+            <div class="topbar d-flex justify-content-between align-items-center">
+
+                <div>
+                    <div class="page-title">
+                        My Payroll
+                    </div>
+
+                    <div class="small muted">
+                        {% if employee %}
+                            {{ employee.full_name }}
+                        {% else %}
+                            Staff Member
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div>
+                    <a
+                        href="{% url 'accounts:staff_dashboard' %}"
+                        class="btn btn-outline-primary btn-sm"
+                    >
+                        <i class="bi bi-arrow-left me-1"></i>
+                        Dashboard
+                    </a>
+                </div>
+
+            </div>
+
+
+            <!-- PAYROLL CONTENT -->
+            <div class="payroll-page">
+
+                <div class="payroll-header">
+
+                    <h1>
+                        <i class="bi bi-cash-stack me-2"></i>
+                        My Payroll
+                    </h1>
+
+                    <p>
+                        Select a payroll period to view and print your payslip.
+                    </p>
+
+                </div>
+
+
+                <!-- SELECT PERIOD -->
+                <div class="period-card">
+
+                    <div class="period-title">
+                        <i class="bi bi-calendar3 me-2"></i>
+                        Select Payroll Period
+                    </div>
+
+                    <form method="get">
+
+                        <div class="period-grid">
+
+                            <div class="field">
+
+                                <label for="year">
+                                    Payroll Year
+                                </label>
+
+                                <select
+                                    name="year"
+                                    id="year"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Year
+                                    </option>
+
+                                    {% for year in active_years %}
+
+                                        <option
+                                            value="{{ year }}"
+                                            {% if selected_year == year|stringformat:"s" %}
+                                                selected
+                                            {% endif %}
+                                        >
+                                            {{ year }}
+                                        </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                            </div>
+
+
+                            <div class="field">
+
+                                <label for="month">
+                                    Payroll Month
+                                </label>
+
+                                <select
+                                    name="month"
+                                    id="month"
+                                    required
+                                >
+
+                                    <option value="">
+                                        Select Month
+                                    </option>
+
+                                    <option value="1" {% if selected_month == "1" %}selected{% endif %}>
+                                        January
+                                    </option>
+
+                                    <option value="2" {% if selected_month == "2" %}selected{% endif %}>
+                                        February
+                                    </option>
+
+                                    <option value="3" {% if selected_month == "3" %}selected{% endif %}>
+                                        March
+                                    </option>
+
+                                    <option value="4" {% if selected_month == "4" %}selected{% endif %}>
+                                        April
+                                    </option>
+
+                                    <option value="5" {% if selected_month == "5" %}selected{% endif %}>
+                                        May
+                                    </option>
+
+                                    <option value="6" {% if selected_month == "6" %}selected{% endif %}>
+                                        June
+                                    </option>
+
+                                    <option value="7" {% if selected_month == "7" %}selected{% endif %}>
+                                        July
+                                    </option>
+
+                                    <option value="8" {% if selected_month == "8" %}selected{% endif %}>
+                                        August
+                                    </option>
+
+                                    <option value="9" {% if selected_month == "9" %}selected{% endif %}>
+                                        September
+                                    </option>
+
+                                    <option value="10" {% if selected_month == "10" %}selected{% endif %}>
+                                        October
+                                    </option>
+
+                                    <option value="11" {% if selected_month == "11" %}selected{% endif %}>
+                                        November
+                                    </option>
+
+                                    <option value="12" {% if selected_month == "12" %}selected{% endif %}>
+                                        December
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <div>
+
+                                <button
+                                    type="submit"
+                                    class="load-btn"
+                                >
+                                    <i class="bi bi-search me-1"></i>
+                                    LOAD PAYSLIP
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <i class="bi bi-info-circle me-1"></i>
+
+                            Select the payroll year and month, then click
+                            <strong>LOAD PAYSLIP</strong>
+                            to retrieve your payslip.
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+
+                <!-- RESULT -->
+                {% if period_selected %}
+
+                    <div class="result-card">
+
+                        <div class="result-header">
+
+                            <i class="bi bi-receipt me-2"></i>
+                            Payslip Result
+
+                        </div>
+
+
+                        {% for payslip in payslips %}
+
+                            <div class="payslip-row">
+
+                                <div>
+
+                                    <span class="label">
+                                        Payslip Number
+                                    </span>
+
+                                    <span class="value">
+                                        {{ payslip.payslip_number }}
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span class="label">
+                                        Payroll Period
+                                    </span>
+
+                                    <span class="value">
+                                        {{ payslip.payroll_record.payroll_period.name }}
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span class="label">
+                                        Generated
+                                    </span>
+
+                                    <span class="value">
+                                        {{ payslip.generated_at|date:"d M Y" }}
+                                    </span>
+
+                                </div>
+
+
+                                <div>
+
+                                    <span class="label">
+                                        Net Salary
+                                    </span>
+
+                                    <span class="value net">
+                                        KSh {{ payslip.payroll_record.net_salary|floatformat:2 }}
+                                    </span>
+
+                                </div>
+
+
+                                <div class="actions">
+
+                                    <a
+                                        class="action-btn view-btn"
+                                        href="{% url 'hr_payroll:staff_payslip_view' payslip.pk %}"
+                                    >
+                                        <i class="bi bi-eye me-1"></i>
+                                        VIEW
+                                    </a>
+
+                                    <a
+                                        class="action-btn print-btn"
+                                        href="{% url 'hr_payroll:staff_payslip_print' payslip.pk %}"
+                                        target="_blank"
+                                    >
+                                        <i class="bi bi-printer me-1"></i>
+                                        PRINT
+                                    </a>
+
+                                    <a
+                                        class="action-btn pdf-btn"
+                                        href="{% url 'hr_payroll:staff_payslip_pdf' payslip.pk %}"
+                                        target="_blank"
+                                    >
+                                        <i class="bi bi-file-earmark-pdf me-1"></i>
+                                        PDF
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        {% empty %}
+
+                            <div
+                                class="empty-card"
+                                style="border:none;box-shadow:none;"
+                            >
+
+                                <div class="icon">
+                                    <i class="bi bi-receipt"></i>
+                                </div>
+
+                                <h3>
+                                    No Payslip Available
+                                </h3>
+
+                                <p>
+                                    No payslip has been generated for the
+                                    selected payroll period.
+                                </p>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                {% else %}
+
+                    <div class="empty-card">
+
+                        <div class="icon">
+                            <i class="bi bi-calendar-check"></i>
+                        </div>
+
+                        <h3>
+                            Select a Payroll Period
+                        </h3>
+
+                        <p>
+                            Choose the year and month above and click
+                            <strong>LOAD PAYSLIP</strong>
+                            to view your payroll statement.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+
+                <div class="footer">
+
+                    {% if branding %}
+                        {{ branding.school_name|default:"Luhan School" }}
+                    {% else %}
+                        Luhan School
+                    {% endif %}
+
+                    · Staff Portal
+
+                    {% if today %}
+                        · {{ today|date:"Y" }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+</html>

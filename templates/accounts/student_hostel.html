@@ -1,0 +1,214 @@
+﻿{% extends "accounts/student_dashboard.html" %}
+
+{% block content %}
+<div class="hostel-portal-wrap">
+<style>
+.hostel-portal-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hostel-hero {
+    background: linear-gradient(135deg,#0f766e,#2563eb);
+    color: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 30px rgba(15,23,42,.12);
+}
+
+.hostel-card {
+    border: 0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(15,23,42,.08);
+    padding: 20px;
+    height: 100%;
+}
+
+.hostel-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-pending {
+    background:#fff3cd;
+    color:#856404;
+}
+
+.status-approved {
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.status-rejected {
+    background:#f8d7da;
+    color:#842029;
+}
+
+.status-cancelled {
+    background:#e2e3e5;
+    color:#41464b;
+}
+
+.hostel-action {
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.hostel-table th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+</style>
+
+<div class="hostel-hero">
+    <h2 class="fw-bold mb-2">🏠 Hostel & Room</h2>
+    <p class="mb-0 opacity-75">
+        Manage your hostel application, room allocation and incident reports.
+    </p>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-md-4">
+        <div class="hostel-card">
+            <h5 class="fw-bold">🏠 Apply for Hostel</h5>
+            <p class="text-muted">
+                Submit a request for hostel accommodation and your preferred room.
+            </p>
+            <a href="{% url 'accounts:student_hostel_apply' %}"
+               class="btn btn-primary hostel-action">
+                Apply Now
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="hostel-card">
+            <h5 class="fw-bold">🚨 Report Incident</h5>
+            <p class="text-muted">
+                Report a hostel-related issue to the school.
+            </p>
+            <a href="{% url 'accounts:student_hostel_incident' %}"
+               class="btn btn-danger hostel-action">
+                Report Incident
+            </a>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="hostel-card">
+            <h5 class="fw-bold">🛏️ Current Allocation</h5>
+
+            {% for allocation in allocations %}
+                {% if allocation.status == "active" %}
+                    <div class="mt-2">
+                        <strong>{{ allocation.hostel.name }}</strong><br>
+                        Room {{ allocation.room.room_number }}
+
+                        {% if allocation.bed %}
+                            · Bed {{ allocation.bed.bed_number }}
+                        {% endif %}
+                    </div>
+                {% empty %}
+                    <p class="text-muted mb-0">
+                        No active hostel allocation.
+                    </p>
+                {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+
+</div>
+
+<div class="hostel-card mb-4">
+    <h5 class="fw-bold mb-3">My Hostel Applications</h5>
+
+    {% if applications %}
+    <div class="table-responsive">
+        <table class="table hostel-table align-middle">
+            <thead>
+                <tr>
+                    <th>Hostel</th>
+                    <th>Room</th>
+                    <th>Requested Date</th>
+                    <th>Status</th>
+                    <th>Review Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr>
+                    <td>{{ application.hostel.name }}</td>
+                    <td>
+                        {% if application.room %}
+                            {{ application.room.room_number }}
+                        {% else %}
+                            Any available room
+                        {% endif %}
+                    </td>
+                    <td>{{ application.requested_date }}</td>
+                    <td>
+                        <span class="hostel-status status-{{ application.status }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ application.review_notes|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted mb-0">
+            You have not submitted a hostel application.
+        </p>
+    {% endif %}
+</div>
+
+<div class="hostel-card">
+    <h5 class="fw-bold mb-3">Recent Incident Reports</h5>
+
+    {% if incidents %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Incident</th>
+                    <th>Hostel</th>
+                    <th>Severity</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for incident in incidents %}
+                <tr>
+                    <td>{{ incident.title }}</td>
+                    <td>{{ incident.hostel.name }}</td>
+                    <td>{{ incident.get_severity_display }}</td>
+                    <td>{{ incident.incident_date }}</td>
+                    <td>
+                        {% if incident.resolved %}
+                            <span class="badge bg-success">Resolved</span>
+                        {% else %}
+                            <span class="badge bg-warning text-dark">Open</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted mb-0">No incident reports.</p>
+    {% endif %}
+</div>
+
+</div>
+{% endblock %}

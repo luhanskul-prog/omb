@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="mb-0">All Students</h4>
+
+                <a href="{% url 'add_student' %}"
+                   class="btn btn-light btn-sm">
+                    ➕ Add Student
+                </a>
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-dark">
+                        <tr>
+                            <th>No.</th>
+                            <th>Admission No.</th>
+                            <th>Learner Name</th>
+                            <th>Class</th>
+                            <th>Stream</th>
+                            <th>Gender</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for student in students %}
+
+                        <tr>
+
+                            <td>{{ forloop.counter }}</td>
+
+                            <td>{{ student.admission_no }}</td>
+
+                            <td>{{ student.get_full_name }}</td>
+
+                            <td>{{ student.class_name }}</td>
+
+                            <td>{{ student.stream }}</td>
+
+                            <td>{{ student.gender }}</td>
+
+                            <td>
+
+                                <a href="{% url 'edit_student' student.id %}"
+                                   class="btn btn-warning btn-sm">
+                                    📝 Edit
+                                </a>
+
+                                <a href="{% url 'delete_student' student.id %}"
+                                   class="btn btn-danger btn-sm">
+                                    🗑️ Deactivate/Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="7" class="text-center py-4">
+                                No active students registered.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

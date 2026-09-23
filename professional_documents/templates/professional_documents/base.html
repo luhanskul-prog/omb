@@ -1,0 +1,20 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-info mb-3">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% block professional_content %}{% endblock %}
+
+</div>
+
+{% endblock %}

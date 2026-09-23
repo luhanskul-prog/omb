@@ -1,0 +1,280 @@
+﻿
+{% extends "termly_submission/base.html" %}
+
+{% block termly_content %}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h2>Termly Submission Requirements</h2>
+
+        <p class="text-muted">
+            Set the number of professional documents expected
+            from each teacher for every assigned subject.
+        </p>
+
+        <form method="get"
+              class="row g-3">
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Academic Year
+                </label>
+
+                <select name="academic_year"
+                        class="form-select">
+
+                    {% for year in academic_years %}
+
+                    <option value="{{ year.pk }}"
+                        {% if selected_year.pk == year.pk %}
+                            selected
+                        {% endif %}>
+
+                        {{ year.year }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Term
+                </label>
+
+                <select name="term"
+                        class="form-select">
+
+                    {% for term in terms %}
+
+                    <option value="{{ term.pk }}"
+                        {% if selected_term.pk == term.pk %}
+                            selected
+                        {% endif %}>
+
+                        {{ term.name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Teacher
+                </label>
+
+                <select name="teacher"
+                        class="form-select">
+
+                    <option value="">
+                        Select teacher
+                    </option>
+
+                    {% for teacher in teachers %}
+
+                    <option value="{{ teacher.pk }}"
+                        {% if selected_teacher.pk == teacher.pk %}
+                            selected
+                        {% endif %}>
+
+                        {{ teacher.name }}
+                        ({{ teacher.name }})
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-2 d-flex align-items-end">
+
+                <button class="btn btn-primary w-100">
+                    Load Subjects
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+{% if selected_teacher %}
+
+<div class="alert alert-info">
+
+    <strong>
+        {{ selected_teacher.name }}
+    </strong>
+
+    <br>
+
+    Employee Number:
+    {{ employee_number }}
+
+    <br>
+
+    {{ selected_year.year }} â€”
+    {{ selected_term.name }}
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h4>
+            Expected Professional Documents
+        </h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Class</th>
+                        <th>Stream</th>
+                        <th>Subject</th>
+
+                        <th>Expected Schemes</th>
+                        <th>Expected Records</th>
+                        <th>Expected Lesson Plans</th>
+
+                        <th>Admin Feedback</th>
+                        <th>Save</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for requirement in rows %}
+
+                    <tr>
+
+                        <form method="post">
+
+                            {% csrf_token %}
+
+                            <input type="hidden"
+                                   name="academic_year"
+                                   value="{{ selected_year.pk }}">
+
+                            <input type="hidden"
+                                   name="term"
+                                   value="{{ selected_term.pk }}">
+
+                            <input type="hidden"
+                                   name="teacher"
+                                   value="{{ selected_teacher.pk }}">
+
+                            <input type="hidden"
+                                   name="requirement_id"
+                                   value="{{ requirement.pk }}">
+
+                            <td>
+                                {{ requirement.class_name }}
+                            </td>
+
+                            <td>
+                                {{ requirement.stream|default:"-" }}
+                            </td>
+
+                            <td>
+                                {{ requirement.subject }}
+                            </td>
+
+                            <td>
+                                <input type="number"
+                                       min="0"
+                                       name="expected_schemes"
+                                       value="{{ requirement.expected_schemes }}"
+                                       class="form-control">
+                            </td>
+
+                            <td>
+                                <input type="number"
+                                       min="0"
+                                       name="expected_records"
+                                       value="{{ requirement.expected_records }}"
+                                       class="form-control">
+                            </td>
+
+                            <td>
+                                <input type="number"
+                                       min="0"
+                                       name="expected_lesson_plans"
+                                       value="{{ requirement.expected_lesson_plans }}"
+                                       class="form-control">
+                            </td>
+
+                            <td>
+                                <textarea
+                                    name="admin_feedback"
+                                    class="form-control"
+                                    rows="2">{{ requirement.admin_feedback }}</textarea>
+                            </td>
+
+                            <td>
+                                <button class="btn btn-success">
+                                    Save
+                                </button>
+                            </td>
+
+                        </form>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="8"
+                            class="text-center">
+
+                            No active teaching assignments
+                            were found for this teacher.
+
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock %}
+
+
+

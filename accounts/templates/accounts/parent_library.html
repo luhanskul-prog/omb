@@ -1,0 +1,319 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Library - {{ student }}</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            color: #1f2937;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        }
+
+        .header h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 4px 0;
+            color: #6b7280;
+        }
+
+        .branding {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 25px;
+            margin-top: 6px;
+        }
+
+        .section {
+            background: white;
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.05);
+        }
+
+        .section h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        .book {
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+
+        .book:last-child {
+            margin-bottom: 0;
+        }
+
+        .book-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .book-info {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .empty {
+            color: #6b7280;
+            padding: 10px 0;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 15px;
+            text-decoration: none;
+            color: #2563eb;
+            font-weight: 600;
+        }
+
+        @media (max-width: 700px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <a href="{% url 'accounts:parent_dashboard' %}" class="back">
+        ← Back to Parent Dashboard
+    </a>
+
+    <div class="header">
+
+        {% if branding %}
+            {% if branding.school_name %}
+                <div class="branding">{{ branding.school_name }}</div>
+            {% endif %}
+        {% endif %}
+
+        <h1>Library</h1>
+
+        <p>
+            Student:
+            <strong>
+                {% if student %}
+                    {{ student }}
+                {% else %}
+                    {{ child }}
+                {% endif %}
+            </strong>
+        </p>
+
+        {% if child.admission_no %}
+            <p>Admission No: {{ child.admission_no }}</p>
+        {% endif %}
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+            Available Books
+            <strong>{{ books|length }}</strong>
+        </div>
+
+        <div class="stat">
+            Currently Borrowed
+            <strong>{{ current_books|length }}</strong>
+        </div>
+
+        <div class="stat">
+            Returned Books
+            <strong>{{ returned_books|length }}</strong>
+        </div>
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>Currently Borrowed Books</h2>
+
+        {% for issue in current_books %}
+
+            <div class="book">
+
+                <div class="book-title">
+                    {{ issue.book.title }}
+                </div>
+
+                <div class="book-info">
+
+                    {% if issue.issue_date %}
+                        Issued:
+                        {{ issue.issue_date }}
+                    {% endif %}
+
+                    {% if issue.due_date %}
+                        <br>
+                        Due:
+                        {{ issue.due_date }}
+                    {% endif %}
+
+                    {% if issue.status %}
+                        <br>
+                        Status:
+                        {{ issue.status|title }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty">
+                No books are currently borrowed.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>Returned Books</h2>
+
+        {% for issue in returned_books %}
+
+            <div class="book">
+
+                <div class="book-title">
+                    {{ issue.book.title }}
+                </div>
+
+                <div class="book-info">
+
+                    {% if issue.issue_date %}
+                        Issued:
+                        {{ issue.issue_date }}
+                    {% endif %}
+
+                    {% if issue.return_date %}
+                        <br>
+                        Returned:
+                        {{ issue.return_date }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty">
+                No returned books found.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <div class="section">
+
+        <h2>Available Library Books</h2>
+
+        {% for book in books %}
+
+            <div class="book">
+
+                <div class="book-title">
+                    {{ book.title }}
+                </div>
+
+                <div class="book-info">
+
+                    {% if book.author %}
+                        Author: {{ book.author }}
+                    {% endif %}
+
+                    {% if book.category %}
+                        <br>
+                        Category: {{ book.category }}
+                    {% endif %}
+
+                    {% if book.available_copies %}
+                        <br>
+                        Available Copies: {{ book.available_copies }}
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <div class="empty">
+                No books are currently available.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+</body>
+</html>

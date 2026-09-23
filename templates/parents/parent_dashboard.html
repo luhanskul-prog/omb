@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+```
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Parent Dashboard | Luhan School</title>
+
+<link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet">
+```
+
+</head>
+
+<body class="bg-light">
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-dark bg-primary shadow-sm">
+
+```
+<div class="container">
+
+    <span class="navbar-brand fw-bold">
+        Luhan School
+    </span>
+
+    <a
+        href="{% url 'logout' %}"
+        class="btn btn-light">
+
+        Logout
+
+    </a>
+
+</div>
+```
+
+</nav>
+
+<!-- MAIN CONTENT -->
+
+<div class="container py-5">
+
+```
+<!-- WELCOME -->
+
+<div class="mb-4">
+
+    <h2 class="fw-bold">
+        Parent Dashboard
+    </h2>
+
+
+    {% if parent %}
+
+        <p class="text-muted mb-0">
+
+            Welcome,
+            <strong>
+                {{ parent.full_name }}
+            </strong>
+
+        </p>
+
+    {% else %}
+
+        <div class="alert alert-warning">
+
+            Your parent account has not yet been linked.
+
+            Please contact the school administrator.
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- CHILDREN -->
+
+<h4 class="mb-4">
+
+    My Children
+
+</h4>
+
+
+<div class="row g-4">
+
+
+    {% for child in children %}
+
+
+        <div class="col-md-6 col-lg-4">
+
+
+            <div class="card shadow-sm h-100 border-0">
+
+
+                <!-- PHOTO -->
+
+                {% if child.photo %}
+
+                    <img
+                        src="{{ child.photo.url }}"
+                        class="card-img-top"
+                        alt="{{ child.first_name }}"
+                        style="
+                            height:220px;
+                            object-fit:cover;
+                        ">
+
+                {% else %}
+
+                    <div
+                        class="bg-secondary text-white
+                               d-flex align-items-center
+                               justify-content-center"
+                        style="
+                            height:220px;
+                        ">
+
+                        No Photo
+
+                    </div>
+
+                {% endif %}
+
+
+                <!-- CHILD DETAILS -->
+
+                <div class="card-body">
+
+
+                    <h5 class="card-title fw-bold">
+
+                        {{ child.first_name }}
+
+                        {% if child.middle_name %}
+
+                            {{ child.middle_name }}
+
+                        {% endif %}
+
+                        {{ child.last_name }}
+
+                    </h5>
+
+
+                    <hr>
+
+
+                    <p class="mb-2">
+
+                        <strong>
+                            Admission No:
+                        </strong>
+
+                        {{ child.admission_no }}
+
+                    </p>
+
+
+                    <p class="mb-2">
+
+                        <strong>
+                            Class:
+                        </strong>
+
+                        {{ child.class_name }}
+
+                    </p>
+
+
+                    <p class="mb-3">
+
+                        <strong>
+                            Stream:
+                        </strong>
+
+                        {{ child.stream|default:"-" }}
+
+                    </p>
+
+
+                    <!-- CHILD PORTAL -->
+
+                    <a
+                        href="{% url 'child_portal' child.id %}"
+                        class="btn btn-primary w-100">
+
+                        Open Child Portal
+
+                    </a>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    {% empty %}
+
+
+        <div class="col-12">
+
+            <div class="alert alert-info">
+
+                No children have been linked to this
+                parent account yet.
+
+            </div>
+
+        </div>
+
+
+    {% endfor %}
+
+
+</div>
+```
+
+</div>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+</body>
+
+</html>

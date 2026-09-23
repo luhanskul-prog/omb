@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-4">
+
+        <h2 class="fw-bold">
+            M-PESA TILL PAYMENT
+        </h2>
+
+        <p class="text-muted">
+            Enter your M-Pesa phone number and receive
+            an STK Push payment request.
+        </p>
+
+    </div>
+
+    {% if error %}
+
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+    <div class="card shadow-sm mx-auto"
+         style="max-width:700px;">
+
+        <div class="card-body p-4">
+
+            <div class="text-center mb-4">
+
+                <div class="text-muted">
+                    LEARNER
+                </div>
+
+                <h4 class="fw-bold">
+
+                    {{ student.first_name }}
+                    {{ student.middle_name }}
+                    {{ student.last_name }}
+
+                </h4>
+
+                <div class="text-muted">
+
+                    Admission No:
+                    {{ student.admission_no }}
+
+                </div>
+
+            </div>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <div class="border rounded p-3 text-center">
+
+                        <div class="text-muted small">
+                            OUTSTANDING BALANCE
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            KSh {{ balance }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <div class="border rounded p-3 text-center">
+
+                        <div class="text-muted small">
+                            M-PESA TILL
+                        </div>
+
+                        <div class="fs-3 fw-bold">
+                            {{ till }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% if intent %}
+
+                <div id="waitingBox"
+                     class="alert alert-info text-center">
+
+                    <div class="fw-bold fs-5 mb-2">
+                        STK PUSH SENT
+                    </div>
+
+                    <div>
+                        A payment request has been sent to:
+                    </div>
+
+                    <div class="fs-5 fw-bold mt-2">
+                        {{ phone_number }}
+                    </div>
+
+                    <div class="mt-2">
+                        Amount:
+                        <strong>
+                            KSh {{ amount }}
+                        </strong>
+                    </div>
+
+                    <div class="mt-3">
+
+                        <span class="spinner-border spinner-border-sm">
+                        </span>
+
+                        Waiting for M-Pesa confirmation...
+
+                    </div>
+
+                    <div class="small text-muted mt-2">
+
+                        Check the phone and enter your
+                        M-Pesa PIN to approve the payment.
+
+                    </div>
+
+                </div>
+
+                <div id="successBox"
+                     class="alert alert-success text-center"
+                     style="display:none;">
+
+                    <h4 class="fw-bold">
+                        PAYMENT SUCCESSFUL
+                    </h4>
+
+                    <p id="successMessage"></p>
+
+                    <div>
+                        Transaction:
+                        <strong id="transactionId"></strong>
+                    </div>
+
+                    <div class="mt-2">
+                        Receipt:
+                        <strong id="receiptNumber"></strong>
+                    </div>
+
+                    <div class="mt-3">
+                        Updated Balance:
+                        <strong id="updatedBalance"></strong>
+                    </div>
+
+                    <div class="mt-4">
+                        <a id="downloadReceiptButton"
+                           href="#"
+                           target="_blank"
+                           class="btn btn-primary btn-lg fw-bold">
+                            📄 DOWNLOAD OFFICIAL RECEIPT (PDF)
+                        </a>
+                    </div>
+
+                </div>
+
+                <div id="problemBox"
+                     class="alert alert-warning text-center"
+                     style="display:none;">
+
+                    <h5 class="fw-bold">
+                        PAYMENT STATUS
+                    </h5>
+
+                    <div id="problemMessage"></div>
+
+                </div>
+
+                <div class="text-center mt-4">
+
+                    <a href="{% url 'fees:alternate_payment_gateway' %}"
+                       class="btn btn-outline-secondary">
+
+                        BACK TO PAYMENT OPTIONS
+
+                    </a>
+
+                </div>
+
+                <script>
+
+                (function () {
+
+                    const statusUrl =
+                        "{% url 'fees:alternate_till_payment_status' intent.id %}";
+
+                    let stopped = false;
+
+                    async function checkStatus() {
+
+                        if (stopped) {
+                            return;
+                        }
+
+                        try {
+
+                            const response =
+                                await fetch(
+                                    statusUrl,
+                                    {
+                                        method: "GET",
+                                        headers: {
+                                            "X-Requested-With":
+                                                "XMLHttpRequest"
+                                        },
+                                        cache: "no-store"
+                                    }
+                                );
+
+                            const data =
+                                await response.json();
+
+                            if (!data.ok) {
+                                return;
+                            }
+
+                            if (
+                                data.status ===
+                                "VERIFIED"
+                            ) {
+
+                                stopped = true;
+
+                                document.getElementById(
+                                    "waitingBox"
+                                ).style.display =
+                                    "none";
+
+                                document.getElementById(
+                                    "successBox"
+                                ).style.display =
+                                    "block";
+
+                                document.getElementById(
+                                    "successMessage"
+                                ).textContent =
+                                    data.message || "";
+
+                                document.getElementById(
+                                    "transactionId"
+                                ).textContent =
+                                    data.transaction_id || "";
+
+                                document.getElementById(
+                                    "receiptNumber"
+                                ).textContent =
+                                    data.receipt_number ||
+                                    "Generated";
+
+                                document.getElementById(
+                                    "updatedBalance"
+                                ).textContent =
+                                    "KSh " + data.balance;
+
+                                const receiptButton =
+                                    document.getElementById(
+                                        "downloadReceiptButton"
+                                    );
+
+                                if (
+                                    receiptButton &&
+                                    data.receipt_url
+                                ) {
+                                    receiptButton.href =
+                                        data.receipt_url;
+                                }
+
+                                return;
+                            }
+
+                            if (
+                                data.status ===
+                                    "UNMATCHED" ||
+                                data.status ===
+                                    "EXPIRED" ||
+                                data.status ===
+                                    "CANCELLED"
+                            ) {
+
+                                stopped = true;
+
+                                document.getElementById(
+                                    "waitingBox"
+                                ).style.display =
+                                    "none";
+
+                                document.getElementById(
+                                    "problemBox"
+                                ).style.display =
+                                    "block";
+
+                                document.getElementById(
+                                    "problemMessage"
+                                ).textContent =
+                                    data.message ||
+                                    "The payment was not completed.";
+
+                                return;
+                            }
+
+                        } catch (error) {
+
+                            console.log(
+                                "STK status check:",
+                                error
+                            );
+
+                        }
+
+                        if (!stopped) {
+
+                            setTimeout(
+                                checkStatus,
+                                3000
+                            );
+
+                        }
+
+                    }
+
+                    checkStatus();
+
+                })();
+
+                </script>
+
+            {% else %}
+
+                <form method="post"
+                      action="{% url 'fees:alternate_till_payment' %}">
+
+                    {% csrf_token %}
+
+                    <input type="hidden"
+                           name="admission_no"
+                           value="{{ admission_no }}">
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-bold">
+                            M-Pesa Phone Number
+                        </label>
+
+                        <input type="text"
+                               name="phone_number"
+                               class="form-control form-control-lg"
+                               value="{{ phone_number|default:'' }}"
+                               placeholder="07XXXXXXXX"
+                               required>
+
+                        <div class="form-text">
+                            The STK Push will be sent to this number.
+                        </div>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label class="form-label fw-bold">
+                            Amount
+                        </label>
+
+                        <input type="number"
+                               name="amount"
+                               class="form-control form-control-lg"
+                               min="1"
+                               max="{{ balance }}"
+                               step="0.01"
+                               value="{{ amount|default:'' }}"
+                               placeholder="Enter amount"
+                               required>
+
+                    </div>
+
+                    <button type="submit"
+                            class="btn btn-success btn-lg w-100 fw-bold">
+
+                        SEND STK PAYMENT REQUEST
+
+                    </button>
+
+                </form>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

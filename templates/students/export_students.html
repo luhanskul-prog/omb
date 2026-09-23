@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- HEADER -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-file-earmark-excel-fill me-2"></i>
+                Export Students
+            </h2>
+
+            <p class="text-muted mb-0">
+                Select the exact learner records you want to export.
+            </p>
+        </div>
+
+        <a href="{% url 'student_management' %}"
+           class="btn btn-outline-secondary">
+            ← Back to Student Management
+        </a>
+
+    </div>
+
+
+    <!-- EXPORT OPTIONS -->
+
+    <div class="row g-4">
+
+
+        <!-- 1. ALL LEARNERS -->
+        <div class="col-md-6 col-xl-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">OPTION 1</span>
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Export All Learners
+                    </h5>
+
+                    <p class="text-muted">
+                        Export all learners in the system.
+                    </p>
+
+                    <form method="get"
+                          action="{% url 'export_students' %}">
+
+                        <input type="hidden"
+                               name="export_type"
+                               value="all">
+
+                        <label class="form-label fw-semibold">
+                            Academic Year
+                        </label>
+
+                        <select name="academic_year"
+                                class="form-select mb-3">
+
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}">
+                                {{ year.year }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <button class="btn btn-primary w-100">
+                            📤 Export All Learners
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 2. CLASS -->
+        <div class="col-md-6 col-xl-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">OPTION 2</span>
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Export According to Class
+                    </h5>
+
+                    <p class="text-muted">
+                        Export learners from a selected class.
+                    </p>
+
+                    <form method="get"
+                          action="{% url 'export_students' %}">
+
+                        <input type="hidden"
+                               name="export_type"
+                               value="class">
+
+                        <label class="form-label fw-semibold">
+                            Academic Year
+                        </label>
+
+                        <select name="academic_year"
+                                class="form-select mb-2">
+
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}">
+                                {{ year.year }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Class
+                        </label>
+
+                        <select name="class"
+                                class="form-select mb-3"
+                                required>
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            {% for code,label in classes %}
+                            <option value="{{ code }}">
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <button class="btn btn-primary w-100">
+                            Export by Class
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 3. CLASS + STREAM -->
+        <div class="col-md-6 col-xl-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">OPTION 3</span>
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Export Class + Stream
+                    </h5>
+
+                    <p class="text-muted">
+                        Export learners from a selected class and stream.
+                    </p>
+
+                    <form method="get"
+                          action="{% url 'export_students' %}">
+
+                        <input type="hidden"
+                               name="export_type"
+                               value="class_stream">
+
+                        <label class="form-label fw-semibold">
+                            Academic Year
+                        </label>
+
+                        <select name="academic_year"
+                                class="form-select mb-2">
+
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}">
+                                {{ year.year }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Class
+                        </label>
+
+                        <select name="class"
+                                class="form-select mb-2"
+                                required>
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            {% for code,label in classes %}
+                            <option value="{{ code }}">
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Stream
+                        </label>
+
+                        <select name="stream"
+                                class="form-select mb-3"
+                                required>
+
+                            <option value="">
+                                Select Stream
+                            </option>
+
+                            {% for stream in streams %}
+                            <option value="{{ stream }}">
+                                {{ stream }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <button class="btn btn-primary w-100">
+                            Export Class + Stream
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 4. CLASS + GENDER -->
+        <div class="col-md-6 col-xl-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">OPTION 4</span>
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Export Class + Gender
+                    </h5>
+
+                    <p class="text-muted">
+                        Export learners from a selected class and gender.
+                    </p>
+
+                    <form method="get"
+                          action="{% url 'export_students' %}">
+
+                        <input type="hidden"
+                               name="export_type"
+                               value="class_gender">
+
+                        <label class="form-label fw-semibold">
+                            Academic Year
+                        </label>
+
+                        <select name="academic_year"
+                                class="form-select mb-2">
+
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}">
+                                {{ year.year }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Class
+                        </label>
+
+                        <select name="class"
+                                class="form-select mb-2"
+                                required>
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            {% for code,label in classes %}
+                            <option value="{{ code }}">
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Gender
+                        </label>
+
+                        <select name="gender"
+                                class="form-select mb-3"
+                                required>
+
+                            <option value="">
+                                Select Gender
+                            </option>
+
+                            {% for value,label in gender_choices %}
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <button class="btn btn-primary w-100">
+                            Export Class + Gender
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- 5. CLASS + STREAM + GENDER -->
+        <div class="col-md-6 col-xl-4">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body p-4">
+
+                    <div class="mb-3">
+                        <span class="badge bg-primary">OPTION 5</span>
+                    </div>
+
+                    <h5 class="fw-bold">
+                        Export Class + Stream + Gender
+                    </h5>
+
+                    <p class="text-muted">
+                        Export learners using class, stream and gender.
+                    </p>
+
+                    <form method="get"
+                          action="{% url 'export_students' %}">
+
+                        <input type="hidden"
+                               name="export_type"
+                               value="class_stream_gender">
+
+                        <label class="form-label fw-semibold">
+                            Academic Year
+                        </label>
+
+                        <select name="academic_year"
+                                class="form-select mb-2">
+
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in academic_years %}
+                            <option value="{{ year.id }}">
+                                {{ year.year }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Class
+                        </label>
+
+                        <select name="class"
+                                class="form-select mb-2"
+                                required>
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            {% for code,label in classes %}
+                            <option value="{{ code }}">
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Stream
+                        </label>
+
+                        <select name="stream"
+                                class="form-select mb-2"
+                                required>
+
+                            <option value="">
+                                Select Stream
+                            </option>
+
+                            {% for stream in streams %}
+                            <option value="{{ stream }}">
+                                {{ stream }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <label class="form-label fw-semibold">
+                            Gender
+                        </label>
+
+                        <select name="gender"
+                                class="form-select mb-3"
+                                required>
+
+                            <option value="">
+                                Select Gender
+                            </option>
+
+                            {% for value,label in gender_choices %}
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+                            {% endfor %}
+
+                        </select>
+
+                        <button class="btn btn-primary w-100">
+                            Export Class + Stream + Gender
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+{% endblock %}

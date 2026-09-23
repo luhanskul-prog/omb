@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Status</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #f4f7fb;
+            min-height: 100vh;
+        }
+
+        .status-wrapper {
+            max-width: 650px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .status-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0,0,0,.08);
+            overflow: hidden;
+        }
+
+        .status-header {
+            background: #0d6efd;
+            color: #fff;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .status-body {
+            padding: 30px;
+        }
+
+        .reference-box {
+            background: #f8f9fa;
+            border: 2px solid #0d6efd;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #0d6efd;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .credential-box {
+            background: #f0fff4;
+            border: 2px solid #198754;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="status-wrapper">
+
+    <div class="status-card">
+
+        <div class="status-header">
+            <h2 class="mb-1">Application Status</h2>
+            <div>Check your online admission application</div>
+        </div>
+
+        <div class="status-body">
+
+            <form method="post" class="mb-4">
+                {% csrf_token %}
+
+                <label class="form-label fw-semibold">
+                    Application Status Number
+                </label>
+
+                <input
+                    type="text"
+                    name="status_reference"
+                    class="form-control form-control-lg mb-3"
+                    placeholder="e.g. ADM-583214"
+                    value="{% if request.POST.status_reference %}{{ request.POST.status_reference }}{% endif %}"
+                    required
+                >
+
+                <button class="btn btn-primary btn-lg w-100">
+                    Check Application Status
+                </button>
+            </form>
+
+            {% if error %}
+                <div class="alert alert-danger">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            {% if application %}
+
+                <div class="reference-box mb-4">
+                    {{ application.status_reference }}
+                </div>
+
+                <h5 class="fw-bold mb-3">
+                    Applicant Details
+                </h5>
+
+                <div class="detail-row">
+                    <span>Name</span>
+                    <strong>{{ application.get_full_name }}</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Application Number</span>
+                    <strong>{{ application.application_no }}</strong>
+                </div>
+
+                <div class="detail-row">
+                    <span>Requested Class</span>
+                    <strong>{{ application.requested_class }}</strong>
+                </div>
+
+                {% if application.requested_stream %}
+                <div class="detail-row">
+                    <span>Stream</span>
+                    <strong>{{ application.requested_stream }}</strong>
+                </div>
+                {% endif %}
+
+                <div class="text-center mt-4">
+
+                    {% if application.status == "Pending" %}
+
+                        <div class="alert alert-warning">
+                            <h5 class="fw-bold">Application Under Review</h5>
+                            <p class="mb-0">
+                                Your application has been received and is
+                                currently being reviewed by the school.
+                            </p>
+                        </div>
+
+                    {% elif application.status == "Admitted" %}
+
+                        <div class="alert alert-success text-center">
+                            <h4 class="fw-bold">Congratulations!</h4>
+
+                            <p class="mb-2">
+                                Congratulations, {{ application.get_full_name }}.
+                            </p>
+
+                            <p class="mb-0">
+                                You have secured admission at
+                                <strong>
+                                    {% if branding %}
+                                        {{ branding.school_name }}
+                                    {% else %}
+                                        our school
+                                    {% endif %}
+                                </strong>.
+                            </p>
+                        </div>
+
+                        {% if application.admitted_student %}
+
+                            <div class="credential-box text-start">
+
+                                <h5 class="text-success fw-bold text-center mb-3">
+                                    Your Student Portal Credentials
+                                </h5>
+
+                                <p class="text-center">
+                                    Your credentials to the Student Portal are:
+                                </p>
+
+                                <div class="detail-row">
+                                    <span>Admission Number</span>
+                                    <strong>
+                                        {{ application.admitted_student.admission_no }}
+                                    </strong>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span>Username</span>
+                                    <strong>
+                                        {{ application.admitted_student.admission_no|lower }}
+                                    </strong>
+                                </div>
+
+                                <div class="detail-row">
+                                    <span>Password</span>
+                                    <strong>
+                                        {{ application.admitted_student.admission_no }}
+                                    </strong>
+                                </div>
+
+                                <div class="alert alert-warning mt-3 mb-0">
+                                    Please keep your credentials safe.
+                                    You are advised to change your password
+                                    after your first login.
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% elif application.status == "Rejected" %}
+
+                        <div class="alert alert-danger text-center">
+
+                            <h5 class="fw-bold">
+                                Application Not Approved
+                            </h5>
+
+                            <p>
+                                We are sorry, but your application to
+                                <strong>
+                                    {% if branding %}
+                                        {{ branding.school_name }}
+                                    {% else %}
+                                        our school
+                                    {% endif %}
+                                </strong>
+                                has not been approved at this time.
+                            </p>
+
+                            {% if application.rejection_reason %}
+                                <p>
+                                    <strong>Reason:</strong>
+                                    {{ application.rejection_reason }}
+                                </p>
+                            {% endif %}
+
+                            <hr>
+
+                            <p class="mb-2">
+                                Kindly reach out to the school through the
+                                contact details below for further information
+                                or clarification.
+                            </p>
+
+                            {% if branding %}
+                                {% if branding.phone %}
+                                    <div>
+                                        <strong>Phone:</strong>
+                                        {{ branding.phone }}
+                                    </div>
+                                {% endif %}
+
+                                {% if branding.alternative_phone %}
+                                    <div>
+                                        <strong>Alternative Phone:</strong>
+                                        {{ branding.alternative_phone }}
+                                    </div>
+                                {% endif %}
+
+                                {% if branding.email %}
+                                    <div>
+                                        <strong>Email:</strong>
+                                        {{ branding.email }}
+                                    </div>
+                                {% endif %}
+
+                                {% if branding.physical_address %}
+                                    <div class="mt-2">
+                                        <strong>Address:</strong>
+                                        {{ branding.physical_address }}
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+            <div class="text-center mt-4">
+                <a href="{% url 'login' %}" class="btn btn-outline-secondary">
+                    Back to Login
+                </a>
+
+                <a href="{% url 'online_application_form' %}"
+                   class="btn btn-outline-primary">
+                    Apply Online
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

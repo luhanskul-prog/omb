@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Application Review
+            </h2>
+
+            <p class="text-muted mb-0">
+                {{ application.application_no }}
+            </p>
+        </div>
+
+        <a href="{% url 'online_applications' %}"
+           class="btn btn-outline-secondary">
+            ← Back to Applications
+        </a>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white">
+            <h5 class="fw-bold mb-0">
+                Applicant Information
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <div class="col-md-6">
+                    <small class="text-muted">FULL NAME</small>
+                    <div class="fw-semibold">
+                        {{ application.get_full_name }}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <small class="text-muted">GENDER</small>
+                    <div>{{ application.gender }}</div>
+                </div>
+
+                <div class="col-md-3">
+                    <small class="text-muted">DATE OF BIRTH</small>
+                    <div>{{ application.date_of_birth }}</div>
+                </div>
+
+                <div class="col-md-6">
+                    <small class="text-muted">REQUESTED CLASS</small>
+                    <div class="fw-semibold">
+                        {{ application.requested_class }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <small class="text-muted">REQUESTED STREAM</small>
+                    <div>
+                        {{ application.requested_stream|default:"Not specified" }}
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <small class="text-muted">PREVIOUS SCHOOL</small>
+                    <div>
+                        {{ application.previous_school|default:"Not provided" }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-white">
+            <h5 class="fw-bold mb-0">
+                Parent / Guardian Information
+            </h5>
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+                <div class="col-md-4">
+                    <small class="text-muted">PARENT NAME</small>
+                    <div>{{ application.parent_name }}</div>
+                </div>
+
+                <div class="col-md-4">
+                    <small class="text-muted">PHONE</small>
+                    <div>{{ application.parent_phone }}</div>
+                </div>
+
+                <div class="col-md-4">
+                    <small class="text-muted">EMAIL</small>
+                    <div>
+                        {{ application.parent_email|default:"Not provided" }}
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <small class="text-muted">ADDRESS</small>
+                    <div>
+                        {{ application.address|default:"Not provided" }}
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="mb-4">
+                <strong>Status:</strong>
+
+                {% if application.status == "Pending" %}
+                    <span class="badge bg-warning text-dark ms-2">
+                        Pending
+                    </span>
+                {% elif application.status == "Admitted" %}
+                    <span class="badge bg-success ms-2">
+                        Admitted
+                    </span>
+                {% else %}
+                    <span class="badge bg-danger ms-2">
+                        Rejected
+                    </span>
+                {% endif %}
+            </div>
+
+
+            {% if application.status == "Pending" %}
+
+            <div class="d-flex gap-2">
+
+                <form method="post"
+                      action="{% url 'admit_online_application' application.id %}"
+                      onsubmit="return confirm('Admit this applicant and create a student record?');">
+
+                    {% csrf_token %}
+
+                    <button class="btn btn-success">
+                        <i class="bi bi-person-check-fill me-1"></i>
+                        Admit Applicant
+                    </button>
+
+                </form>
+
+
+                <button type="button"
+                        class="btn btn-outline-danger"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#rejectBox">
+                    Reject Application
+                </button>
+
+            </div>
+
+
+            <div class="collapse mt-3" id="rejectBox">
+
+                <form method="post"
+                      action="{% url 'reject_online_application' application.id %}">
+
+                    {% csrf_token %}
+
+                    <textarea name="rejection_reason"
+                              class="form-control mb-2"
+                              rows="3"
+                              placeholder="Reason for rejection (optional)"></textarea>
+
+                    <button class="btn btn-danger">
+                        Confirm Rejection
+                    </button>
+
+                </form>
+
+            </div>
+
+            {% elif application.status == "Admitted" %}
+
+                <div class="alert alert-success mb-0">
+                    This applicant has already been admitted.
+
+                    {% if application.admitted_student %}
+                        <a href="{% url 'student_profile' application.admitted_student.id %}"
+                           class="alert-link">
+                            View Student Record
+                        </a>
+                    {% endif %}
+                </div>
+
+            {% else %}
+
+                <div class="alert alert-danger mb-0">
+                    This application was rejected.
+
+                    {% if application.rejection_reason %}
+                        <div class="mt-2">
+                            <strong>Reason:</strong>
+                            {{ application.rejection_reason }}
+                        </div>
+                    {% endif %}
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

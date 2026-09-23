@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Departments | Luhan School</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f4f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .top-header {
+            background: linear-gradient(
+                135deg,
+                #0d6efd,
+                #084298
+            );
+
+            color: white;
+
+            padding: 22px 0;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.10);
+        }
+
+        .page-title {
+            font-weight: 700;
+        }
+
+        .welcome-text {
+            color: rgba(255,255,255,0.85);
+            font-size: 14px;
+        }
+
+        .back-btn {
+            border: 1px solid rgba(255,255,255,0.7);
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #0d6efd;
+        }
+
+        .management-card {
+            background: white;
+
+            border: 1px solid #e1e6ed;
+
+            border-radius: 12px;
+
+            padding: 22px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.04);
+        }
+
+        .department-table th {
+            background: #f8f9fa;
+            color: #495057;
+            font-size: 14px;
+        }
+
+        .department-table td {
+            vertical-align: middle;
+        }
+
+        .department-name {
+            font-weight: 700;
+            color: #263238;
+        }
+
+        .department-description {
+            color: #6c757d;
+            font-size: 13px;
+        }
+
+        .badge-active {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .badge-inactive {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="top-header">
+
+    <div class="container">
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-3">
+
+            <div>
+
+                <h2 class="page-title mb-1">
+                    Department Management
+                </h2>
+
+                <div class="welcome-text">
+
+                    Create and manage school departments
+                    and departmental assignments.
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <a
+                    href="{% url 'accounts:admin_dashboard' %}"
+                    class="btn back-btn"
+                >
+                    ← Admin Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container pb-5">
+
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="alert
+                {% if message.tags %}
+                    alert-{{ message.tags }}
+                {% else %}
+                    alert-info
+                {% endif %}
+                alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         TOP ACTIONS
+    ====================================================== -->
+
+    <div class="management-card mb-4">
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-3">
+
+            <div>
+
+                <h4 class="mb-1">
+                    School Departments
+                </h4>
+
+                <p class="text-muted mb-0">
+
+                    Departments can be assigned to staff
+                    members when creating or editing accounts.
+
+                </p>
+
+            </div>
+
+
+            <div class="d-flex gap-2">
+
+                <a
+                    href="{% url 'accounts:staff_management' %}"
+                    class="btn btn-outline-primary"
+                >
+                    👥 Staff
+                </a>
+
+                <a
+                    href="{% url 'accounts:add_department' %}"
+                    class="btn btn-primary"
+                >
+                    ➕ Add Department
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         DEPARTMENT TABLE
+    ====================================================== -->
+
+    <div class="management-card">
+
+        <div class="table-responsive">
+
+            {% if departments %}
+
+                <table
+                    class="table
+                           table-hover
+                           department-table
+                           mb-0"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Department
+                            </th>
+
+                            <th>
+                                Description
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for department in departments %}
+
+                            <tr>
+
+                                <!-- NAME -->
+
+                                <td>
+
+                                    <div class="department-name">
+
+                                        {{ department.name }}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DESCRIPTION -->
+
+                                <td>
+
+                                    {% if department.description %}
+
+                                        <div class="department-description">
+
+                                            {{ department.description }}
+
+                                        </div>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            No description
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    {% if department.is_active %}
+
+                                        <span class="badge badge-active">
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge badge-inactive">
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- ACTIONS -->
+
+                                <td class="text-end">
+
+                                    <div class="d-flex
+                                                justify-content-end
+                                                gap-2
+                                                flex-wrap">
+
+                                        <a
+                                            href="{% url 'accounts:edit_department' department.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                        >
+                                            Edit
+                                        </a>
+
+
+                                        <form
+                                            method="post"
+                                            action="{% url 'accounts:toggle_department_status' department.id %}"
+                                            class="d-inline"
+                                        >
+
+                                            {% csrf_token %}
+
+
+                                            {% if department.is_active %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    onclick="return confirm('Deactivate this department?');"
+                                                >
+                                                    Deactivate
+                                                </button>
+
+                                            {% else %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-success"
+                                                >
+                                                    Activate
+                                                </button>
+
+                                            {% endif %}
+
+                                        </form>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        🏢
+                    </div>
+
+                    <h4>
+                        No Departments Yet
+                    </h4>
+
+                    <p>
+                        Create your first department so staff
+                        can be assigned to it.
+                    </p>
+
+                    <a
+                        href="{% url 'accounts:add_department' %}"
+                        class="btn btn-primary"
+                    >
+                        ➕ Add First Department
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="text-center
+                text-muted
+                small
+                mt-4">
+
+        Luhan School Management System
+
+    </div>
+
+
+</main>
+
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

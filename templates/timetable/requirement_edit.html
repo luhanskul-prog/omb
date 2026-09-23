@@ -1,0 +1,227 @@
+<style>
+
+/* =========================================================
+   LUHAN TIMETABLE COMPACT NAVIGATION
+   ========================================================= */
+
+.timetable-compact-nav{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:5px !important;
+    align-items:center !important;
+}
+
+.timetable-compact-nav a,
+.timetable-compact-nav button{
+    font-size:11px !important;
+    padding:6px 9px !important;
+    line-height:1.15 !important;
+    border-radius:6px !important;
+}
+
+.timetable-compact-nav i{
+    font-size:11px !important;
+}
+
+.timetable-compact-title{
+    font-size:20px !important;
+    line-height:1.2 !important;
+}
+
+.timetable-compact-subtitle{
+    font-size:11px !important;
+    line-height:1.3 !important;
+}
+
+.timetable-compact-section{
+    font-size:13px !important;
+}
+
+.timetable-compact-card-title{
+    font-size:13px !important;
+}
+
+</style>
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-pencil-square"></i>
+                Edit Timetable Requirement
+            </h3>
+            <p class="text-muted mb-0">
+                Modify lesson allocation for this class and subject.
+            </p>
+        </div>
+
+        <a href="{% url 'timetable:requirements' %}"
+           class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Back
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Class</label>
+                        <select name="class_id" class="form-select" required>
+                            {% for item in classes %}
+                                <option value="{{ item.id }}"
+                                    {% if item.id == requirement.class_group_id %}selected{% endif %}>
+                                    {{ item.name }}{% if item.stream %} - {{ item.stream }}{% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Subject</label>
+                        <select name="subject_id" class="form-select" required>
+                            {% for item in subjects %}
+                                <option value="{{ item.id }}"
+                                    {% if item.id == requirement.subject_id %}selected{% endif %}>
+                                    {{ item.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Teacher</label>
+                        <select name="teacher_id" class="form-select">
+                            <option value="">Not assigned</option>
+                            {% for item in teachers %}
+                                <option value="{{ item.id }}"
+                                    {% if item.id == requirement.teacher_id %}selected{% endif %}>
+                                    {{ item.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Room</label>
+                        <select name="room_id" class="form-select">
+                            <option value="">Not assigned</option>
+                            {% for item in rooms %}
+                                <option value="{{ item.id }}"
+                                    {% if item.id == requirement.room_id %}selected{% endif %}>
+                                    {{ item.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Single Lessons / Week
+                        </label>
+                        <input type="number"
+                               name="single_lessons"
+                               value="{{ single_lessons }}"
+                               min="0"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Double Lessons / Week
+                        </label>
+                        <input type="number"
+                               name="double_lessons"
+                               value="{{ double_lessons }}"
+                               min="0"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Duration</label>
+                        <select name="duration_periods" class="form-select">
+                            {% for value in "1234" %}
+                                <option value="{{ value }}"
+                                    {% if requirement.duration_periods|stringformat:"s" == value %}selected{% endif %}>
+                                    {{ value }} period{{ value|pluralize }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Priority</label>
+                        <input type="number"
+                               name="priority"
+                               value="{{ requirement.priority }}"
+                               class="form-control">
+                    </div>
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Preferred Day</label>
+                        <select name="preferred_day_id" class="form-select">
+                            <option value="">Any Day</option>
+                            {% for day in days %}
+                                <option value="{{ day.id }}"
+                                    {% if day.id == requirement.preferred_day_id %}selected{% endif %}>
+                                    {{ day.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input type="checkbox"
+                                   name="practical"
+                                   class="form-check-input"
+                                   id="practical"
+                                   {% if requirement.practical %}checked{% endif %}>
+                            <label for="practical"
+                                   class="form-check-label fw-bold">
+                                Practical Lesson
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Notes</label>
+                        <textarea name="notes"
+                                  class="form-control"
+                                  rows="3">{{ requirement.notes }}</textarea>
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+                        <i class="bi bi-check-circle"></i>
+                        Save Changes
+                    </button>
+
+                    <a href="{% url 'timetable:requirements' %}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

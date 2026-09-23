@@ -1,0 +1,212 @@
+﻿{% extends "accounts/parent_dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid py-3">
+<style>
+.hostel-portal-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hostel-hero {
+    background: linear-gradient(135deg,#0f766e,#2563eb);
+    color: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 30px rgba(15,23,42,.12);
+}
+
+.hostel-card {
+    border: 0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(15,23,42,.08);
+    padding: 20px;
+    height: 100%;
+}
+
+.hostel-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-pending {
+    background:#fff3cd;
+    color:#856404;
+}
+
+.status-approved {
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.status-rejected {
+    background:#f8d7da;
+    color:#842029;
+}
+
+.status-cancelled {
+    background:#e2e3e5;
+    color:#41464b;
+}
+
+.hostel-action {
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.hostel-table th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+</style>
+
+<div class="hostel-hero">
+    <h2 class="fw-bold mb-2">🏠 Hostel & Room</h2>
+    <p class="mb-0 opacity-75">
+        Manage hostel applications and incident reports for your children.
+    </p>
+</div>
+
+{% for item in child_data %}
+
+<div class="hostel-card mb-4">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+
+        <div>
+            <h4 class="fw-bold mb-1">
+                {{ item.student.first_name }}
+                {{ item.student.middle_name }}
+                {{ item.student.last_name }}
+            </h4>
+
+            <div class="text-muted">
+                Admission No: {{ item.student.admission_no }}
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a href="{% url 'accounts:parent_hostel_apply' item.student.id %}"
+               class="btn btn-primary hostel-action">
+                🏠 Apply for Hostel
+            </a>
+
+            <a href="{% url 'accounts:parent_hostel_incident' item.student.id %}"
+               class="btn btn-danger hostel-action">
+                🚨 Report Incident
+            </a>
+
+        </div>
+
+    </div>
+
+    <hr>
+
+    <h6 class="fw-bold">Current Allocation</h6>
+
+    {% for allocation in item.allocations %}
+        {% if allocation.status == "active" %}
+            <div class="alert alert-success">
+                <strong>{{ allocation.hostel.name }}</strong>
+                · Room {{ allocation.room.room_number }}
+
+                {% if allocation.bed %}
+                    · Bed {{ allocation.bed.bed_number }}
+                {% endif %}
+            </div>
+        {% empty %}
+            <p class="text-muted">No active hostel allocation.</p>
+        {% endfor %}
+    {% endfor %}
+
+    <h6 class="fw-bold mt-4">Applications</h6>
+
+    {% if item.applications %}
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th>Hostel</th>
+                    <th>Room</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in item.applications %}
+                <tr>
+                    <td>{{ application.hostel.name }}</td>
+                    <td>
+                        {% if application.room %}
+                            {{ application.room.room_number }}
+                        {% else %}
+                            Any available
+                        {% endif %}
+                    </td>
+                    <td>{{ application.requested_date }}</td>
+                    <td>
+                        <span class="hostel-status status-{{ application.status }}">
+                            {{ application.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ application.review_notes|default:"—" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+        <p class="text-muted">No hostel applications.</p>
+    {% endif %}
+
+    <h6 class="fw-bold mt-4">Recent Incidents</h6>
+
+    {% if item.incidents %}
+        {% for incident in item.incidents %}
+        <div class="border rounded p-3 mb-2">
+            <strong>{{ incident.title }}</strong>
+            <span class="badge bg-secondary">
+                {{ incident.get_severity_display }}
+            </span>
+            <div class="small text-muted">
+                {{ incident.hostel.name }} · {{ incident.incident_date }}
+            </div>
+            <div class="mt-1">
+                {{ incident.description }}
+            </div>
+            <div class="mt-2">
+                {% if incident.resolved %}
+                    <span class="badge bg-success">Resolved</span>
+                {% else %}
+                    <span class="badge bg-warning text-dark">Open</span>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">No incident reports.</p>
+    {% endif %}
+
+</div>
+
+{% empty %}
+
+<div class="hostel-card">
+    <h4>No children linked to this parent account.</h4>
+    <p class="text-muted mb-0">
+        Please contact the school administration.
+    </p>
+</div>
+
+{% endfor %}
+
+</div>
+{% endblock %}

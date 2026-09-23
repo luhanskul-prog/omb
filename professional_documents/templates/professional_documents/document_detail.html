@@ -1,0 +1,231 @@
+
+{% extends "professional_documents/base.html" %}
+
+{% block professional_content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2>
+            {{ document.get_document_type_display }}
+        </h2>
+
+        <div class="text-muted">
+            {{ document.academic_year.year }}
+            — {{ document.term.name }}
+            — {{ document.class_name }}
+            {% if document.stream %}
+                / {{ document.stream }}
+            {% endif %}
+            — {{ document.subject.name }}
+        </div>
+    </div>
+
+    <div>
+
+        {% if document.status == "APPROVED" %}
+            <span class="badge bg-success p-2">
+                APPROVED
+            </span>
+        {% elif document.status == "FLAGGED" %}
+            <span class="badge bg-danger p-2">
+                FLAGGED
+            </span>
+        {% elif document.status == "SUBMITTED" %}
+            <span class="badge bg-warning text-dark p-2">
+                SUBMITTED
+            </span>
+        {% else %}
+            <span class="badge bg-secondary p-2">
+                DRAFT
+            </span>
+        {% endif %}
+
+    </div>
+
+</div>
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <div class="row g-3">
+
+            <div class="col-md-4">
+                <strong>Teacher</strong><br>
+                {{ document.teacher.get_full_name|default:document.teacher.username }}
+            </div>
+
+            <div class="col-md-4">
+                <strong>Class / Stream</strong><br>
+                {{ document.class_name }}
+                {% if document.stream %}
+                    / {{ document.stream }}
+                {% endif %}
+            </div>
+
+            <div class="col-md-4">
+                <strong>Subject</strong><br>
+                {{ document.subject.name }}
+            </div>
+
+            {% if document.lesson_date %}
+            <div class="col-md-4">
+                <strong>Lesson Date</strong><br>
+                {{ document.lesson_date }}
+            </div>
+            {% endif %}
+
+            {% if document.start_time %}
+            <div class="col-md-4">
+                <strong>Time</strong><br>
+                {{ document.start_time }}
+                {% if document.end_time %}
+                    — {{ document.end_time }}
+                {% endif %}
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+</div>
+
+{% if document.uploaded_file %}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>Uploaded Document</h4>
+
+        <a href="{{ document.uploaded_file.url }}"
+           target="_blank"
+           class="btn btn-primary">
+            Open / Download Document
+        </a>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% if document.content %}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>Document Content</h4>
+
+        <div style="white-space:pre-wrap;">
+            {{ document.content }}
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% if document.admin_remarks %}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>Administrator Remarks</h4>
+
+        <div class="alert
+            {% if document.status == 'FLAGGED' %}
+                alert-danger
+            {% else %}
+                alert-success
+            {% endif %}">
+            {{ document.admin_remarks }}
+        </div>
+
+        {% if document.reviewed_at %}
+        <small class="text-muted">
+            Reviewed {{ document.reviewed_at|date:"d M Y H:i" }}
+            by
+            {{ document.reviewed_by.get_full_name|default:document.reviewed_by.username }}
+        </small>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endif %}
+
+<div class="mb-4">
+
+    {% if not is_admin and document.is_editable_by_teacher %}
+
+        <a href="{% url 'professional_documents:edit' document.pk %}"
+           class="btn btn-secondary">
+            Edit
+        </a>
+
+        <form method="post"
+              action="{% url 'professional_documents:submit' document.pk %}"
+              style="display:inline;">
+            {% csrf_token %}
+            <button class="btn btn-primary">
+                Submit to Admin
+            </button>
+        </form>
+
+    {% endif %}
+
+</div>
+
+{% if is_admin and document.status == "SUBMITTED" %}
+
+<div class="card border-primary">
+
+    <div class="card-body">
+
+        <h4>Administrator Review</h4>
+
+        <form method="post"
+              action="{% url 'professional_documents:review' document.pk %}">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Administrator Remarks
+                </label>
+
+                <textarea name="admin_remarks"
+                          class="form-control"
+                          rows="5"
+                          placeholder="Enter approval remarks or explain the issue that must be corrected..."></textarea>
+
+            </div>
+
+            <button name="action"
+                    value="approve"
+                    class="btn btn-success">
+                Approve Document
+            </button>
+
+            <button name="action"
+                    value="flag"
+                    class="btn btn-danger">
+                Flag for Correction
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,312 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                Attendance Report
+            </h2>
+
+            <p class="text-muted mb-0">
+                View learner attendance records and reports.
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a href="{% url 'attendance:mark_attendance' %}"
+               class="btn btn-primary">
+
+                <i class="bi bi-check2-square"></i>
+                Mark Attendance
+
+            </a>
+
+            <a href="{% url 'attendance:dashboard' %}"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left"></i>
+                Dashboard
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SUMMARY
+    ====================================================== -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Total Learners
+                    </p>
+
+                    <h3 class="fw-bold">
+                        {{ students|length }}
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Present
+                    </p>
+
+                    <h3 class="fw-bold text-success">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Absent
+                    </p>
+
+                    <h3 class="fw-bold text-danger">
+                        0
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-md-6 col-lg-3">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <p class="text-muted mb-1">
+                        Attendance Rate
+                    </p>
+
+                    <h3 class="fw-bold text-primary">
+                        0%
+                    </h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         REPORT TABLE
+    ====================================================== -->
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white py-3">
+
+            <h5 class="fw-bold mb-0">
+                Learner Attendance
+            </h5>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if students %}
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th class="ps-4">
+                                #
+                            </th>
+
+                            <th>
+                                Learner
+                            </th>
+
+                            <th>
+                                Class
+                            </th>
+
+                            <th>
+                                Admission No.
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for student in students %}
+
+                        <tr>
+
+                            <td class="ps-4">
+                                {{ forloop.counter }}
+                            </td>
+
+
+                            <td>
+
+                                <div class="d-flex align-items-center">
+
+                                    {% if student.photo %}
+
+                                    <img src="{{ student.photo.url }}"
+                                         alt="{{ student.first_name }}"
+                                         class="rounded-circle me-2"
+                                         width="40"
+                                         height="40"
+                                         style="object-fit:cover;">
+
+                                    {% else %}
+
+                                    <div class="rounded-circle bg-primary bg-opacity-10
+                                                d-flex align-items-center
+                                                justify-content-center
+                                                me-2"
+                                         style="width:40px;height:40px;">
+
+                                        <i class="bi bi-person text-primary"></i>
+
+                                    </div>
+
+                                    {% endif %}
+
+                                    <span class="fw-semibold">
+
+                                        {{ student.first_name }}
+                                        {{ student.last_name }}
+
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-light text-dark">
+
+                                    {{ student.class_name }}
+
+                                </span>
+
+                            </td>
+
+
+                            <td>
+
+                                {% if student.admission_number %}
+
+                                    {{ student.admission_number }}
+
+                                {% elif student.admission_no %}
+
+                                    {{ student.admission_no }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                <span class="badge bg-secondary">
+                                    No Record
+                                </span>
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-5">
+
+                <i class="bi bi-bar-chart fs-1 text-muted"></i>
+
+                <h5 class="mt-3">
+                    No attendance records
+                </h5>
+
+                <p class="text-muted">
+                    There are currently no learners to display.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,491 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}
+Library Members
+{% endblock %}
+
+{% block content %}
+
+<div class="actions">
+    <a class="btn" href="{% url 'library_member_add' %}">
+        + Add Member
+    </a>
+
+    {% if filters_applied %}
+    <a
+        class="btn"
+        target="_blank"
+        href="{% url 'library_member_print' %}?q={{ q|urlencode }}&class={{ class_name|urlencode }}&stream={{ stream|urlencode }}&member_type={{ member_type|urlencode }}"
+    >
+        🖨 Print Results
+    </a>
+    {% endif %}
+</div>
+
+<div class="card">
+
+    <!-- =====================================================
+     LIBRARY MEMBER NAVIGATION
+     ===================================================== -->
+
+<style>
+
+.library-member-page-navigation {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0 0 24px 0;
+}
+
+.library-member-page-button {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 17px 20px;
+    border-radius: 12px;
+    text-decoration: none !important;
+    background: #ffffff;
+    border: 1px solid #dbe3ef;
+    box-shadow: 0 3px 12px rgba(0,0,0,.06);
+    transition: all .2s ease;
+}
+
+.library-member-page-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(0,0,0,.10);
+}
+
+.library-member-page-button.active {
+    border: 2px solid #2563eb;
+    background: #eff6ff;
+}
+
+.library-member-page-icon {
+    width: 46px;
+    height: 46px;
+    min-width: 46px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    font-size: 22px;
+}
+
+.library-member-page-text strong {
+    display: block;
+    color: #111827;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.library-member-page-text span {
+    display: block;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+
+    .library-member-page-navigation {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+<div class="library-member-page-navigation">
+
+    <a
+        href="{% url 'library_members' %}"
+        class="library-member-page-button active"
+    >
+
+        <div class="library-member-page-icon">
+            🔎
+        </div>
+
+        <div class="library-member-page-text">
+
+            <strong>Search Members</strong>
+
+            <span>
+                Search and manage library members
+            </span>
+
+        </div>
+
+    </a>
+
+
+    <a
+        href="{% url 'library_student_members' %}"
+        class="library-member-page-button"
+    >
+
+        <div class="library-member-page-icon">
+            🎓
+        </div>
+
+        <div class="library-member-page-text">
+
+            <strong>Student Members</strong>
+
+            <span>
+                Filter students by class and stream
+            </span>
+
+        </div>
+
+    </a>
+
+
+    <a
+        href="{% url 'library_staff_members' %}"
+        class="library-member-page-button"
+    >
+
+        <div class="library-member-page-icon">
+            👨‍🏫
+        </div>
+
+        <div class="library-member-page-text">
+
+            <strong>Staff Members</strong>
+
+            <span>
+                Search and manage staff members
+            </span>
+
+        </div>
+
+    </a>
+
+</div>
+
+
+<h2>Search & Filter Library Members</h2>
+
+    <form method="get">
+
+        <div style="
+            display:grid;
+            grid-template-columns:2fr 1fr 1fr 1fr auto auto;
+            gap:12px;
+            align-items:end;
+        ">
+
+            <div>
+                <label>Search</label>
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ q }}"
+                    class="form-control"
+                    placeholder="Name, admission no., employee no., phone..."
+                >
+            </div>
+
+            <div>
+                <label>Class</label>
+                <select name="class" class="form-control">
+                    <option value="">All Classes</option>
+
+                    {% for item in class_options %}
+                        <option
+                            value="{{ item }}"
+                            {% if class_name == item %}selected{% endif %}
+                        >
+                            {{ item }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Stream</label>
+                <select name="stream" class="form-control">
+                    <option value="">All Streams</option>
+
+                    {% for item in stream_options %}
+                        <option
+                            value="{{ item }}"
+                            {% if stream == item %}selected{% endif %}
+                        >
+                            {{ item }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label>Member Type</label>
+                <select name="member_type" class="form-control">
+                    <option value="">All Members</option>
+
+                    <option
+                        value="student"
+                        {% if member_type == "student" %}selected{% endif %}
+                    >
+                        Students
+                    </option>
+
+                    <option
+                        value="staff"
+                        {% if member_type == "staff" %}selected{% endif %}
+                    >
+                        Staff
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn">
+                Search
+            </button>
+
+            <a
+                class="btn light"
+                href="{% url 'library_members' %}"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% if filters_applied %}
+
+<div class="card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:15px;
+        flex-wrap:wrap;
+    ">
+
+        <div>
+            <h2 style="margin-bottom:4px;">
+                Search Results
+            </h2>
+
+            <div style="color:#666;">
+                {% if class_name %}
+                    Class: <strong>{{ class_name }}</strong>
+                {% endif %}
+
+                {% if stream %}
+                    &nbsp; | &nbsp;
+                    Stream: <strong>{{ stream }}</strong>
+                {% endif %}
+
+                {% if member_type %}
+                    &nbsp; | &nbsp;
+                    Type:
+                    <strong>
+                        {% if member_type == "student" %}
+                            Students
+                        {% else %}
+                            Staff
+                        {% endif %}
+                    </strong>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+
+            {% if class_name or stream %}
+            <a
+                class="btn"
+                target="_blank"
+                href="{% url 'library_member_print' %}?class={{ class_name|urlencode }}&stream={{ stream|urlencode }}&member_type=student"
+            >
+                🖨 Print Class / Stream
+            </a>
+            {% endif %}
+
+            {% if member_type == "staff" %}
+            <a
+                class="btn"
+                target="_blank"
+                href="{% url 'library_member_print' %}?member_type=staff"
+            >
+                🖨 Print Staff
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div style="
+        margin-top:15px;
+        padding:12px 15px;
+        background:#f5f7fa;
+        border-radius:8px;
+    ">
+        Members found:
+        <strong>{{ members|length }}</strong>
+    </div>
+
+    <div style="overflow-x:auto; margin-top:15px;">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Admission / Employee No.</th>
+                    <th>Class</th>
+                    <th>Stream</th>
+                    <th>Phone</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for member in members %}
+
+                <tr>
+
+                    <td>{{ forloop.counter }}</td>
+
+                    <td>
+                        <strong>
+                            {% if member.student %}
+                                {{ member.student.get_full_name }}
+                            {% elif member.employee %}
+                                {{ member.employee.first_name }}
+                                {{ member.employee.last_name }}
+                            {% else %}
+                                {{ member.name }}
+                            {% endif %}
+                        </strong>
+                    </td>
+
+                    <td>
+                        {{ member.get_member_type_display }}
+                    </td>
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.admission_no }}
+                        {% elif member.employee %}
+                            {{ member.employee.employee_number }}
+                        {% else %}
+                            {{ member.admission_number|default:"—" }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.class_name|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.stream|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {{ member.phone|default:"—" }}
+                    </td>
+
+                    <td>
+                        {% if member.active %}
+                            <span class="badge success">
+                                Active
+                            </span>
+                        {% else %}
+                            <span class="badge danger">
+                                Inactive
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td style="white-space:nowrap;">
+
+                        <a
+                            class="btn light"
+                            href="{% url 'library_member_edit' member.pk %}"
+                        >
+                            Edit
+                        </a>
+
+                        <a
+                            class="btn danger"
+                            href="{% url 'library_member_delete' member.pk %}"
+                        >
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td
+                        colspan="9"
+                        style="text-align:center; padding:35px;"
+                    >
+                        No members matched your search/filter.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% else %}
+
+<div class="card" style="
+    text-align:center;
+    padding:50px 20px;
+">
+
+    <div style="font-size:42px; margin-bottom:10px;">
+        🔎
+    </div>
+
+    <h2>Search Library Members</h2>
+
+    <p style="color:#666;">
+        Search by name, admission number, employee number,
+        phone or email, or select a class, stream or member type.
+    </p>
+
+    <p style="color:#888;">
+        Member records will appear here after you perform a search.
+    </p>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
+

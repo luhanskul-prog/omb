@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ portal_title }}</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;padding:30px}
+        .box{max-width:700px;margin:auto;background:white;padding:30px;border-radius:12px}
+        label{display:block;font-weight:bold;margin-top:15px}
+        input,select,textarea{width:100%;padding:10px;margin-top:6px;box-sizing:border-box}
+        textarea{min-height:100px}
+        button,a{display:inline-block;padding:11px 18px;margin-top:20px;border:0;border-radius:7px;text-decoration:none;cursor:pointer}
+        button{background:#1646a0;color:white}
+        a{background:#e9eef8;color:#173b78}
+        .error{color:#a00;margin-top:5px}
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>{{ portal_title }}</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Academic Year</label>
+        <select name="academic_year" required>
+            <option value="">Select academic year</option>
+            {% for item in academic_years %}
+                <option value="{{ item.id }}" {% if week and week.academic_year_id == item.id %}selected{% endif %}>
+                    {{ item }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Term</label>
+        <select name="term" required>
+            <option value="">Select term</option>
+            {% for item in terms %}
+                <option value="{{ item.id }}" {% if week and week.term_id == item.id %}selected{% endif %}>
+                    {{ item }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <label>Week Number</label>
+        <input type="number" name="week_number" min="1" max="53" required value="{{ week.week_number|default:'' }}">
+
+        <label>Week Title</label>
+        <input type="text" name="title" placeholder="e.g. Week 1" value="{{ week.title|default:'' }}">
+
+        <label>Date From</label>
+        <input type="date" name="week_start" required value="{{ week.week_start|date:'Y-m-d' }}">
+
+        <label>Date To</label>
+        <input type="date" name="week_end" required value="{{ week.week_end|date:'Y-m-d' }}">
+
+        <label>Description</label>
+        <textarea name="description">{{ week.description|default:'' }}</textarea>
+
+        <button type="submit">Save Week</button>
+        <a href="{% url 'weekly_reports:manage_weeks' %}">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

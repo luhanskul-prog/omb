@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Generate Subject Marks Excel</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;padding:30px}
+        .box{max-width:850px;margin:auto;background:white;padding:30px;border-radius:12px;box-shadow:0 4px 18px #0001}
+        h1{margin-top:0}
+        label{display:block;font-weight:bold;margin-top:18px}
+        select,button{width:100%;padding:12px;margin-top:7px;border:1px solid #ccc;border-radius:6px}
+        button{background:#1649a0;color:white;font-weight:bold;border:0;margin-top:25px;cursor:pointer}
+        .info{background:#eef5ff;padding:15px;border-radius:8px;margin-bottom:20px}
+        .back{display:inline-block;margin-bottom:20px}
+    </style>
+</head>
+<body>
+<div class="box">
+
+    <a class="back" href="/academic/assessments/">← Assessment & Marks Management</a>
+
+    <h1>Generate Subject Marks Excel</h1>
+
+    <div class="info">
+        Select the active assessment, class, stream and subject.
+        The generated Excel will contain existing marks for that exact assessment.
+        Teachers can only generate subjects they are authorized to teach.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label>Active Assessment</label>
+        <select name="window" required>
+            <option value="">-- Select Assessment --</option>
+            {% for window in windows %}
+            <option value="{{ window.id }}"
+                {% if selected_window_id|stringformat:"s" == window.id|stringformat:"s" %}selected{% endif %}>
+                {{ window.academic_year }} — {{ window.term }} — {{ window.assessment_type }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Class</label>
+        <select name="class_name" onchange="this.form.method='get'; this.form.submit()" required>
+            <option value="">-- Select Class --</option>
+            {% for item in classes %}
+            <option value="{{ item }}" {% if selected_class == item %}selected{% endif %}>
+                {{ item }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Stream</label>
+        <select name="stream" onchange="this.form.method='get'; this.form.submit()">
+            <option value="">All Streams</option>
+            {% for item in streams %}
+            <option value="{{ item }}" {% if selected_stream == item %}selected{% endif %}>
+                {{ item }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Subject</label>
+        <select name="subject" required>
+            <option value="">-- Select Subject --</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}"
+                {% if selected_subject_id|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
+                {{ subject.name }}{% if subject.code %} ({{ subject.code }}){% endif %}
+            </option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Generate Subject Marks Excel</button>
+    </form>
+
+</div>
+</body>
+</html>

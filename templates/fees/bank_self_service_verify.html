@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-primary text-white py-3">
+            <h3 class="mb-0">🏦 Verify Bank Payment</h3>
+        </div>
+
+        <div class="card-body">
+
+            {% if disabled %}
+
+                <div class="alert alert-warning">
+                    Bank automatic payments are currently disabled.
+                </div>
+
+            {% else %}
+
+                {% if success %}
+
+                    <div class="alert alert-success">
+                        <h4 class="fw-bold">
+                            Payment Verified Successfully
+                        </h4>
+
+                        <p class="mb-0">
+                            The bank transaction has been verified and the
+                            payment has been posted to the learner's fee
+                            account.
+                        </p>
+                    </div>
+
+                    <div class="card border-success mb-4">
+                        <div class="card-body">
+
+                            <h5 class="fw-bold text-success">
+                                Payment Details
+                            </h5>
+
+                            <div class="row g-3">
+
+                                <div class="col-md-6">
+                                    <strong>Student</strong>
+                                    <div>
+                                        {{ student.first_name }}
+                                        {{ student.middle_name }}
+                                        {{ student.last_name }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Admission Number</strong>
+                                    <div>
+                                        {{ student.admission_no }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Transaction Code</strong>
+                                    <div class="fs-5 fw-bold">
+                                        {{ transaction_code }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Amount</strong>
+                                    <div class="fs-5 fw-bold">
+                                        {{ bank_transaction.amount }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Bank</strong>
+                                    <div>
+                                        {{ bank_transaction.bank_name }}
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <strong>Payment Status</strong>
+                                    <div class="text-success fw-bold">
+                                        VERIFIED
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    {% if fee_payment %}
+
+                        <a
+                            href="{% url 'fees:print_receipt' fee_payment.id %}"
+                            class="btn btn-success btn-lg"
+                        >
+                            Download Official Receipt
+                        </a>
+
+                    {% endif %}
+
+                    <a
+                        href="{% url 'fees:bank_self_service_verify' %}"
+                        class="btn btn-outline-primary btn-lg ms-2"
+                    >
+                        Verify Another Transaction
+                    </a>
+
+                {% else %}
+
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <strong>Verification unsuccessful.</strong>
+                            <div class="mt-1">
+                                {{ error }}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="row justify-content-center">
+
+                        <div class="col-lg-7">
+
+                            <h5 class="fw-bold mb-3">
+                                Enter Bank Transaction Code
+                            </h5>
+
+                            <p class="text-muted">
+                                Enter the transaction code exactly as shown
+                                on your bank transfer confirmation.
+                            </p>
+
+                            <form method="post">
+                                {% csrf_token %}
+
+                                <label class="form-label fw-semibold">
+                                    Bank Transaction Code
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="transaction_code"
+                                    value="{{ transaction_code }}"
+                                    class="form-control form-control-lg text-uppercase"
+                                    placeholder="e.g. BANKTX123456"
+                                    autocomplete="off"
+                                    required
+                                >
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary btn-lg w-100 mt-3"
+                                >
+                                    Verify Transaction
+                                </button>
+
+                            </form>
+
+                            <div class="alert alert-info mt-4 mb-0">
+                                <strong>Important:</strong>
+                                Verification succeeds only when the
+                                transaction has been received by the school's
+                                bank integration and matches the school's
+                                payment verification rules.
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

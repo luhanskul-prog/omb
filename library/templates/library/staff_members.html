@@ -1,0 +1,291 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}
+Staff Library Members
+{% endblock %}
+
+{% block content %}
+
+<div class="actions">
+
+    <a
+        class="btn light"
+        href="{% url 'library_members' %}"
+    >
+        ← Search Members
+    </a>
+
+    <a
+        class="btn"
+        href="{% url 'library_member_add' %}"
+    >
+        + Add Member
+    </a>
+
+</div>
+
+
+<div class="card">
+
+    <h2>
+        Staff Library Members
+    </h2>
+
+    <p style="color:#666;">
+        Search for staff registered as library members
+        using name, employee number, phone or email.
+    </p>
+
+
+    <form method="get">
+
+        <div style="
+            display:grid;
+            grid-template-columns:1fr auto auto;
+            gap:12px;
+            align-items:end;
+        ">
+
+            <div>
+
+                <label>
+                    Search Staff
+                </label>
+
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ q }}"
+                    class="form-control"
+                    placeholder="Name, employee number, phone or email"
+                >
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn"
+            >
+                Search
+            </button>
+
+
+            <a
+                href="{% url 'library_staff_members' %}"
+                class="btn light"
+            >
+                Clear
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+
+{% if q %}
+
+<div class="card">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        gap:15px;
+        flex-wrap:wrap;
+    ">
+
+        <div>
+
+            <h2>
+                Staff Members
+            </h2>
+
+            <div style="color:#666;">
+
+                Search:
+                <strong>{{ q }}</strong>
+
+                &nbsp; | &nbsp;
+
+                Total:
+                <strong>{{ staff|length }}</strong>
+
+            </div>
+
+        </div>
+
+
+        <div>
+
+            <a
+                class="btn"
+                target="_blank"
+                href="{% url 'library_staff_members_print' %}?q={{ q|urlencode }}"
+            >
+                🖨 Print Staff Register
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div style="
+        overflow-x:auto;
+        margin-top:20px;
+    ">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+                    <th>Employee No.</th>
+                    <th>Staff Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for member in staff %}
+
+                <tr>
+
+                    <td>
+                        {{ forloop.counter }}
+                    </td>
+
+                    <td>
+                        {{ member.employee.employee_number }}
+                    </td>
+
+                    <td>
+
+                        <strong>
+
+                            {{ member.employee.first_name }}
+
+                            {% if member.employee.last_name %}
+                                {{ member.employee.last_name }}
+                            {% endif %}
+
+                        </strong>
+
+                    </td>
+
+                    <td>
+                        {{ member.phone }}
+                    </td>
+
+                    <td>
+                        {{ member.email }}
+                    </td>
+
+                    <td>
+
+                        {% if member.active %}
+
+                            <span class="badge success">
+                                Active
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge danger">
+                                Inactive
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td style="white-space:nowrap;">
+
+                        <a
+                            class="btn light"
+                            href="{% url 'library_member_edit' member.pk %}"
+                        >
+                            Edit
+                        </a>
+
+                        <a
+                            class="btn danger"
+                            href="{% url 'library_member_delete' member.pk %}"
+                        >
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+
+
+                {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        style="
+                            text-align:center;
+                            padding:35px;
+                        "
+                    >
+                        No staff library members found.
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+{% else %}
+
+
+<div class="card" style="
+    text-align:center;
+    padding:50px 20px;
+">
+
+    <div style="
+        font-size:42px;
+        margin-bottom:10px;
+    ">
+        👨‍🏫
+    </div>
+
+    <h2>
+        Staff Library Members
+    </h2>
+
+    <p style="color:#666;">
+        Search for a staff member to display
+        the library membership register.
+    </p>
+
+</div>
+
+
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,26 @@
+﻿{% extends "hr_payroll/base.html" %}
+{% block content %}
+<div class="page-wrap">
+    <h1>Allowance Types</h1>
+    <p><a class="btn-link" href="{% url 'hr_payroll:allowance_type_add' %}">+ Add Allowance Type</a></p>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Taxable</th>
+                <th>Status</th>
+            </tr>
+            {% for item in allowance_types %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.is_taxable|yesno:"Yes,No" }}</td>
+                <td>{{ item.is_active|yesno:"Active,Inactive" }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">No allowance types found.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

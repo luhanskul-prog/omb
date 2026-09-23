@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="mb-3">Unpublish Timetable</h2>
+
+            <div class="alert alert-warning">
+                This will immediately hide the published timetable
+                from portal users. The timetable entries will not be deleted.
+            </div>
+
+            <p>
+                Published lessons:
+                <strong>{{ published_count }}</strong>
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                {% if erp_permission.change_timetableentry %}
+                <button type="submit" class="btn btn-warning">
+                    Unpublish Timetable
+                </button>
+                {% endif %}
+
+                <a href="{% url 'scheduling:timetable_review' %}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

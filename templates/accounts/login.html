@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if branding %}{{ branding.school_name }} | {% endif %}Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #eef4fb;
+        }
+
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* LEFT LOGIN PANEL */
+        .login-panel {
+            width: 43%;
+            min-height: 100vh;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .mini-logo {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+            margin-bottom: 18px;
+        }
+
+        .brand-name {
+            color: #0b3d91;
+            font-size: 30px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .portal-text {
+            color: #6b7280;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 25px;
+            font-weight: 750;
+            color: #172033;
+            margin-bottom: 8px;
+        }
+
+        .section-subtitle {
+            color: #718096;
+            margin-bottom: 25px;
+        }
+
+        /* ROLE BUTTONS */
+        .role-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 22px;
+        }
+
+        .role-btn {
+            border: 1px solid #dbe4f0;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 15px 10px;
+            cursor: pointer;
+            color: #26354d;
+            font-weight: 650;
+            transition: .2s;
+        }
+
+        .role-btn:hover,
+        .role-btn.active {
+            background: #0b5ed7;
+            color: white;
+            border-color: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(11,94,215,.18);
+        }
+
+        .role-icon {
+            display: block;
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        .staff-options {
+            display: none;
+            background: #f4f8fd;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 18px;
+        }
+
+        .staff-option {
+            width: 100%;
+            border: 1px solid #d8e2ef;
+            background: white;
+            border-radius: 9px;
+            padding: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .staff-option:last-child {
+            margin-bottom: 0;
+        }
+
+        .staff-option.active {
+            border-color: #0b5ed7;
+            background: #eaf3ff;
+            color: #0b5ed7;
+            font-weight: 700;
+        }
+
+        .form-label {
+            font-weight: 650;
+            color: #374151;
+        }
+
+        .form-control {
+            min-height: 50px;
+            border-radius: 10px;
+            border: 1px solid #d7dfeb;
+        }
+
+        .form-control:focus {
+            border-color: #0b5ed7;
+            box-shadow: 0 0 0 3px rgba(11,94,215,.10);
+        }
+
+        .login-btn {
+            width: 100%;
+            min-height: 52px;
+            border: none;
+            border-radius: 10px;
+            background: #0b5ed7;
+            font-weight: 700;
+            font-size: 16px;
+            transition: .2s;
+        }
+
+        .login-btn:hover {
+            background: #084db2;
+        }
+
+        .selected-role {
+            font-size: 13px;
+            color: #0b5ed7;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: #9aa4b2;
+            font-size: 12px;
+            margin-top: 25px;
+        }
+
+        /* RIGHT BRANDING SLIDESHOW */
+        .branding-panel {
+            width: 57%;
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #063b8c, #0b5ed7);
+            color: white;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity .8s ease;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-content {
+            max-width: 650px;
+        }
+
+        .slide-logo {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            background: rgba(255,255,255,.95);
+            padding: 12px;
+            border-radius: 25px;
+            margin-bottom: 25px;
+        }
+
+        .welcome-label {
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 13px;
+            font-weight: 700;
+            opacity: .85;
+            margin-bottom: 12px;
+        }
+
+        .slide h1 {
+            font-size: clamp(34px, 4vw, 58px);
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
+
+        .slide h2 {
+            font-size: 30px;
+            font-weight: 750;
+            margin-bottom: 15px;
+        }
+
+        .motto {
+            font-size: 21px;
+            font-style: italic;
+            opacity: .92;
+            margin-bottom: 25px;
+        }
+
+        .slide p {
+            font-size: 17px;
+            line-height: 1.7;
+            opacity: .9;
+        }
+
+        .info-card {
+            margin-top: 25px;
+            padding: 22px;
+            background: rgba(255,255,255,.12);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+        }
+
+        .slide-controls {
+            position: absolute;
+            bottom: 35px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            z-index: 10;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            margin: 0 5px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.45);
+            cursor: pointer;
+        }
+
+        .dot.active {
+            width: 25px;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .school-code {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            background: rgba(255,255,255,.12);
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .login-wrapper {
+                display: block;
+            }
+
+            .login-panel {
+                width: 100%;
+                min-height: 100vh;
+                padding: 30px 20px;
+            }
+
+            .branding-panel {
+                display: none;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<style>
+.role-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    cursor: pointer;
+}
+
+.role-btn:hover {
+    text-decoration: none !important;
+}
+
+.role-btn:visited {
+    text-decoration: none !important;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <!-- ================= LEFT: LOGIN ================= -->
+    <section class="login-panel">
+        <div class="login-box">
+
+            <div class="text-center">
+                {% if branding and branding.logo %}
+                    <img src="{{ branding.logo.url }}" class="mini-logo" alt="School Logo">
+                {% endif %}
+
+                <div class="brand-name">
+                    {% if branding %}
+                        {{ branding.school_name }}
+                    {% endif %}
+                </div>
+
+                <div class="portal-text">
+                    School Management Portal
+                </div>
+            </div>
+
+            <div class="section-title">Welcome Back</div>
+
+            <div class="section-subtitle">
+                Select your account type to continue.
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger py-2">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- ROLE SELECTION -->
+            <div class="role-grid">
+
+                <a href="{% url 'accounts:admin_login' %}" class="role-btn"><span class="role-icon">ADMIN</span></a>
+
+                <a href="{% url 'accounts:staff_selection' %}" class="role-btn"><span class="role-icon">STAFF</span></a>
+
+                <a href="{% url 'accounts:student_login' %}" class="role-btn"><span class="role-icon">STUDENT</span></a>
+
+                <a href="{% url 'accounts:parent_login' %}" class="role-btn"><span class="role-icon">PARENT</span></a>
+
+            </div>
+
+            <!-- ONLINE ADMISSION -->
+            <div class="text-center mt-4">
+                <a href="{% url 'online_application_form' %}"
+                   class="btn btn-outline-primary w-100"
+                   style="font-weight:600;">
+                    Apply Online for Admission
+                </a>
+            </div>
+
+            <!-- APPLICATION STATUS -->
+            <div class="text-center mt-2">
+                <a href="{% url 'application_status' %}"
+                   class="btn btn-outline-secondary w-100"
+                   style="font-weight:600;">
+                    View Application Status
+                </a>
+            </div>
+
+            <!-- STAFF TYPE -->
+            <div id="staffOptions" class="staff-options">
+
+                <div class="small text-muted fw-semibold mb-2">
+                    Select Staff Category
+                </div>
+
+                <button type="button"
+                        class="staff-option"
+                        onclick="selectStaffType('Teaching Staff', this)">
+                    ðŸ‘¨â€ðŸ« Teaching Staff
+                </button>
+
+                <button type="button"
+                        class="staff-option"
+                        onclick="selectStaffType('Support Staff', this)">
+                    ðŸ‘¥ Support Staff
+                </button>
+
+            </div>
+
+            <div id="selectedRole" class="selected-role" style="display:none;"></div>
+
+            <!-- LOGIN FORM -->
+            
+
+            <div class="footer-text">
+                Secure School Management System
+            </div>
+
+        </div>
+    </section>
+
+
+    <!-- ================= RIGHT: DYNAMIC SCHOOL BRANDING ================= -->
+    <section class="branding-panel">
+
+        {% if branding %}
+
+            <!-- SLIDE 1: SCHOOL BRANDING -->
+            <div class="slide active">
+                <div class="slide-content">
+
+                    {% if branding.logo %}
+                        <img
+                            src="{{ branding.logo.url }}"
+                            class="slide-logo"
+                            alt="{{ branding.school_name }}"
+                        >
+                    {% endif %}
+
+                    {% if branding.school_name %}
+                        <h1>
+                            {{ branding.school_name }}
+                        </h1>
+                    {% endif %}
+
+                    {% if branding.motto %}
+                        <div class="motto">
+                            {{ branding.motto }}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+
+            <!-- SLIDE 2: SCHOOL INFORMATION -->
+            <div class="slide">
+                <div class="slide-content">
+
+                    {% if branding.additional_information %}
+                        <div class="info-card">
+                            {{ branding.additional_information|linebreaks }}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+
+            <!-- SLIDE 3: CONTACT INFORMATION -->
+            <div class="slide">
+                <div class="slide-content">
+
+                    {% if branding.phone %}
+                        <p>
+                            {{ branding.phone }}
+                        </p>
+                    {% endif %}
+
+                    {% if branding.alternative_phone %}
+                        <p>
+                            {{ branding.alternative_phone }}
+                        </p>
+                    {% endif %}
+
+                    {% if branding.email %}
+                        <p>
+                            {{ branding.email }}
+                        </p>
+                    {% endif %}
+
+                    {% if branding.website %}
+                        <p>
+                            {{ branding.website }}
+                        </p>
+                    {% endif %}
+
+                    {% if branding.physical_address %}
+                        <p>
+                            {{ branding.physical_address }}
+                        </p>
+                    {% endif %}
+
+                    {% if branding.postal_address %}
+                        <p>
+                            {{ branding.postal_address }}
+                        </p>
+                    {% endif %}
+
+                    {% if branding.school_code %}
+                        <span class="school-code">
+                            {{ branding.school_code }}
+                        </span>
+                    {% endif %}
+
+                </div>
+            </div>
+
+
+            <!-- SLIDE 4: ADDITIONAL INFORMATION -->
+            <div class="slide">
+                <div class="slide-content">
+
+                    {% if branding.additional_information %}
+                        <div class="info-card">
+                            {{ branding.additional_information|linebreaks }}
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+
+
+            <!-- SLIDE DOTS -->
+            <div class="slide-controls">
+                <span class="dot active" onclick="showSlide(0)"></span>
+                <span class="dot" onclick="showSlide(1)"></span>
+                <span class="dot" onclick="showSlide(2)"></span>
+                <span class="dot" onclick="showSlide(3)"></span>
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+
+
+
+
+</body>
+</html>
+
+

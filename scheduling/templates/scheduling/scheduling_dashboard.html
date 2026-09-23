@@ -1,0 +1,701 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Scheduling Dashboard | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f4f6f9;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(
+                135deg,
+                #0d6efd,
+                #084298
+            );
+
+            color: white;
+            padding: 25px 0;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.12);
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            opacity: .85;
+            font-size: 13px;
+        }
+
+        .main {
+            padding: 25px 0 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e1e5ea;
+            border-radius: 12px;
+            padding: 20px;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,.05);
+
+            height: 100%;
+        }
+
+        .stat-title {
+            color: #6c757d;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: 700;
+            color: #084298;
+            margin-top: 8px;
+        }
+
+        .section-card {
+            background: white;
+            border: 1px solid #e1e5ea;
+            border-radius: 12px;
+            margin-top: 20px;
+            overflow: hidden;
+
+            box-shadow:
+                0 3px 12px rgba(0,0,0,.04);
+        }
+
+        .section-header {
+            padding: 15px 18px;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 700;
+        }
+
+        .section-body {
+            padding: 18px;
+        }
+
+        .action-card {
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 18px;
+            height: 100%;
+            transition: .15s;
+        }
+
+        .action-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,.08);
+        }
+
+        .action-card h5 {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .action-card p {
+            color: #6c757d;
+            font-size: 12px;
+        }
+
+        .table {
+            font-size: 13px;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="header">
+
+    <div class="container-fluid px-3 px-lg-4">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+
+                <h1>
+                    Timetable & Scheduling
+                </h1>
+
+                <p>
+                    Luhan School ERP Â· Scheduling Management
+                </p>
+
+            </div>
+
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                {% if erp_permission.view_timetableentry %}
+                <a
+                    href="{% url 'scheduling:timetable' %}"
+                    class="btn btn-light"
+                >
+                    Manage Timetable
+                </a>
+                {% endif %}
+
+                {% if erp_permission.add_timetableentry %}
+                <a
+                    href="{% url 'scheduling:add_timetable_entry' %}"
+                    class="btn btn-success"
+                >
+                    + Add Timetable Entry
+                </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="container-fluid main px-3 px-lg-4">
+
+
+    <!-- STATISTICS -->
+
+    <div class="row g-3">
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Subjects
+                </div>
+
+                <div class="stat-number">
+                    {{ total_subjects }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Teachers
+                </div>
+
+                <div class="stat-number">
+                    {{ total_teachers }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Rooms
+                </div>
+
+                <div class="stat-number">
+                    {{ total_rooms }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="col-lg-3 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Timetable Entries
+                </div>
+
+                <div class="stat-number">
+                    {{ total_timetable_entries }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="section-card">
+
+        <div class="section-header">
+            Scheduling Management
+        </div>
+
+
+        <div class="section-body">
+
+            <div class="row g-3">
+
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="action-card">
+
+                        <h5>
+                            ðŸ“… Manage Timetable
+                        </h5>
+
+                        <p>
+                            View, filter, edit and remove timetable lessons.
+                        </p>
+
+                            {% if erp_permission.view_timetableentry %}
+                        <a
+                            href="{% url 'scheduling:timetable' %}"
+                            class="btn btn-primary btn-sm"
+                        >
+                            Open Timetable
+                        </a>
+                            {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="action-card">
+
+                        <h5>
+                            âž• Add Timetable Entry
+                        </h5>
+
+                        <p>
+                            Create a new lesson and assign class, teacher,
+                            subject, room and period.
+                        </p>
+
+                            {% if erp_permission.add_timetableentry %}
+                        <a
+                            href="{% url 'scheduling:add_timetable_entry' %}"
+                            class="btn btn-success btn-sm"
+                        >
+                            Add Lesson
+                        </a>
+                            {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-lg-4 col-md-6">
+
+                    <div class="action-card">
+
+                        <h5>
+                            ðŸ“ Exams
+                        </h5>
+
+                        <p>
+                            Exam scheduling section can be added next.
+                        </p>
+
+                        <button
+                            class="btn btn-outline-secondary btn-sm"
+                            disabled
+                        >
+                            Coming Soon
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- TODAY -->
+
+    <div class="section-card">
+
+        <div class="section-header">
+
+            Today's Timetable
+
+            <span class="text-muted small ms-2">
+                {{ today_name }} Â· {{ today }}
+
+            </span>
+
+        </div>
+
+
+        <div class="section-body p-0">
+
+            {% if today_timetable %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Time</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Teacher</th>
+                                <th>Room</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for entry in today_timetable %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ entry.period.start_time|time:"H:i" }}
+                                        -
+                                        {{ entry.period.end_time|time:"H:i" }}
+                                    </td>
+
+                                    <td>
+
+                                        {{ entry.class_name }}
+
+                                        {% if entry.stream %}
+                                            - {{ entry.stream }}
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+                                        {{ entry.subject.name }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if entry.teacher %}
+                                            {{ entry.teacher.name }}
+                                        {% else %}
+                                            â€”
+                                        {% endif %}
+
+                                    </td>
+
+                                    <td>
+
+                                        {% if entry.room %}
+                                            {{ entry.room.name }}
+                                        {% else %}
+                                            â€”
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="p-4 text-center text-muted">
+
+                    No timetable lessons scheduled for today.
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- EXAMS -->
+
+    <div class="section-card">
+
+        <div class="section-header">
+            Upcoming Exams
+        </div>
+
+
+        <div class="section-body">
+
+            {% if upcoming_exams %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Date</th>
+                                <th>Exam</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Time</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for exam in upcoming_exams %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ exam.date }}
+                                    </td>
+
+                                    <td>
+                                        {{ exam.exam_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ exam.class_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ exam.subject.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ exam.start_time|time:"H:i" }}
+                                        -
+                                        {{ exam.end_time|time:"H:i" }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-muted">
+                    No upcoming exams.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+
+    <!-- SUBSTITUTIONS -->
+
+    <div class="section-card">
+
+        <div class="section-header">
+            Recent Teacher Substitutions
+        </div>
+
+
+        <div class="section-body">
+
+            {% if recent_substitutions %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Date</th>
+                                <th>Class</th>
+                                <th>Subject</th>
+                                <th>Absent Teacher</th>
+                                <th>Substitute</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for substitution in recent_substitutions %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ substitution.date }}
+                                    </td>
+
+                                    <td>
+                                        {{ substitution.class_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ substitution.subject.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ substitution.absent_teacher.name }}
+                                    </td>
+
+                                    <td>
+                                        {{ substitution.substitute_teacher.name }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-muted">
+                    No recent teacher substitutions.
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+
+<!-- AUTOMATIC TIMETABLE GENERATOR CARD -->
+
+<div class="container my-4">
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <div class="row align-items-center">
+
+                <div class="col-md-8">
+
+                    <h4 class="fw-bold mb-2">
+                        Automatic Timetable Generator
+                    </h4>
+
+                    <p class="text-muted mb-0">
+                        Automatically create a balanced weekly timetable
+                        from teacher teaching assignments and lessons per week.
+                        The system checks teacher, class, room and fixed-lesson
+                        conflicts.
+                    </p>
+
+                </div>
+
+                <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                        {% if erp_permission.add_timetableentry %}
+                    <a
+                        href="{% url 'scheduling:timetable_generator' %}"
+                        class="btn btn-primary btn-lg"
+                    >
+                        Generate Timetable
+                    </a>
+                        {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- END AUTOMATIC TIMETABLE GENERATOR CARD -->
+
+</body>
+
+</html>
+

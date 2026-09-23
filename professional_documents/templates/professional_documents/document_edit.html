@@ -1,0 +1,93 @@
+
+{% extends "professional_documents/base.html" %}
+
+{% block professional_content %}
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h2>Edit Professional Document</h2>
+
+        <p class="text-muted">
+            {{ document.get_document_type_display }}
+            —
+            {{ document.class_name }}
+            —
+            {{ document.subject.name }}
+        </p>
+
+        <form method="post"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Title
+                </label>
+
+                <input type="text"
+                       name="title"
+                       class="form-control"
+                       value="{{ document.title }}">
+
+            </div>
+
+            {% if document.document_type != "SCHEME" %}
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Content
+                </label>
+
+                <textarea name="content"
+                          class="form-control"
+                          rows="16">{{ document.content }}</textarea>
+
+            </div>
+
+            {% endif %}
+
+            {% if document.document_type != "RECORD" %}
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Upload PDF / Word
+                </label>
+
+                <input type="file"
+                       name="uploaded_file"
+                       class="form-control"
+                       accept=".pdf,.doc,.docx">
+
+                {% if document.uploaded_file %}
+                <small class="text-muted">
+                    Current file:
+                    {{ document.uploaded_file.name }}
+                </small>
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+            <button class="btn btn-primary">
+                Save Changes
+            </button>
+
+            <a href="{% url 'professional_documents:detail' document.pk %}"
+               class="btn btn-secondary">
+                Cancel
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

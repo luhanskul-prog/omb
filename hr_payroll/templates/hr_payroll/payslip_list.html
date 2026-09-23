@@ -1,0 +1,859 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        max-width: 1300px;
+        margin: 0 auto;
+        padding: 25px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .page-header h1 {
+        margin: 0 0 6px;
+        font-size: 30px;
+    }
+
+    .page-header p {
+        margin: 0;
+        color: #6c757d;
+    }
+
+    .actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+    }
+
+    .inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .btn {
+        display: inline-block;
+        border: 0;
+        border-radius: 8px;
+        padding: 9px 14px;
+        text-decoration: none;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .btn-info {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .btn-warning {
+        background: #f0ad00;
+        color: #111;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-success {
+        background: #198754;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    .search-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+
+    .search-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 22px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.08);
+        border: 1px solid #e9ecef;
+    }
+
+    .search-card h2 {
+        margin: 0 0 6px;
+        font-size: 20px;
+    }
+
+    .search-card p {
+        margin: 0 0 18px;
+        color: #6c757d;
+        font-size: 13px;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #343a40;
+    }
+
+    .form-control {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        background: #fff;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13,110,253,.12);
+    }
+
+    .search-button {
+        width: 100%;
+        margin-top: 3px;
+        padding: 11px 15px;
+    }
+
+    .results-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .results-header h2 {
+        margin: 0;
+        font-size: 21px;
+    }
+
+    .result-summary {
+        color: #6c757d;
+        font-size: 13px;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 1000px;
+    }
+
+    th,
+    td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e8e8e8;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f5f7fa;
+        font-size: 13px;
+    }
+
+    td {
+        font-size: 13px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #eef2f7;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .badge-success {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .badge-warning {
+        background: #fff3cd;
+        color: #664d03;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 45px 20px;
+        color: #777;
+    }
+
+    .initial-state {
+        background: #fff;
+        border-radius: 14px;
+        padding: 50px 25px;
+        text-align: center;
+        box-shadow: 0 3px 16px rgba(0,0,0,.06);
+        color: #6c757d;
+    }
+
+    .initial-state h2 {
+        color: #343a40;
+        margin-top: 0;
+    }
+
+    .employee-help {
+        margin-top: 6px;
+        font-size: 11px;
+        color: #6c757d;
+    }
+
+    .employee-results {
+        position: relative;
+        max-height: 260px;
+        overflow-y: auto;
+        margin-top: 4px;
+        background: #fff;
+        border: 1px solid #ced4da;
+        border-radius: 8px;
+        box-shadow: 0 5px 18px rgba(0,0,0,.12);
+        z-index: 1000;
+    }
+
+    .employee-result {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        padding: 11px 13px;
+        border: 0;
+        border-bottom: 1px solid #eeeeee;
+        background: #fff;
+        text-align: left;
+        cursor: pointer;
+        font-size: 13px;
+    }
+
+    .employee-result:last-child {
+        border-bottom: 0;
+    }
+
+    .employee-result:hover {
+        background: #f1f6ff;
+    }
+
+    .employee-result-name {
+        font-weight: 700;
+        color: #212529;
+    }
+
+    .employee-result-number {
+        color: #6c757d;
+        font-size: 12px;
+        white-space: nowrap;
+    }
+
+    .employee-selected-info {
+        margin-top: 8px;
+        padding: 9px 11px;
+        border-radius: 7px;
+        background: #e7f1ff;
+        color: #174a8b;
+        font-size: 12px;
+    }
+
+    @media (max-width: 850px) {
+        .search-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .page-wrap {
+            padding: 15px;
+        }
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Staff Payslips</h1>
+            <p>Search, view, manage and track staff payslips.</p>
+        </div>
+
+        <div class="actions">
+            <a href="{% url 'hr_payroll:payroll_list' %}"
+               class="btn btn-secondary">
+                Payroll
+            </a>
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- SEARCH OPTIONS -->
+    <!-- ===================================================== -->
+
+    <div class="search-grid">
+
+        <!-- SEARCH ONE EMPLOYEE -->
+
+        <div class="search-card">
+
+            <h2>Search One Employee</h2>
+
+            <p>
+                Find a specific employee's payslip for a selected payroll period.
+            </p>
+
+            <form method="get">
+
+                <input type="hidden"
+                       name="search_one"
+                       value="1">
+
+                <div class="form-group">
+
+                    <label for="employee_search">
+                        Employee Name / Employee Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="employee_search"
+                        name="employee_search"
+                        class="form-control"
+                        list="employee_list"
+                        placeholder="Type employee name or number..."
+                        autocomplete="off"
+                        value="{% if selected_employee %}{{ selected_employee.full_name }}{% endif %}"
+                    >
+
+                    <div id="employee-results"
+                         class="employee-results"
+                         style="display:none;">
+
+                        {% for employee in employees %}
+
+                            <button
+                                type="button"
+                                class="employee-result"
+                                data-id="{{ employee.pk }}"
+                                data-name="{{ employee.full_name }}"
+                                data-number="{{ employee.employee_number }}">
+
+                                <span class="employee-result-name">
+                                    {{ employee.full_name }}
+                                </span>
+
+                                <span class="employee-result-number">
+                                    {{ employee.employee_number }}
+                                </span>
+
+                            </button>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="employee-help">
+                        Start typing the employee's name or employee number.
+                    </div>
+
+                </div>
+
+                <input type="hidden"
+                       name="employee_id"
+                       id="employee_id"
+                       value="{{ selected_employee_id }}">
+
+                <div class="form-group">
+
+                    <div id="employee-selected-info"
+                         class="employee-selected-info"
+                         {% if not selected_employee %}style="display:none;"{% endif %}>
+
+                        {% if selected_employee %}
+                            Selected:
+                            <strong>{{ selected_employee.full_name }}</strong>
+                            — {{ selected_employee.employee_number }}
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+
+                    <label for="one_period">
+                        Payroll Period
+                    </label>
+
+                    <select
+                        name="payroll_period_id"
+                        id="one_period"
+                        class="form-control"
+                        required>
+
+                        <option value="">
+                            Select payroll period
+                        </option>
+
+                        {% for period in payroll_periods %}
+
+                            <option
+                                value="{{ period.pk }}"
+                                {% if selected_period_id == period.pk|stringformat:"s" %}selected{% endif %}>
+                                {{ period.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-info search-button">
+                    Load Payslip
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- SEARCH ALL EMPLOYEES -->
+
+        <div class="search-card">
+
+            <h2>Search All Employees</h2>
+
+            <p>
+                Load every payslip generated for one payroll period.
+            </p>
+
+            <form method="get">
+
+                <input type="hidden"
+                       name="search_all"
+                       value="1">
+
+                <div class="form-group">
+
+                    <label for="all_period">
+                        Payroll Period
+                    </label>
+
+                    <select
+                        name="payroll_period_id"
+                        id="all_period"
+                        class="form-control"
+                        required>
+
+                        <option value="">
+                            Select payroll period
+                        </option>
+
+                        {% for period in payroll_periods %}
+
+                            <option
+                                value="{{ period.pk }}"
+                                {% if selected_period_id == period.pk|stringformat:"s" %}selected{% endif %}>
+                                {{ period.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-success search-button">
+                    Load All Payslips
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- RESULTS -->
+    <!-- ===================================================== -->
+
+    {% if search_performed %}
+
+        <div class="results-header">
+
+            <div>
+
+                {% if search_mode == "one" %}
+
+                    <h2>
+                        Employee Payslip
+                    </h2>
+
+                    {% if selected_employee %}
+                        <div class="result-summary">
+                            {{ selected_employee.full_name }}
+                            — {{ selected_employee.employee_number }}
+                            {% if selected_period %}
+                                | {{ selected_period.name }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                {% elif search_mode == "all" %}
+
+                    <h2>
+                        Payslips for Payroll Period
+                    </h2>
+
+                    {% if selected_period %}
+                        <div class="result-summary">
+                            {{ selected_period.name }}
+                        </div>
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+            <div class="result-summary">
+                {{ payslips|length }} payslip{{ payslips|length|pluralize }}
+                found
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Payslip Number</th>
+                        <th>Employee</th>
+                        <th>Employee No.</th>
+                        <th>Payroll Period</th>
+                        <th>Net Salary</th>
+                        <th>Generated</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for payslip in payslips %}
+
+                        <tr>
+
+                            <td>
+                                <strong>
+                                    {{ payslip.payslip_number }}
+                                </strong>
+                            </td>
+
+                            <td>
+                                {{ payslip.payroll_record.employee.full_name }}
+                            </td>
+
+                            <td>
+                                {{ payslip.payroll_record.employee.employee_number }}
+                            </td>
+
+                            <td>
+                                {{ payslip.payroll_record.payroll_period.name }}
+                            </td>
+
+                            <td>
+                                {{ payslip.payroll_record.net_salary|floatformat:2 }}
+                            </td>
+
+                            <td>
+                                {{ payslip.generated_at|date:"d M Y H:i" }}
+                            </td>
+
+                            <td>
+
+                                {% if payslip.is_sent %}
+
+                                    <span class="badge badge-success">
+                                        Sent
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge badge-warning">
+                                        Not Sent
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <div class="actions">
+
+                                    <a href="{% url 'hr_payroll:payslip_view' payslip.pk %}"
+                                       class="btn btn-info">
+                                        View
+                                    </a>
+
+                                    <a href="{% url 'hr_payroll:payslip_edit' payslip.pk %}"
+                                       class="btn btn-warning">
+                                        Edit
+                                    </a>
+
+                                    <a href="{% url 'hr_payroll:payslip_print' payslip.pk %}"
+                                       class="btn btn-info">
+                                        Print
+                                    </a>
+
+                                    {% if not payslip.is_sent %}
+
+                                        <form method="post"
+                                              action="{% url 'hr_payroll:payslip_mark_sent' payslip.pk %}"
+                                              class="inline-form">
+
+                                            {% csrf_token %}
+
+                                            <button type="submit"
+                                                    class="btn btn-success">
+                                                Mark Sent
+                                            </button>
+
+                                        </form>
+
+                                    {% endif %}
+
+                                    <a href="{% url 'hr_payroll:payslip_delete' payslip.pk %}"
+                                       class="btn btn-danger">
+                                        Delete
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+
+                            <td colspan="8"
+                                class="empty">
+
+                                {% if search_mode == "one" %}
+                                    No payslip was found for this employee and payroll period.
+                                {% else %}
+                                    No payslips have been generated for this payroll period.
+                                {% endif %}
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="initial-state">
+
+            <h2>Search for Payslips</h2>
+
+            <p>
+                Use one of the search options above to load staff payslips.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const searchInput = document.getElementById("employee_search");
+    const employeeIdInput = document.getElementById("employee_id");
+    const selectedInfo = document.getElementById("employee-selected-info");
+    const resultsBox = document.getElementById("employee-results");
+
+    if (!searchInput || !employeeIdInput || !resultsBox) {
+        return;
+    }
+
+    const employees = Array.from(
+        resultsBox.querySelectorAll(".employee-result")
+    );
+
+    function filterEmployees() {
+
+        const query = searchInput.value.trim().toLowerCase();
+
+        /*
+         * Do not automatically select anybody.
+         * The employee ID remains empty until HR clicks
+         * one of the filtered results.
+         */
+        employeeIdInput.value = "";
+
+        if (selectedInfo) {
+            selectedInfo.innerHTML = "";
+            selectedInfo.style.display = "none";
+        }
+
+        if (!query) {
+            resultsBox.style.display = "none";
+
+            employees.forEach(function (employee) {
+                employee.style.display = "none";
+            });
+
+            return;
+        }
+
+        let matches = 0;
+
+        employees.forEach(function (employee) {
+
+            const name =
+                (employee.dataset.name || "").toLowerCase();
+
+            const number =
+                (employee.dataset.number || "").toLowerCase();
+
+            const matchesQuery =
+                name.includes(query) ||
+                number.includes(query);
+
+            if (matchesQuery) {
+
+                employee.style.display = "flex";
+                matches++;
+
+            } else {
+
+                employee.style.display = "none";
+
+            }
+
+        });
+
+        if (matches > 0) {
+            resultsBox.style.display = "block";
+        } else {
+            resultsBox.style.display = "none";
+        }
+    }
+
+
+    employees.forEach(function (employee) {
+
+        employee.addEventListener("click", function () {
+
+            const employeeId = this.dataset.id;
+            const employeeName = this.dataset.name;
+            const employeeNumber = this.dataset.number;
+
+            /*
+             * Selection happens ONLY after the user clicks
+             * the desired employee.
+             */
+            employeeIdInput.value = employeeId;
+
+            searchInput.value = employeeName;
+
+            if (selectedInfo) {
+
+                selectedInfo.innerHTML =
+                    "Selected: <strong>" +
+                    employeeName +
+                    "</strong> — " +
+                    employeeNumber;
+
+                selectedInfo.style.display = "block";
+            }
+
+            resultsBox.style.display = "none";
+
+        });
+
+    });
+
+
+    searchInput.addEventListener("input", filterEmployees);
+
+
+    searchInput.addEventListener("focus", function () {
+
+        if (this.value.trim()) {
+            filterEmployees();
+        }
+
+    });
+
+
+    /*
+     * Close the filtered employee list when clicking elsewhere.
+     */
+    document.addEventListener("click", function (event) {
+
+        if (
+            !searchInput.contains(event.target) &&
+            !resultsBox.contains(event.target)
+        ) {
+            resultsBox.style.display = "none";
+        }
+
+    });
+
+});
+</script>
+
+{% endblock %}
+
+
+

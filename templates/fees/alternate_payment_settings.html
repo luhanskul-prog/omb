@@ -1,0 +1,316 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
+<title>Alternate Payment Settings</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:#f4f6f9;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+}
+
+.wrapper{
+    max-width:1050px;
+    margin:35px auto;
+    padding:20px;
+}
+
+.header{
+    background:#c40000;
+    color:white;
+    border-radius:16px;
+    padding:28px;
+    margin-bottom:22px;
+}
+
+.header h1{
+    margin:0 0 8px;
+    font-size:28px;
+}
+
+.header p{
+    margin:0;
+    opacity:.92;
+}
+
+.section{
+    background:white;
+    border-radius:16px;
+    padding:28px;
+    margin-bottom:20px;
+    box-shadow:0 5px 20px rgba(0,0,0,.07);
+}
+
+.section h2{
+    margin:0 0 20px;
+    color:#c40000;
+    font-size:21px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.field{
+    display:flex;
+    flex-direction:column;
+}
+
+.field.full{
+    grid-column:1/-1;
+}
+
+.field label{
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+.field input,
+.field textarea{
+    width:100%;
+    border:1px solid #ccd2da;
+    border-radius:9px;
+    padding:13px;
+    font-size:15px;
+}
+
+.field textarea{
+    resize:vertical;
+}
+
+.save{
+    width:100%;
+    background:#c40000;
+    color:white;
+    border:none;
+    border-radius:10px;
+    padding:16px;
+    font-size:16px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.save:hover{
+    background:#a80000;
+}
+
+.notice{
+    background:#fff4d6;
+    border:1px solid #ead18a;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+@media(max-width:750px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .field.full{
+        grid-column:auto;
+    }
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="header">
+
+<h1>
+ALTERNATE PAYMENT SETTINGS
+</h1>
+
+<p>
+Configure the payment details displayed to parents and students.
+</p>
+
+</div>
+
+
+<div class="notice">
+
+<strong>Important:</strong>
+
+These settings control the manual Alternate Payment options
+(PayBill, Till and Bank). They do not change the existing
+M-Pesa STK integration.
+
+</div>
+
+
+<form method="post">
+
+{% csrf_token %}
+
+
+<div class="section">
+
+<h2>
+M-Pesa PayBill
+</h2>
+
+<div class="grid">
+
+<div class="field">
+
+<label>
+PayBill Number
+</label>
+
+{{ form.paybill_number }}
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Payment Instructions
+</label>
+
+{{ form.paybill_instructions }}
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>
+M-Pesa Till
+</h2>
+
+<div class="grid">
+
+<div class="field">
+
+<label>
+Till Number
+</label>
+
+{{ form.till_number }}
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Payment Instructions
+</label>
+
+{{ form.till_instructions }}
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="section">
+
+<h2>
+Bank Payment
+</h2>
+
+<div class="grid">
+
+<div class="field">
+
+<label>
+Bank Name
+</label>
+
+{{ form.bank_name }}
+
+</div>
+
+
+<div class="field">
+
+<label>
+Account Name
+</label>
+
+{{ form.bank_account_name }}
+
+</div>
+
+
+<div class="field">
+
+<label>
+Account Number
+</label>
+
+{{ form.bank_account_number }}
+
+</div>
+
+
+<div class="field">
+
+<label>
+Branch
+</label>
+
+{{ form.bank_branch }}
+
+</div>
+
+
+<div class="field full">
+
+<label>
+Payment Instructions
+</label>
+
+{{ form.bank_instructions }}
+
+</div>
+
+</div>
+
+</div>
+
+
+<button
+    type="submit"
+    class="save"
+>
+SAVE ALTERNATE PAYMENT SETTINGS
+</button>
+
+
+</form>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,436 @@
+{% extends "base.html" %}
+{% block content %}
+
+<style>
+.sm-page{
+    height:calc(100vh - 80px);
+    min-height:620px;
+    background:#f4f7fb;
+    display:flex;
+    flex-direction:column;
+}
+
+.sm-head{
+    background:linear-gradient(135deg,#063b91,#0b63ce);
+    color:#fff;
+    padding:16px 22px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.sm-title{
+    font-size:21px;
+    font-weight:800;
+}
+
+.sm-sub{
+    font-size:12px;
+    opacity:.85;
+    margin-top:3px;
+}
+
+.sm-body{
+    flex:1;
+    display:grid;
+    grid-template-columns:235px 1fr;
+    gap:14px;
+    padding:14px;
+    min-height:0;
+}
+
+.sm-card{
+    background:#fff;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(20,40,80,.06);
+    overflow:hidden;
+    min-height:0;
+}
+
+.sm-list{
+    overflow:auto;
+    height:100%;
+    padding:8px;
+}
+
+.sm-item{
+    display:block;
+    padding:6px 9px;
+    border-radius:6px;
+    text-decoration:none;
+    color:#26384d;
+    margin-bottom:2px;
+    font-size:11px;
+    line-height:1.15;
+}
+
+.sm-item strong{
+    font-size:11px;
+    font-weight:700;
+}
+
+.sm-item small{
+    font-size:9px !important;
+    line-height:1;
+    margin-top:2px;
+}
+
+.sm-item:hover,
+.sm-item.active{
+    background:#e7f1ff;
+    color:#0757ad;
+}
+
+.sm-item.active{
+    font-weight:700;
+    border-left:3px solid #0866d8;
+}
+
+.sm-main{
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+
+.sm-toolbar{
+    padding:13px 16px;
+    border-bottom:1px solid #e5eaf0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.sm-toolbar strong{
+    font-size:15px;
+}
+
+.sm-count{
+    font-size:11px;
+    color:#64748b;
+}
+
+.sm-table-wrap{
+    overflow:auto;
+    flex:1;
+}
+
+.sm-table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:12px;
+}
+
+.sm-table th,
+.sm-table td{
+    padding:9px 10px;
+    border-bottom:1px solid #edf1f5;
+    text-align:left;
+    white-space:nowrap;
+}
+
+.sm-table th{
+    background:#f7f9fc;
+    font-size:10px;
+    text-transform:uppercase;
+    color:#64748b;
+    position:sticky;
+    top:0;
+    z-index:2;
+}
+
+.sm-table tr:hover td{
+    background:#fafcff;
+}
+
+.badge2{
+    background:#edf4ff;
+    color:#0757ad;
+    border-radius:12px;
+    padding:4px 8px;
+    font-size:10px;
+    font-weight:700;
+}
+
+.reassign-form{
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.reassign-form select{
+    height:30px;
+    min-width:150px;
+    border:1px solid #cbd5e1;
+    border-radius:5px;
+    padding:3px 7px;
+    font-size:11px;
+    background:#fff;
+}
+
+.reassign-btn{
+    border:0;
+    background:#0b63ce;
+    color:#fff;
+    padding:6px 9px;
+    border-radius:5px;
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+}
+
+.reassign-btn:hover{
+    background:#063b91;
+}
+
+@media(max-width:900px){
+    .sm-body{
+        grid-template-columns:190px 1fr;
+    }
+
+    .reassign-form{
+        flex-direction:column;
+        align-items:stretch;
+    }
+}
+
+@media(max-width:700px){
+    .sm-page{
+        height:auto;
+    }
+
+    .sm-body{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+
+
+<div class="sm-page">
+
+    <div class="sm-head">
+
+        <div>
+            <div class="sm-title">Subject Management</div>
+
+            <div class="sm-sub">
+                {% if selected_subject %}
+                    {{ selected_subject.name }}
+                    · Manage teacher assignments
+                {% else %}
+                    Select a subject
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{% url 'timetable:creation_wizard_step' 4 %}"
+           class="btn btn-light btn-sm">
+            Back to Step 4
+        </a>
+
+    </div>
+
+
+    <div class="sm-body">
+
+        <!-- SUBJECT LIST -->
+
+        <div class="sm-card">
+
+            <div class="p-3 border-bottom fw-bold">
+                Subjects
+            </div>
+
+            <div class="sm-list">
+
+                {% for subject in subjects %}
+
+                <a href="?subject={{ subject.id }}"
+                   class="sm-item {% if selected_subject and selected_subject.id == subject.id %}active{% endif %}">
+
+                    <strong>{{ subject.name }}</strong>
+
+                    {% if subject.code %}
+                    <small class="d-block text-muted">
+                        {{ subject.code }}
+                    </small>
+                    {% endif %}
+
+                </a>
+
+                {% empty %}
+
+                <div class="p-3 text-muted">
+                    No subjects found.
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+
+        <!-- ASSIGNMENTS -->
+
+        <div class="sm-card sm-main">
+
+            {% if selected_subject %}
+
+            <div class="sm-toolbar">
+
+                <strong>
+                    {{ selected_subject.name }} · Teacher Assignments
+                </strong>
+
+                <span class="sm-count">
+                    {{ subject_requirements|length }} assignment(s)
+                </span>
+
+            </div>
+
+
+            <div class="sm-table-wrap">
+
+                <table class="sm-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Teacher</th>
+                            <th>Class / Grade</th>
+                            <th>Lessons</th>
+                            <th>Double</th>
+                            <th>Room</th>
+                            <th>Reassign Teacher</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    {% for r in subject_requirements %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ r.teacher.name }}</strong>
+                        </td>
+
+                        <td>
+                            {{ r.class_group.name }}
+                            {% if r.class_group.stream %}
+                                - {{ r.class_group.stream }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="badge2">
+                                {{ r.lessons_per_week }}/week
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ r.double_lessons_per_week|default:"0" }}
+                        </td>
+
+                        <td>
+                            {% if r.room %}
+                                {{ r.room.name }}
+                            {% else %}
+                                Auto
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            <form method="post"
+                                  class="reassign-form">
+
+                                {% csrf_token %}
+
+                                <input type="hidden"
+                                       name="action"
+                                       value="reassign_teacher">
+
+                                <input type="hidden"
+                                       name="requirement_id"
+                                       value="{{ r.id }}">
+
+                                <select name="new_teacher"
+                                        required>
+
+                                    <option value="">
+                                        Select teacher
+                                    </option>
+
+                                    {% for teacher in teachers %}
+
+                                    <option value="{{ teacher.id }}"
+                                        {% if teacher.id == r.teacher_id %}
+                                            selected
+                                        {% endif %}>
+                                        {{ teacher.name }}
+                                    </option>
+
+                                    {% endfor %}
+
+                                </select>
+
+                                <button type="submit"
+                                        class="reassign-btn">
+                                    REASSIGN
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="6"
+                            class="text-center text-muted py-5">
+                            No assignments for this subject.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% else %}
+
+            <div class="h-100 d-flex align-items-center justify-content-center text-muted">
+
+                <div class="text-center">
+
+                    <div style="font-size:42px;margin-bottom:10px;">
+                        📚
+                    </div>
+
+                    <strong>Select a subject</strong>
+
+                    <div style="font-size:12px;margin-top:4px;">
+                        Teacher and class assignments will appear here.
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

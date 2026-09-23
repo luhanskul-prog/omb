@@ -1,0 +1,82 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}Categories{% endblock %}
+
+{% block content %}
+
+<div class="actions">
+    <a class="btn" href="{% url 'library_category_add' %}">+ Add Category Manually</a>
+    <a class="btn secondary" href="{% url 'library_books' %}">Books</a>
+</div>
+
+<div class="table-wrap">
+
+<table>
+<thead>
+<tr>
+    <th>Category</th>
+    <th>Type</th>
+    <th>Description</th>
+    <th>Books</th>
+    <th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for category in categories %}
+
+<tr>
+    <td>
+        <strong>
+            <a href="{% url 'library_books' %}?category={{ category.pk }}">
+                {{ category.name }}
+            </a>
+        </strong>
+    </td>
+
+    <td>
+        {{ category.get_category_type_display }}
+    </td>
+
+    <td>
+        {{ category.description|default:"—" }}
+    </td>
+
+    <td>
+        {{ category.books.count }}
+    </td>
+
+    <td>
+        <a class="btn light"
+           href="{% url 'library_category_edit' category.pk %}">
+            Edit
+        </a>
+
+        <a class="btn danger"
+           href="{% url 'library_category_delete' category.pk %}">
+            Delete
+        </a>
+    </td>
+</tr>
+
+{% empty %}
+
+<tr>
+    <td colspan="5" style="text-align:center;padding:30px;">
+        No categories created yet.
+        <br><br>
+        <a class="btn" href="{% url 'library_category_add' %}">
+            + Add Category Manually
+        </a>
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}

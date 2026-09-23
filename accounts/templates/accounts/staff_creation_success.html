@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Account Created | Luhan School</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 18px;
+            padding: 35px;
+            box-shadow: 0 12px 35px rgba(0,0,0,.08);
+        }
+
+        .success {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .success-icon {
+            font-size: 55px;
+        }
+
+        h1 {
+            color: #15803d;
+            margin-bottom: 8px;
+        }
+
+        .credentials {
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            padding: 22px;
+            margin-top: 25px;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 12px 0;
+            border-bottom: 1px solid #dbeafe;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .value {
+            font-weight: bold;
+            color: #0f4c81;
+        }
+
+        .subjects {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .buttons {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .button {
+            text-decoration: none;
+            padding: 13px 22px;
+            border-radius: 8px;
+            font-weight: bold;
+            background: #0f4c81;
+            color: white;
+        }
+
+        .button.secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <div class="success">
+            <div class="success-icon">✅</div>
+
+            <h1>Staff Account Created Successfully</h1>
+
+            <p>
+                The staff member has been successfully registered
+                in the school ERP.
+            </p>
+        </div>
+
+        <div class="credentials">
+
+            <div class="row">
+                <span class="label">Staff Name</span>
+                <span class="value">
+                    {{ staff.first_name }} {{ staff.last_name }}
+                </span>
+            </div>
+
+            <div class="row">
+                <span class="label">Staff Type</span>
+                <span class="value">
+                    {{ staff.staff_type }}
+                </span>
+            </div>
+
+            <div class="row">
+                <span class="label">Staff Role</span>
+                <span class="value">
+                    {{ staff.role }}
+                </span>
+            </div>
+
+            <div class="row">
+                <span class="label">Employee Number</span>
+                <span class="value">
+                    {{ staff.employee_number }}
+                </span>
+            </div>
+
+            <div class="row">
+                <span class="label">Username</span>
+                <span class="value">
+                    {{ staff.username }}
+                </span>
+            </div>
+
+            <div class="row">
+                <span class="label">Initial Password</span>
+                <span class="value">
+                    {{ staff.password }}
+                </span>
+            </div>
+
+        </div>
+
+        {% if staff.subjects %}
+
+            <div class="subjects">
+
+                <h3>Assigned Subjects</h3>
+
+                <ul>
+                    {% for subject in staff.subjects %}
+                        <li>{{ subject }}</li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+
+        {% endif %}
+
+        <div class="buttons">
+
+            <a
+                href="{% url 'accounts:staff_type_selection' %}"
+                class="button"
+            >
+                Add Another Staff Member
+            </a>
+
+            <a
+                href="{% url 'accounts:staff_management' %}"
+                class="button secondary"
+            >
+                Staff Management
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

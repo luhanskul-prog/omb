@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Transport Management | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =====================================================
+           GENERAL
+        ===================================================== */
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+            color: #1f2937;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .top-header {
+            background:
+                linear-gradient(
+                    135deg,
+                    #f97316,
+                    #ea580c
+                );
+
+            color: white;
+
+            padding: 22px 0;
+
+            box-shadow:
+                0 4px 18px
+                rgba(0, 0, 0, 0.12);
+        }
+
+        .brand-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .brand-subtitle {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .header-btn {
+            border: 0;
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        .main-container {
+            max-width: 1400px;
+            margin: auto;
+            padding: 28px 20px 50px;
+        }
+
+
+        /* =====================================================
+           PAGE TITLE
+        ===================================================== */
+
+        .page-heading {
+            margin-bottom: 22px;
+        }
+
+        .page-heading h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .page-heading p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           STAT CARDS
+        ===================================================== */
+
+        .stat-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 17px;
+            height: 100%;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+        }
+
+        .orange {
+            background: #fff1e8;
+        }
+
+        .blue {
+            background: #eaf2ff;
+        }
+
+        .green {
+            background: #eaf8ef;
+        }
+
+        .purple {
+            background: #f2ecff;
+        }
+
+        .red {
+            background: #ffeaea;
+        }
+
+        .yellow {
+            background: #fff8dc;
+        }
+
+        .stat-number {
+            font-size: 27px;
+            font-weight: 800;
+            margin-top: 14px;
+        }
+
+        .stat-label {
+            color: #6b7280;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           SECTION
+        ===================================================== */
+
+        .section {
+            margin-top: 28px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 13px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .section-subtitle {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+
+        /* =====================================================
+           MODULE CARDS
+        ===================================================== */
+
+        .module-card {
+            background: white;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 17px;
+
+            height: 100%;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 0, 0, 0.08);
+        }
+
+        .module-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 10px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 20px;
+
+            margin-bottom: 12px;
+        }
+
+        .module-title {
+            font-size: 15px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .module-description {
+            font-size: 12px;
+            color: #6b7280;
+            min-height: 35px;
+            margin-bottom: 14px;
+        }
+
+        .module-btn {
+            width: 100%;
+            border-radius: 7px;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 8px;
+        }
+
+
+        /* =====================================================
+           TABLE PANELS
+        ===================================================== */
+
+        .panel {
+            background: white;
+
+            border:
+                1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 15px 17px;
+
+            border-bottom:
+                1px solid #eef0f3;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table th {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #9ca3af;
+            font-weight: 700;
+            padding: 11px 15px;
+            white-space: nowrap;
+        }
+
+        .table td {
+            font-size: 12px;
+            padding: 12px 15px;
+            vertical-align: middle;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #9ca3af;
+            padding: 28px 10px !important;
+        }
+
+
+        /* =====================================================
+           BADGES
+        ===================================================== */
+
+        .status-badge {
+            display: inline-block;
+
+            padding: 4px 8px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: #eaf8ef;
+            color: #15803d;
+        }
+
+        .status-inactive {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 11px;
+            margin-top: 35px;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 767px) {
+
+            .top-header {
+                padding: 18px 0;
+            }
+
+            .brand-title {
+                font-size: 20px;
+            }
+
+            .header-actions {
+                margin-top: 10px;
+            }
+
+            .main-container {
+                padding:
+                    20px 14px 40px;
+            }
+
+            .stat-number {
+                font-size: 23px;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 3px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="top-header">
+
+    <div class="container-fluid px-4">
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    flex-wrap">
+
+            <div>
+
+                <h1 class="brand-title">
+                    🚌 Luhan School ERP
+                </h1>
+
+                <div class="brand-subtitle">
+                    Transport Management System
+                </div>
+
+            </div>
+
+
+            <div class="header-actions">
+
+                <a
+                    href="/admin-dashboard/"
+                    class="btn btn-light header-btn"
+                >
+                    ← Dashboard
+                </a>
+
+                <a
+                    href="{% url 'logout' %}"
+                    class="btn btn-outline-light header-btn"
+                >
+                    Logout
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="main-container">
+
+
+    <!-- =====================================================
+         PAGE HEADING
+    ====================================================== -->
+
+    <div class="page-heading">
+
+        <h1>
+            Transport Overview
+        </h1>
+
+        <p>
+            Manage school vehicles, drivers, routes,
+            learner transport and trips.
+        </p>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         STATISTICS
+    ====================================================== -->
+
+    <div class="row g-3">
+
+
+        <!-- VEHICLES -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon orange">
+                        🚌
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ total_vehicles }}
+                </div>
+
+                <div class="stat-label">
+                    Total Vehicles
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE VEHICLES -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon green">
+                        ✓
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ active_vehicles }}
+                </div>
+
+                <div class="stat-label">
+                    Active Vehicles
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- INACTIVE -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon red">
+                        ⛔
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ inactive_vehicles }}
+                </div>
+
+                <div class="stat-label">
+                    Inactive Vehicles
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- DRIVERS -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon blue">
+                        👨‍✈️
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ total_drivers }}
+                </div>
+
+                <div class="stat-label">
+                    Drivers
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ROUTES -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon purple">
+                        🗺️
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ total_routes }}
+                </div>
+
+                <div class="stat-label">
+                    Routes
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEARNER ASSIGNMENTS -->
+
+        <div class="col-xl-2 col-lg-4 col-md-6">
+
+            <div class="stat-card">
+
+                <div class="stat-top">
+
+                    <div class="stat-icon yellow">
+                        🎓
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    {{ total_assignments }}
+                </div>
+
+                <div class="stat-label">
+                    Learner Assignments
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         MANAGEMENT MODULES
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <div>
+
+                <h2 class="section-title">
+                    Transport Management
+                </h2>
+
+                <div class="section-subtitle">
+                    Manage every part of school transport
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-3">
+
+
+            <!-- VEHICLES -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon orange">
+                        🚌
+                    </div>
+
+                    <div class="module-title">
+                        Vehicles
+                    </div>
+
+                    <div class="module-description">
+                        Register buses and vehicles,
+                        monitor status and details.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-warning module-btn"
+                    >
+                        Manage Vehicles
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- DRIVERS -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon blue">
+                        👨‍✈️
+                    </div>
+
+                    <div class="module-title">
+                        Drivers
+                    </div>
+
+                    <div class="module-description">
+                        Manage drivers, contacts,
+                        licences and assignments.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-primary module-btn"
+                    >
+                        Manage Drivers
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ROUTES -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon purple">
+                        🗺️
+                    </div>
+
+                    <div class="module-title">
+                        Routes
+                    </div>
+
+                    <div class="module-description">
+                        Create routes, stops and
+                        transport zones.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-primary module-btn"
+                    >
+                        Manage Routes
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- LEARNER TRANSPORT -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon green">
+                        🎓
+                    </div>
+
+                    <div class="module-title">
+                        Learner Transport
+                    </div>
+
+                    <div class="module-description">
+                        Assign learners to routes,
+                        vehicles and transport services.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-success module-btn"
+                    >
+                        Manage Assignments
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- TRIPS -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon blue">
+                        🛣️
+                    </div>
+
+                    <div class="module-title">
+                        Trips
+                    </div>
+
+                    <div class="module-description">
+                        Record daily trips,
+                        departures and arrivals.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-primary module-btn"
+                    >
+                        Manage Trips
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- FUEL -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon yellow">
+                        ⛽
+                    </div>
+
+                    <div class="module-title">
+                        Fuel Records
+                    </div>
+
+                    <div class="module-description">
+                        Track fuel purchases,
+                        usage and expenditure.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-warning module-btn"
+                    >
+                        Fuel Management
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAINTENANCE -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon red">
+                        🔧
+                    </div>
+
+                    <div class="module-title">
+                        Vehicle Maintenance
+                    </div>
+
+                    <div class="module-description">
+                        Track servicing, repairs,
+                        maintenance costs and history.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-danger module-btn"
+                    >
+                        Maintenance
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- REPORTS -->
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <div class="module-card">
+
+                    <div class="module-icon purple">
+                        📊
+                    </div>
+
+                    <div class="module-title">
+                        Transport Reports
+                    </div>
+
+                    <div class="module-description">
+                        View transport statistics,
+                        expenditure and operational reports.
+                    </div>
+
+                    <a
+                        href="#"
+                        class="btn btn-outline-primary module-btn"
+                    >
+                        View Reports
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RECENT VEHICLES & DRIVERS
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="row g-3">
+
+
+            <!-- VEHICLES -->
+
+            <div class="col-lg-6">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3 class="panel-title">
+                            Recent Vehicles
+                        </h3>
+
+                        <span class="section-subtitle">
+                            Latest records
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Vehicle</th>
+
+                                    <th>Registration</th>
+
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for vehicle in vehicles %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ vehicle }}
+                                    </td>
+
+                                    <td>
+                                        {{ vehicle.registration_number|default:"—" }}
+                                    </td>
+
+                                    <td>
+
+                                        {% if vehicle.status == "active" %}
+
+                                        <span class="status-badge status-active">
+                                            Active
+                                        </span>
+
+                                        {% else %}
+
+                                        <span class="status-badge status-inactive">
+                                            Inactive
+                                        </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="3"
+                                        class="empty-state"
+                                    >
+                                        No vehicles registered yet.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- DRIVERS -->
+
+            <div class="col-lg-6">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3 class="panel-title">
+                            Recent Drivers
+                        </h3>
+
+                        <span class="section-subtitle">
+                            Latest records
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Driver</th>
+
+                                    <th>Phone</th>
+
+                                    <th>Status</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for driver in drivers %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ driver }}
+                                    </td>
+
+                                    <td>
+                                        {{ driver.phone|default:"—" }}
+                                    </td>
+
+                                    <td>
+
+                                        <span class="status-badge status-active">
+                                            Driver
+                                        </span>
+
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="3"
+                                        class="empty-state"
+                                    >
+                                        No drivers registered yet.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ROUTES & TRIPS
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="row g-3">
+
+
+            <!-- ROUTES -->
+
+            <div class="col-lg-6">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3 class="panel-title">
+                            Recent Routes
+                        </h3>
+
+                        <span class="section-subtitle">
+                            Transport routes
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Route</th>
+
+                                    <th>Details</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for route in routes %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ route }}
+                                    </td>
+
+                                    <td>
+                                        Transport route
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="empty-state"
+                                    >
+                                        No routes created yet.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- TRIPS -->
+
+            <div class="col-lg-6">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3 class="panel-title">
+                            Recent Trips
+                        </h3>
+
+                        <span class="section-subtitle">
+                            Latest trips
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Trip</th>
+
+                                    <th>Details</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for trip in trips %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ trip }}
+                                    </td>
+
+                                    <td>
+                                        Transport trip
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="empty-state"
+                                    >
+                                        No trips recorded yet.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FUEL & MAINTENANCE
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="row g-3">
+
+
+            <!-- FUEL -->
+
+            <div class="col-lg-6">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3 class="panel-title">
+                            Recent Fuel Records
+                        </h3>
+
+                        <span class="section-subtitle">
+                            Fuel activity
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Record</th>
+
+                                    <th>Details</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for fuel in fuel_records %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ fuel }}
+                                    </td>
+
+                                    <td>
+                                        Fuel transaction
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="empty-state"
+                                    >
+                                        No fuel records yet.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- MAINTENANCE -->
+
+            <div class="col-lg-6">
+
+                <div class="panel">
+
+                    <div class="panel-header">
+
+                        <h3 class="panel-title">
+                            Recent Maintenance
+                        </h3>
+
+                        <span class="section-subtitle">
+                            Vehicle servicing
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table table-hover">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>Record</th>
+
+                                    <th>Details</th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                {% for maintenance in maintenance_records %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ maintenance }}
+                                    </td>
+
+                                    <td>
+                                        Maintenance record
+                                    </td>
+
+                                </tr>
+
+                                {% empty %}
+
+                                <tr>
+
+                                    <td
+                                        colspan="2"
+                                        class="empty-state"
+                                    >
+                                        No maintenance records yet.
+                                    </td>
+
+                                </tr>
+
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="footer">
+
+        Luhan School ERP · Transport Management
+
+    </div>
+
+</main>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

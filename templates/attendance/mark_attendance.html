@@ -1,0 +1,522 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .attendance-page {
+        padding: 25px;
+        background: #f5f7fb;
+        min-height: calc(100vh - 70px);
+    }
+
+    .attendance-header {
+        background: #ffffff;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .attendance-header h1 {
+        margin: 0;
+        font-size: 28px;
+        color: #1f2937;
+    }
+
+    .attendance-header p {
+        margin: 8px 0 0;
+        color: #6b7280;
+    }
+
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .date-box {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .date-box label {
+        font-weight: 600;
+    }
+
+    .date-box input,
+    .date-box select {
+        padding: 9px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        background: white;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        border: none;
+        padding: 10px 16px;
+        border-radius: 7px;
+        cursor: pointer;
+        text-decoration: none;
+        font-weight: 600;
+        display: inline-block;
+    }
+
+    .btn-present {
+        background: #16a34a;
+        color: white;
+    }
+
+    .btn-absent {
+        background: #dc2626;
+        color: white;
+    }
+
+    .btn-save {
+        background: #2563eb;
+        color: white;
+        padding: 12px 25px;
+    }
+
+    .btn-back {
+        background: #6b7280;
+        color: white;
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 12px;
+        overflow-x: auto;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #1f2937;
+        color: white;
+        padding: 14px;
+        text-align: left;
+    }
+
+    td {
+        padding: 13px 14px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    tr:hover {
+        background: #f9fafb;
+    }
+
+    .student-name {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .student-class {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .status-select {
+        padding: 8px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        min-width: 130px;
+        background: white;
+    }
+
+    .remarks {
+        width: 100%;
+        min-width: 180px;
+        padding: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        box-sizing: border-box;
+    }
+
+    .view-only {
+        display: inline-block;
+        padding: 8px 12px;
+        border-radius: 7px;
+        background: #f3f4f6;
+        color: #6b7280;
+        font-weight: 600;
+    }
+
+    .permission-message {
+        padding: 15px 20px;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        color: #9a3412;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    .save-area {
+        padding: 20px;
+        background: white;
+        margin-top: 20px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: flex-end;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+
+    .empty-message {
+        padding: 40px;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    @media (max-width: 700px) {
+        .attendance-page {
+            padding: 12px;
+        }
+
+        .attendance-header h1 {
+            font-size: 22px;
+        }
+
+        .toolbar {
+            align-items: stretch;
+        }
+
+        .date-box,
+        .actions {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="attendance-page">
+
+    <div class="attendance-header">
+        <h1>Mark Attendance</h1>
+        <p>Record daily attendance for learners.</p>
+    </div>
+
+    <!-- Class / Stream selection -->
+    <form method="GET" action="{% url 'attendance:mark_attendance' %}">
+
+        <div class="toolbar">
+
+            <div class="date-box">
+
+                <label for="class_name">Class:</label>
+
+                <select
+                    id="class_name"
+                    name="class_name"
+                    required
+                >
+                    <option value="">Select Class</option>
+
+                    {% for class_name in classes %}
+                        <option
+                            value="{{ class_name }}"
+                            {% if selected_class == class_name %}selected{% endif %}
+                        >
+                            {{ class_name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+                <label for="stream">Stream:</label>
+
+                <select
+                    id="stream"
+                    name="stream"
+                    required
+                >
+                    <option value="">Select Stream</option>
+
+                    {% for stream in streams %}
+                        <option
+                            value="{{ stream }}"
+                            {% if selected_stream == stream %}selected{% endif %}
+                        >
+                            {{ stream }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+
+                <label for="attendance_date">Date:</label>
+
+                <input
+                    type="date"
+                    id="attendance_date"
+                    name="attendance_date"
+                    value="{{ selected_date }}"
+                    required
+                >
+
+                <button
+                    type="submit"
+                    class="btn btn-save"
+                >
+                    Load Register
+                </button>
+
+            </div>
+
+            <div class="actions">
+
+                {% if can_edit_attendance %}
+
+                    <button
+                        type="button"
+                        class="btn btn-present"
+                        onclick="markAll('present')"
+                    >
+                        Mark All Present
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-absent"
+                        onclick="markAll('absent')"
+                    >
+                        Mark All Absent
+                    </button>
+
+                {% endif %}
+
+                <a
+                    href="{% url 'attendance:dashboard' %}"
+                    class="btn btn-back"
+                >
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+    </form>
+
+    {% if students and not can_edit_attendance %}
+
+        <div class="permission-message">
+            View-only access: you can view this class register, but only the
+            class teacher or administrator can record attendance.
+        </div>
+
+    {% endif %}
+
+    <form method="POST" action="{% url 'attendance:save_attendance' %}">
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="class_name"
+            value="{{ selected_class }}"
+        >
+
+        <input
+            type="hidden"
+            name="stream"
+            value="{{ selected_stream }}"
+        >
+
+        <input
+            type="hidden"
+            name="attendance_date"
+            value="{{ selected_date }}"
+        >
+
+        <div class="table-container">
+
+            {% if students %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Learner</th>
+                        <th>Class</th>
+                        <th>Stream</th>
+                        <th>Status</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for student in students %}
+
+                    <tr>
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+                        <td>
+                            <div class="student-name">
+                                {{ student.first_name }}
+                                {{ student.last_name }}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="student-class">
+                                {{ student.class_name }}
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="student-class">
+                                {{ student.stream }}
+                            </div>
+                        </td>
+
+                        <td>
+
+                            {% if can_edit_attendance %}
+
+                                <select
+                                    name="status_{{ student.id }}"
+                                    class="status-select attendance-status"
+                                >
+
+                                    <option value="present">
+                                        Present
+                                    </option>
+
+                                    <option value="absent">
+                                        Absent
+                                    </option>
+
+                                    <option value="late">
+                                        Late
+                                    </option>
+
+                                    <option value="excused">
+                                        Excused
+                                    </option>
+
+                                </select>
+
+                            {% else %}
+
+                                <span class="view-only">
+                                    View Only
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            {% if can_edit_attendance %}
+
+                                <input
+                                    type="text"
+                                    name="remarks_{{ student.id }}"
+                                    class="remarks"
+                                    placeholder="Optional remarks"
+                                >
+
+                            {% else %}
+
+                                <span style="color: #6b7280;">
+                                    Editing restricted
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+                <div class="empty-message">
+
+                    <h3>No learners found</h3>
+
+                    {% if selected_class and selected_stream %}
+
+                        <p>
+                            No learners were found in
+                            {{ selected_class }} {{ selected_stream }}.
+                        </p>
+
+                    {% else %}
+
+                        <p>
+                            Select a class and stream to load the attendance
+                            register.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        {% if students and can_edit_attendance %}
+
+            <div class="save-area">
+
+                <button
+                    type="submit"
+                    class="btn btn-save"
+                >
+                    Save Attendance
+                </button>
+
+            </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+<script>
+
+function markAll(status) {
+
+    const selects = document.querySelectorAll(".attendance-status");
+
+    selects.forEach(function(select) {
+        select.value = status;
+    });
+
+}
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,406 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.page {
+    max-width:1400px;
+    margin:25px auto;
+    padding:20px;
+}
+
+.header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.panel {
+    background:white;
+    border:1px solid #ddd;
+    border-radius:12px;
+    padding:22px;
+    margin-top:20px;
+}
+
+.grid {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+    gap:15px;
+}
+
+label {
+    display:block;
+    font-weight:600;
+    margin-bottom:6px;
+}
+
+input,
+select,
+textarea {
+    width:100%;
+    box-sizing:border-box;
+    padding:10px;
+    border:1px solid #ccc;
+    border-radius:6px;
+}
+
+.btn {
+    padding:11px 16px;
+    border:0;
+    border-radius:7px;
+    background:#0d6efd;
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+}
+
+.btn-danger {
+    background:#dc3545;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td {
+    border:1px solid #ddd;
+    padding:10px;
+}
+
+th {
+    background:#f5f5f5;
+}
+</style>
+
+<div class="page">
+
+    <div class="header">
+
+        <div>
+
+            <h1>Assign Lessons</h1>
+
+            <p>
+                {{ configuration.name }}
+            </p>
+
+        </div>
+
+        <a class="btn"
+           href="{% url 'scheduling:timetable_slot_configuration' configuration.id %}">
+            ? Period / Slot Configuration
+        </a>
+
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="panel">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="panel">
+
+        <h2>New Lesson Assignment</h2>
+
+        <form method="post"
+              action="{% url 'scheduling:timetable_centre_assignment_add' configuration.id %}">
+
+            {% csrf_token %}
+
+            <div class="grid">
+
+                <div>
+                    <label>Class</label>
+
+                    <select name="class_name"
+                            id="class-select"
+                            required>
+
+                        <option value="">
+                            -- Select Existing Class --
+                        </option>
+
+                        {% for class_name in classes %}
+
+                            <option value="{{ class_name }}">
+                                {{ class_name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <small>
+                        Classes are pulled from existing ERP student records.
+                    </small>
+                </div>
+
+                <div>
+                    <label>Stream</label>
+
+                    <select name="stream"
+                            id="stream-select">
+
+                        <option value="">
+                            -- No Stream / General --
+                        </option>
+
+                        {% for item in class_streams %}
+
+                            <option value="{{ item.stream }}"
+                                    data-class="{{ item.class_name }}">
+                                {{ item.stream }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Teacher</label>
+
+                    <select name="teacher"
+                            required>
+
+                        <option value="">
+                            -- Select Teacher --
+                        </option>
+
+                        {% for teacher in teachers %}
+
+                            <option value="{{ teacher.id }}">
+                                {{ teacher }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Subject</label>
+
+                    <select name="subject"
+                            required>
+
+                        <option value="">
+                            -- Select Subject --
+                        </option>
+
+                        {% for subject in subjects %}
+
+                            <option value="{{ subject.id }}">
+                                {{ subject }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Lessons Per Week</label>
+
+                    <input type="number"
+                           name="lessons_per_week"
+                           min="1"
+                           value="1"
+                           required>
+                </div>
+
+                <div>
+                    <label>Mode</label>
+
+                    <select name="mode" required>
+
+                        <option value="SEPARATE">
+                            Separate Class
+                        </option>
+
+                        <option value="JOINT">
+                            Joint Lesson
+                        </option>
+
+                    </select>
+                </div>
+
+                <div>
+                    <label>Duration</label>
+
+                    <select name="duration" required>
+
+                        <option value="SINGLE">
+                            Single Lesson
+                        </option>
+
+                        <option value="DOUBLE">
+                            Double Lesson
+                        </option>
+
+                    </select>
+                </div>
+                <div>
+                    <label>Notes / Rules</label>
+
+                    <input type="text"
+                           name="notes"
+                           placeholder="Optional timetable rule">
+                </div>
+
+            </div>
+
+            <br>
+
+            <button class="btn"
+                    type="submit">
+                ASSIGN LESSON
+            </button>
+
+        </form>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>Saved Lesson Assignments</h2>
+
+        {% if assignments %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>Class</th>
+                        <th>Stream</th>
+                        <th>Lessons / Week</th>
+                        <th>Mode</th>
+                        <th>Duration</th>
+                        <th>Teacher</th>
+                        <th>Subject</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for assignment in assignments %}
+
+                        <tr>
+
+                            <td>{{ assignment.class_name }}</td>
+
+                            <td>{{ assignment.stream|default:"-" }}</td>
+
+                            <td>{{ assignment.lessons_per_week }}</td>
+
+                            <td>{{ assignment.mode }}</td>
+
+                            <td>{{ assignment.duration|default:"-" }}</td>
+
+                            <td>
+                                {% for member in assignment.members.all %}
+                                    {{ member.teacher }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    -
+                                {% endfor %}
+                            </td>
+
+                            <td>
+                                {% for member in assignment.members.all %}
+                                    {{ member.subject }}{% if not forloop.last %}, {% endif %}
+                                {% empty %}
+                                    -
+                                {% endfor %}
+                            </td>
+
+                            <td>
+
+                                <form method="post"
+                                      action="{% url 'scheduling:timetable_centre_assignment_delete' configuration.id assignment.id %}">
+
+                                    {% csrf_token %}
+
+                                    <button class="btn btn-danger"
+                                            type="submit">
+                                        Remove
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <p>
+                No lesson assignments have been created for this
+                timetable configuration.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const classSelect = document.getElementById("class-select");
+    const streamSelect = document.getElementById("stream-select");
+
+    if (!classSelect || !streamSelect) {
+        return;
+    }
+
+    const allStreamOptions = Array.from(
+        streamSelect.querySelectorAll("option[data-class]")
+    );
+
+    function updateStreams() {
+
+        const selectedClass = classSelect.value;
+
+        streamSelect.value = "";
+
+        allStreamOptions.forEach(function (option) {
+
+            const belongsToClass =
+                option.dataset.class === selectedClass;
+
+            option.hidden = !belongsToClass;
+
+            option.disabled = !belongsToClass;
+        });
+    }
+
+    updateStreams();
+
+    classSelect.addEventListener(
+        "change",
+        updateStreams
+    );
+});
+</script>
+
+{% endblock %}
+
+

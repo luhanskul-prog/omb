@@ -1,0 +1,198 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Hostel Fees{% endblock %}
+{% block heading %}Hostel Fees{% endblock %}
+{% block subheading %}Boarding charges, payments and outstanding balances{% endblock %}
+
+{% block content %}
+
+<div class="row g-3 mb-3">
+
+    <div class="col-md-4">
+
+        <div class="stat">
+
+            <div class="stat-icon red">
+                KSh
+            </div>
+
+            <div>
+
+                <div class="stat-number">
+                    {{ outstanding|floatformat:2 }}
+                </div>
+
+                <div class="stat-label">
+                    Outstanding in Current View
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card-box">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Hostel Fee Records</h2>
+            <div class="card-sub">Charges and payment history</div>
+        </div>
+
+        {% if erp_permission.add_hostelfee %}
+        <a href="{% url 'hostel:fee_create' %}" class="btn-main">
+            + Add Fee
+        </a>
+        {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="search-box">
+
+            <div class="row g-2">
+
+                <div class="col-md-8">
+
+                    <input
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search student, admission number, hostel or reference..."
+                    >
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <select name="status" class="form-select">
+
+                        <option value="">All</option>
+                        <option value="paid" {% if status == "paid" %}selected{% endif %}>Paid</option>
+                        <option value="outstanding" {% if status == "outstanding" %}selected{% endif %}>Outstanding</option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn-main w-100">
+                        Filter
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                <tr>
+                    <th>Student</th>
+                    <th>Hostel</th>
+                    <th>Amount</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                    <th>Payment Date</th>
+                    <th>Reference</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for fee in fees %}
+
+                <tr>
+
+                    <td>
+                        <strong>{{ fee.student }}</strong>
+                        <br>
+                        <small class="text-muted">
+                            {{ fee.student.admission_no|default:"" }}
+                        </small>
+                    </td>
+
+                    <td>{{ fee.hostel.name }}</td>
+
+                    <td>
+                        <strong>KSh {{ fee.amount|floatformat:2 }}</strong>
+                    </td>
+
+                    <td>{{ fee.due_date }}</td>
+
+                    <td>
+
+                        {% if fee.paid %}
+                            <span class="badge-soft green">Paid</span>
+                        {% else %}
+                            <span class="badge-soft red">Outstanding</span>
+                        {% endif %}
+
+                    </td>
+
+                    <td>{{ fee.payment_date|default:"—" }}</td>
+
+                    <td>{{ fee.reference|default:"—" }}</td>
+
+                    <td>
+
+                        {% if erp_permission.change_hostelfee %}
+                        <a href="{% url 'hostel:fee_edit' fee.pk %}" class="btn-lightx">
+                            Edit
+                        </a>
+                        {% endif %}
+
+                        {% if not fee.paid %}
+
+                        {% if erp_permission.change_hostelfee %}
+                        <form method="post"
+                              action="{% url 'hostel:fee_mark_paid' fee.pk %}"
+                              class="d-inline">
+
+                            {% csrf_token %}
+
+                            <button class="btn-main">
+                                Mark Paid
+                            </button>
+
+                        </form>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="8" class="text-center text-muted p-5">
+                        No hostel fee records found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

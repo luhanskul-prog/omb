@@ -1,0 +1,487 @@
+<style>
+
+/* =========================================================
+   LUHAN TIMETABLE COMPACT NAVIGATION
+   ========================================================= */
+
+.timetable-compact-nav{
+    display:flex !important;
+    flex-wrap:wrap !important;
+    gap:5px !important;
+    align-items:center !important;
+}
+
+.timetable-compact-nav a,
+.timetable-compact-nav button{
+    font-size:11px !important;
+    padding:6px 9px !important;
+    line-height:1.15 !important;
+    border-radius:6px !important;
+}
+
+.timetable-compact-nav i{
+    font-size:11px !important;
+}
+
+.timetable-compact-title{
+    font-size:20px !important;
+    line-height:1.2 !important;
+}
+
+.timetable-compact-subtitle{
+    font-size:11px !important;
+    line-height:1.3 !important;
+}
+
+.timetable-compact-section{
+    font-size:13px !important;
+}
+
+.timetable-compact-card-title{
+    font-size:13px !important;
+}
+
+</style>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold mb-1">
+                <i class="bi bi-calendar-plus"></i>
+                Timetable Requirement Builder
+            </h3>
+            <p class="text-muted mb-0">
+                Define how many lessons each class requires every week.
+            </p>
+        </div>
+
+        <a href="{% url 'timetable:workspace' %}" class="btn btn-outline-primary">
+            <i class="bi bi-grid-3x3-gap"></i> Timetable
+        </a>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-sliders"></i>
+                Add Timetable Requirement
+            </h5>
+        </div>
+
+        <div class="card-body p-4">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <!-- BASIC DETAILS -->
+                <div class="card border mb-4">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="bi bi-info-circle"></i>
+                        Basic Details
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Class
+                                </label>
+                                <select name="class_id" class="form-select" required>
+                                    <option value="">Select class</option>
+                                    {% for item in classes %}
+                                        <option value="{{ item.id }}">
+                                            {{ item.name }}{% if item.stream %} - {{ item.stream }}{% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Subject
+                                </label>
+                                <select name="subject_id" class="form-select" required>
+                                    <option value="">Select subject</option>
+                                    {% for item in subjects %}
+                                        <option value="{{ item.id }}">
+                                            {{ item.name }}{% if item.code %} ({{ item.code }}){% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Teacher
+                                </label>
+                                <select name="teacher_id" class="form-select">
+                                    <option value="">Select teacher</option>
+                                    {% for item in teachers %}
+                                        <option value="{{ item.id }}">
+                                            {{ item.name }}
+                                            {% if item.staff_number %}
+                                                ({{ item.staff_number }})
+                                            {% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Room
+                                </label>
+                                <select name="room_id" class="form-select">
+                                    <option value="">Select room</option>
+                                    {% for item in rooms %}
+                                        <option value="{{ item.id }}">
+                                            {{ item.name }}
+                                            {% if item.room_type %}
+                                                - {{ item.room_type }}
+                                            {% endif %}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- WEEKLY LESSON PATTERN -->
+                <div class="card border mb-4">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="bi bi-calendar-week"></i>
+                        Weekly Lesson Pattern
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Single Lessons / Week
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="single_lessons"
+                                    class="form-control"
+                                    min="0"
+                                    value="0"
+                                    placeholder="e.g. 4"
+                                >
+
+                                <small class="text-muted">
+                                    Normal one-period lessons.
+                                </small>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Double Lessons / Week
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="double_lessons"
+                                    class="form-control"
+                                    min="0"
+                                    value="0"
+                                    placeholder="e.g. 2"
+                                >
+
+                                <small class="text-muted">
+                                    Two-period lessons.
+                                </small>
+                            </div>
+
+                        </div>
+
+                        <div class="alert alert-primary mt-3 mb-0">
+                            <strong>Example:</strong>
+                            4 single + 2 double = 6 lesson occurrences
+                            using 8 timetable periods per week.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TIMING -->
+                <div class="card border mb-4">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="bi bi-clock"></i>
+                        Timing & Priority
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Duration
+                                </label>
+
+                                <select name="duration_periods" class="form-select">
+                                    <option value="1" selected>
+                                        1 Period
+                                    </option>
+                                    <option value="2">
+                                        2 Periods
+                                    </option>
+                                </select>
+
+                                <small class="text-muted">
+                                    Used as the default duration.
+                                </small>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Priority
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="priority"
+                                    class="form-control"
+                                    value="0"
+                                    min="0"
+                                    max="100"
+                                >
+
+                                <small class="text-muted">
+                                    Higher priority is scheduled first.
+                                </small>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">
+                                    Type
+                                </label>
+
+                                <select name="requirement_type" class="form-select">
+                                    <option value="normal" selected>
+                                        Normal
+                                    </option>
+                                    <option value="practical">
+                                        Practical
+                                    </option>
+                                    <option value="activity">
+                                        Activity
+                                    </option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PREFERENCES -->
+                <div class="card border mb-4">
+                    <div class="card-header bg-light fw-bold">
+                        <i class="bi bi-funnel"></i>
+                        Preferences
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">
+                                    Preferred Day
+                                </label>
+
+                                <select name="preferred_day_id" class="form-select">
+                                    <option value="">
+                                        Any day
+                                    </option>
+
+                                    {% for item in days %}
+                                        <option value="{{ item.id }}">
+                                            {{ item.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check mb-2">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        name="practical"
+                                        value="1"
+                                        id="practicalCheck"
+                                    >
+
+                                    <label
+                                        class="form-check-label fw-semibold"
+                                        for="practicalCheck"
+                                    >
+                                        Practical / Special Room Required
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">
+                                    Notes
+                                </label>
+
+                                <textarea
+                                    name="notes"
+                                    class="form-control"
+                                    rows="3"
+                                    placeholder="Optional scheduling notes..."
+                                ></textarea>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ACTIONS -->
+                <div class="timetable-compact-nav d-flex gap-1">
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check-circle"></i>
+                        Save Requirement
+                    </button>
+
+                    <a
+                        href="{% url 'timetable:workspace' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+    <!-- SAVED REQUIREMENTS -->
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-list-check"></i>
+                Saved Timetable Requirements
+            </h5>
+        </div>
+
+        <div class="card-body p-0">
+
+            {% if requirements %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Class</th>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Room</th>
+                            <th class="text-center">Single / Week</th>
+                            <th class="text-center">Double / Week</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">Priority</th>
+                            <th class="text-center">Type</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for requirement in requirements %}
+                        <tr>
+
+                            <td class="fw-semibold">
+                                {{ requirement.class_group.name }}
+                                {% if requirement.class_group.stream %}
+                                    <small class="text-muted">
+                                        - {{ requirement.class_group.stream }}
+                                    </small>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ requirement.subject.name }}
+                            </td>
+
+                            <td>
+                                {% if requirement.teacher %}
+                                    {{ requirement.teacher.name }}
+                                {% else %}
+                                    <span class="text-muted">Not assigned</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if requirement.room %}
+                                    {{ requirement.room.name }}
+                                {% else %}
+                                    <span class="text-muted">Not assigned</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge bg-primary fs-6">
+                                    {{ requirement.single_lessons }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge bg-warning text-dark fs-6">
+                                    {{ requirement.double_lessons_per_week }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <span class="badge bg-success fs-6">
+                                    {{ requirement.lessons_per_week }}
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                {{ requirement.priority }}
+                            </td>
+
+                            <td class="text-center">
+                                {% if requirement.practical %}
+                                    <span class="badge bg-info text-dark">
+                                        Practical
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">
+                                        Normal
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            {% else %}
+
+            <div class="text-center py-5 text-muted">
+                <i class="bi bi-calendar-x fs-1 d-block mb-3"></i>
+                <h5>No timetable requirements yet</h5>
+                <p class="mb-0">
+                    Add a requirement using the form above.
+                </p>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Role | LUHAN ERP</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #172554;
+            color: white;
+            padding: 18px 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 3px 12px rgba(0,0,0,.08);
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .permissions-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px 0 15px;
+        }
+
+        .permissions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .permission {
+            border: 1px solid #e2e8f0;
+            border-radius: 7px;
+            padding: 12px;
+            background: #f8fafc;
+        }
+
+        .permission:hover {
+            background: #eff6ff;
+        }
+
+        .permission label {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .permission small {
+            display: block;
+            margin-left: 24px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button,
+        .button {
+            padding: 12px 20px;
+            border-radius: 7px;
+            border: none;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 12px;
+            background: #fee2e2;
+            color: #991b1b;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="header">
+
+    <h1>
+        LUHAN ERP — Edit Role
+    </h1>
+
+</div>
+
+
+<div class="container">
+
+    {% if messages %}
+
+        <div class="messages">
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <div class="card">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <label for="name">
+                Role Name
+            </label>
+
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ role.name }}"
+                required
+            >
+
+
+            <label for="description">
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+            >{{ role.description }}</textarea>
+
+
+            <div class="permissions-title">
+                Assign Permissions
+            </div>
+
+
+            <div class="permissions">
+
+                {% for permission in permissions %}
+
+                    <div class="permission">
+
+                        <label>
+
+                            <input
+                                type="checkbox"
+                                name="permissions"
+                                value="{{ permission.id }}"
+
+                                {% if permission in role.permissions.all %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            {{ permission.name }}
+
+                        </label>
+
+                        <small>
+
+                            {{ permission.content_type.app_label }}
+                            /
+                            {{ permission.content_type.model }}
+
+                        </small>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <div class="actions">
+
+                <button
+                    type="submit"
+                    class="primary"
+                >
+                    Save Changes
+                </button>
+
+                <a
+                    href="{% url 'accounts:role_management' %}"
+                    class="button secondary"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+</body>
+</html>

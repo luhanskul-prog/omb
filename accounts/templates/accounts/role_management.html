@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Role Management | LUHAN ERP</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f9;
+            color: #1f2937;
+        }
+
+        .header {
+            background: #172554;
+            color: white;
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            opacity: 0.85;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .top-bar h2 {
+            margin: 0;
+            font-size: 22px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 18px;
+            border-radius: 7px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        .button-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .button-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .button-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .button-secondary:hover {
+            background: #475569;
+        }
+
+        .button-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .button-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        .button-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .messages {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            padding: 13px 16px;
+            border-radius: 7px;
+            margin-bottom: 10px;
+            background: #dbeafe;
+            color: #1e3a8a;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 20px;
+        }
+
+        .role-card {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .role-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .role-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #172554;
+        }
+
+        .status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .description {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: #475569;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .permissions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin-bottom: 18px;
+        }
+
+        .permission {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 5px;
+            padding: 6px 8px;
+            font-size: 11px;
+        }
+
+        .no-permissions {
+            color: #94a3b8;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        .users-count {
+            background: #f8fafc;
+            border-radius: 7px;
+            padding: 10px;
+            margin-bottom: 18px;
+            font-size: 13px;
+            color: #475569;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .actions .button {
+            font-size: 12px;
+            padding: 9px 12px;
+        }
+
+        .empty {
+            background: white;
+            border-radius: 10px;
+            padding: 50px 20px;
+            text-align: center;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .empty h3 {
+            margin-bottom: 8px;
+        }
+
+        .empty p {
+            color: #64748b;
+        }
+
+        @media (max-width: 600px) {
+
+            .header {
+                padding: 15px;
+            }
+
+            .container {
+                margin: 20px auto;
+                padding: 0 12px;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+
+    <div>
+        <h1>LUHAN ERP</h1>
+        <p>Role & Permission Management</p>
+    </div>
+
+    <a
+        href="{% url 'accounts:admin_dashboard' %}"
+        class="button button-secondary"
+    >
+        Dashboard
+    </a>
+
+</div>
+
+
+<div class="container">
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+        <div class="messages">
+
+            {% for message in messages %}
+
+                <div class="message">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         PAGE HEADER
+    ====================================================== -->
+
+    <div class="top-bar">
+
+        <div>
+
+            <h2>Role Management</h2>
+
+            <p style="color:#64748b; margin-top:6px;">
+                Create roles and control what each staff member
+                can access in the ERP.
+            </p>
+
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'accounts:add_role' %}"
+                class="button button-primary"
+            >
+                + Create New Role
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         ROLES
+    ====================================================== -->
+
+    {% if roles %}
+
+        <div class="role-grid">
+
+            {% for role in roles %}
+
+                <div class="role-card">
+
+                    <!-- ROLE HEADER -->
+
+                    <div class="role-header">
+
+                        <div class="role-name">
+                            {{ role.name }}
+                        </div>
+
+                        {% if role.is_active %}
+
+                            <span class="status status-active">
+                                ACTIVE
+                            </span>
+
+                        {% else %}
+
+                            <span class="status status-inactive">
+                                INACTIVE
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    {% if role.description %}
+
+                        <div class="description">
+                            {{ role.description }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="description">
+                            No description provided.
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- USERS -->
+
+                    <div class="users-count">
+
+                        <strong>
+                            {{ role.staff_members.count }}
+                        </strong>
+
+                        staff member{{ role.staff_members.count|pluralize }}
+                        assigned to this role.
+
+                    </div>
+
+
+                    <!-- PERMISSIONS -->
+
+                    <div class="section-title">
+                        Permissions
+                    </div>
+
+                    <div class="permissions">
+
+                        {% for permission in role.permissions.all %}
+
+                            <span class="permission">
+
+                                {{ permission.name }}
+
+                            </span>
+
+                        {% empty %}
+
+                            <span class="no-permissions">
+                                No permissions assigned.
+                            </span>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions">
+
+                        <a
+                            href="{% url 'accounts:edit_role' role.id %}"
+                            class="button button-warning"
+                        >
+                            Edit
+                        </a>
+
+                        <a
+                            href="{% url 'accounts:toggle_role_status' role.id %}"
+                            class="button
+                            {% if role.is_active %}
+                                button-danger
+                            {% else %}
+                                button-success
+                            {% endif %}"
+                        >
+
+                            {% if role.is_active %}
+                                Deactivate
+                            {% else %}
+                                Activate
+                            {% endif %}
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+
+            <h3>No Roles Created</h3>
+
+            <p>
+                You have not created any custom ERP roles yet.
+            </p>
+
+            <br>
+
+            <a
+                href="{% url 'accounts:add_role' %}"
+                class="button button-primary"
+            >
+                Create First Role
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

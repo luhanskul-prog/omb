@@ -1,0 +1,178 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Automatic Timetable Generator</h2>
+            <div class="text-muted">
+                Build the timetable from your Lesson Requirements.
+            </div>
+        </div>
+
+        <a href="{% url 'timetable:requirement_builder' %}"
+           class="btn btn-outline-primary">
+            Lesson Requirements
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} shadow-sm">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if term %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <div class="border rounded p-3 h-100">
+                        <small class="text-muted">Active Term</small>
+                        <h5 class="fw-bold mb-0">
+                            {{ term.academic_year }} - {{ term.term_name }}
+                        </h5>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="border rounded p-3 h-100">
+                        <small class="text-muted">Current Lessons</small>
+                        <h5 class="fw-bold mb-0">
+                            {{ lessons|length }}
+                        </h5>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-magic"></i>
+                            Generate Timetable
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    {% if generation_result %}
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-header fw-bold">
+            Generation Report
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <div class="alert alert-success mb-0">
+                        <strong>
+                            {{ generation_result.created }}
+                        </strong>
+                        Scheduled
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="alert alert-info mb-0">
+                        <strong>
+                            {{ generation_result.requested }}
+                        </strong>
+                        Requested
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="alert alert-secondary mb-0">
+                        <strong>
+                            {{ generation_result.locked }}
+                        </strong>
+                        Locked
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="alert alert-warning mb-0">
+                        <strong>
+                            {{ generation_result.failed|length }}
+                        </strong>
+                        Unscheduled
+                    </div>
+                </div>
+
+            </div>
+
+            {% if generation_result.failed %}
+
+            <hr>
+
+            <h5 class="fw-bold">
+                Unscheduled Lessons
+            </h5>
+
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Class</th>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Room</th>
+                            <th>Priority</th>
+                            <th>Duration</th>
+                            <th>Occurrence</th>
+                            <th>Reason</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for item in generation_result.failed %}
+                        <tr>
+                            <td>{{ item.class }}</td>
+                            <td>{{ item.subject }}</td>
+                            <td>{{ item.teacher }}</td>
+                            <td>{{ item.room }}</td>
+                            <td>{{ item.priority }}</td>
+                            <td>{{ item.duration }}</td>
+                            <td>{{ item.occurrence }}</td>
+                            <td>{{ item.reason }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% endif %}
+
+        </div>
+    </div>
+
+    {% endif %}
+
+    {% else %}
+
+    <div class="alert alert-warning">
+        No active timetable term exists.
+        Create or activate a timetable term first.
+    </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

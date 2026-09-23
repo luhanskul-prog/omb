@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance Report | Luhan School</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        /* =====================================================
+           GENERAL
+        ===================================================== */
+
+        body {
+            background: #eef2f7;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #1f2937;
+        }
+
+        .page-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        /* =====================================================
+           SCREEN HEADER
+        ===================================================== */
+
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #d9dee7;
+            padding: 18px 0;
+            margin-bottom: 25px;
+        }
+
+
+        /* =====================================================
+           REPORT HEADER
+        ===================================================== */
+
+        .report-header {
+            background: white;
+            border: 1px solid #d7dce5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .school-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: .5px;
+            margin-bottom: 3px;
+        }
+
+        .report-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .report-details {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+
+        /* =====================================================
+           FILTERS
+        ===================================================== */
+
+        .filter-card {
+            background: white;
+            border: 1px solid #d7dce5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+
+        /* =====================================================
+           SECTION TITLES
+        ===================================================== */
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+
+        /* =====================================================
+           SUMMARY CARDS
+        ===================================================== */
+
+        .summary-card {
+            background: white;
+            border: 1px solid #d7dce5;
+            border-radius: 10px;
+            padding: 14px 16px;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .summary-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 5px;
+        }
+
+        .summary-total::before {
+            background: #2563eb;
+        }
+
+        .summary-present::before {
+            background: #16a34a;
+        }
+
+        .summary-absent::before {
+            background: #dc2626;
+        }
+
+        .summary-late::before {
+            background: #f59e0b;
+        }
+
+        .summary-excused::before {
+            background: #0891b2;
+        }
+
+        .summary-label {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 600;
+        }
+
+        .summary-number {
+            font-size: 26px;
+            font-weight: 800;
+            margin-top: 2px;
+        }
+
+
+        /* =====================================================
+           REPORT TABLE
+        ===================================================== */
+
+        .report-table {
+            background: white;
+            border: 1px solid #cfd5df;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .report-table table {
+            margin: 0;
+        }
+
+        .report-table thead th {
+            background: #1f2937;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 9px 8px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .report-table tbody td {
+            font-size: 12px;
+            padding: 8px;
+            vertical-align: middle;
+            border-color: #e2e6ec;
+        }
+
+        .report-table tbody tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .report-table tbody tr:hover {
+            background: #eef4ff;
+        }
+
+
+        /* =====================================================
+           STATUS
+        ===================================================== */
+
+        .status-badge {
+            display: inline-block;
+            min-width: 62px;
+            text-align: center;
+            padding: 4px 7px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status-present {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-absent {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-late {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-excused {
+            background: #cffafe;
+            color: #155e75;
+        }
+
+        .status-other {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .screen-footer {
+            margin-top: 30px;
+            padding: 15px;
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .print-footer {
+            display: none;
+        }
+
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+
+        .btn {
+            border-radius: 7px;
+        }
+
+
+        /* =====================================================
+           PRINT
+        ===================================================== */
+
+        @media print {
+
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            html,
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                color: #111827;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .page-container {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                padding: 0;
+            }
+
+
+            /* -------------------------------------------------
+               PRINT HEADER
+            ------------------------------------------------- */
+
+            .report-header {
+                border: none;
+                border-bottom: 2px solid #1f2937;
+                border-radius: 0;
+                padding: 0 0 8px 0;
+                margin-bottom: 10px;
+            }
+
+            .school-name {
+                font-size: 20px;
+                font-weight: 800;
+            }
+
+            .report-title {
+                font-size: 16px;
+                font-weight: 700;
+            }
+
+            .report-details {
+                font-size: 9px;
+                color: #4b5563;
+            }
+
+
+            /* -------------------------------------------------
+               SECTION TITLES
+            ------------------------------------------------- */
+
+            .section-title {
+                font-size: 11px;
+                margin-top: 8px;
+                margin-bottom: 5px;
+                font-weight: 800;
+            }
+
+
+            /* -------------------------------------------------
+               SUMMARY
+            ------------------------------------------------- */
+
+            .summary-row {
+                display: flex !important;
+                flex-wrap: nowrap !important;
+                gap: 6px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .summary-row > div {
+                flex: 1 1 0 !important;
+                width: 20% !important;
+                padding: 0 !important;
+            }
+
+            .summary-card {
+                border: 1px solid #aeb6c2;
+                border-radius: 4px;
+                padding: 6px 8px;
+                min-height: 45px;
+            }
+
+            .summary-card::before {
+                width: 3px;
+            }
+
+            .summary-label {
+                font-size: 8px;
+            }
+
+            .summary-number {
+                font-size: 16px;
+                line-height: 1.1;
+            }
+
+
+            /* -------------------------------------------------
+               TABLE
+            ------------------------------------------------- */
+
+            .report-table {
+                border: 1px solid #9ca3af;
+                border-radius: 4px;
+                overflow: visible;
+            }
+
+            .report-table table {
+                width: 100% !important;
+                table-layout: fixed;
+                border-collapse: collapse;
+            }
+
+            .report-table thead {
+                display: table-header-group;
+            }
+
+            .report-table thead th {
+                background: #1f2937 !important;
+                color: white !important;
+                font-size: 8.5px;
+                padding: 5px 5px;
+                border: 1px solid #1f2937;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .report-table tbody td {
+                font-size: 8.5px;
+                padding: 4px 5px;
+                border: 1px solid #d1d5db;
+                line-height: 1.2;
+            }
+
+            .report-table tbody tr:nth-child(even) {
+                background: #f8fafc !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+
+            /* -------------------------------------------------
+               COLUMN WIDTHS
+            ------------------------------------------------- */
+
+            .report-table th:nth-child(1),
+            .report-table td:nth-child(1) {
+                width: 4%;
+                text-align: center;
+            }
+
+            .report-table th:nth-child(2),
+            .report-table td:nth-child(2) {
+                width: 13%;
+            }
+
+            .report-table th:nth-child(3),
+            .report-table td:nth-child(3) {
+                width: 23%;
+            }
+
+            .report-table th:nth-child(4),
+            .report-table td:nth-child(4) {
+                width: 9%;
+            }
+
+            .report-table th:nth-child(5),
+            .report-table td:nth-child(5) {
+                width: 9%;
+            }
+
+            .report-table th:nth-child(6),
+            .report-table td:nth-child(6) {
+                width: 11%;
+            }
+
+            .report-table th:nth-child(7),
+            .report-table td:nth-child(7) {
+                width: 11%;
+            }
+
+            .report-table th:nth-child(8),
+            .report-table td:nth-child(8) {
+                width: 20%;
+            }
+
+
+            /* -------------------------------------------------
+               STATUS BADGES
+            ------------------------------------------------- */
+
+            .status-badge {
+                min-width: 48px;
+                padding: 2px 4px;
+                font-size: 7px;
+                border-radius: 10px;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .status-present {
+                background: #dcfce7 !important;
+                color: #166534 !important;
+            }
+
+            .status-absent {
+                background: #fee2e2 !important;
+                color: #991b1b !important;
+            }
+
+            .status-late {
+                background: #fef3c7 !important;
+                color: #92400e !important;
+            }
+
+            .status-excused {
+                background: #cffafe !important;
+                color: #155e75 !important;
+            }
+
+
+            /* -------------------------------------------------
+               FOOTER
+            ------------------------------------------------- */
+
+            .print-footer {
+                display: block;
+                border-top: 1px solid #9ca3af;
+                margin-top: 8px;
+                padding-top: 4px;
+                text-align: center;
+                font-size: 7px;
+                color: #6b7280;
+            }
+
+
+            .screen-footer {
+                display: none;
+            }
+
+
+            tr {
+                page-break-inside: avoid;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     SCREEN HEADER
+========================================================= -->
+
+<div class="top-header no-print">
+
+    <div class="container">
+
+        <div class="d-flex justify-content-between
+                    align-items-center flex-wrap gap-3">
+
+            <div>
+
+                <h2 class="fw-bold mb-1">
+                    📊 Attendance Reports
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Luhan School Attendance Management
+                </p>
+
+            </div>
+
+
+            <div class="d-flex gap-2">
+
+                <button
+                    onclick="window.print()"
+                    class="btn btn-dark"
+                >
+                    🖨 Print Report
+                </button>
+
+
+                <a
+                    href="{% url 'school_attendance:attendance_dashboard' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    ← Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="container page-container pb-4">
+
+
+    <!-- =====================================================
+         REPORT HEADER
+    ====================================================== -->
+
+    <div class="report-header">
+
+        <div class="school-name">
+            LUHAN SCHOOL
+        </div>
+
+        <div class="report-title">
+            ATTENDANCE REPORT
+        </div>
+
+        <div class="report-details">
+
+            {% if selected_class %}
+                Class: <strong>{{ selected_class }}</strong>
+            {% else %}
+                All Classes
+            {% endif %}
+
+            &nbsp; | &nbsp;
+
+            {% if selected_stream %}
+                Stream: <strong>{{ selected_stream }}</strong>
+            {% else %}
+                All Streams
+            {% endif %}
+
+            &nbsp; | &nbsp;
+
+            Period:
+            <strong>
+                {{ start_date }} – {{ end_date }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+
+    <div class="filter-card no-print">
+
+        <h5 class="fw-bold mb-3">
+            🔎 Report Filters
+        </h5>
+
+
+        <form method="GET">
+
+            <div class="row g-3">
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Start Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="start_date"
+                        value="{{ start_date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        End Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="end_date"
+                        value="{{ end_date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Class
+                    </label>
+
+                    <select
+                        name="class_name"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Classes
+                        </option>
+
+                        {% for class_name in classes %}
+
+                            <option
+                                value="{{ class_name }}"
+                                {% if selected_class == class_name %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ class_name }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Stream
+                    </label>
+
+                    <select
+                        name="stream"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Streams
+                        </option>
+
+                        {% for stream in streams %}
+
+                            <option
+                                value="{{ stream }}"
+                                {% if selected_stream == stream %}
+                                    selected
+                                {% endif %}
+                            >
+
+                                {{ stream }}
+
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        🔎 Generate Report
+                    </button>
+
+
+                    <a
+                        href="{% url 'school_attendance:attendance_reports' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Clear
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         ATTENDANCE SUMMARY
+    ====================================================== -->
+
+    <div class="section-title">
+        Attendance Summary
+    </div>
+
+
+    <div class="row summary-row g-2">
+
+
+        <!-- TOTAL -->
+
+        <div class="col">
+
+            <div class="summary-card summary-total">
+
+                <div class="summary-label">
+                    Total Records
+                </div>
+
+                <div class="summary-number text-primary">
+                    {{ total_records|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRESENT -->
+
+        <div class="col">
+
+            <div class="summary-card summary-present">
+
+                <div class="summary-label">
+                    Present
+                </div>
+
+                <div class="summary-number text-success">
+                    {{ present_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABSENT -->
+
+        <div class="col">
+
+            <div class="summary-card summary-absent">
+
+                <div class="summary-label">
+                    Absent
+                </div>
+
+                <div class="summary-number text-danger">
+                    {{ absent_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LATE -->
+
+        <div class="col">
+
+            <div class="summary-card summary-late">
+
+                <div class="summary-label">
+                    Late
+                </div>
+
+                <div class="summary-number text-warning">
+                    {{ late_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXCUSED -->
+
+        <div class="col">
+
+            <div class="summary-card summary-excused">
+
+                <div class="summary-label">
+                    Excused
+                </div>
+
+                <div class="summary-number text-info">
+                    {{ excused_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         RECORDS
+    ====================================================== -->
+
+    <div class="section-title mt-3">
+        Attendance Records
+    </div>
+
+
+    <div class="report-table">
+
+        <table class="table">
+
+
+            <thead>
+
+                <tr>
+
+                    <th>#</th>
+
+                    <th>
+                        Admission No.
+                    </th>
+
+                    <th>
+                        Learner
+                    </th>
+
+                    <th>
+                        Class
+                    </th>
+
+                    <th>
+                        Stream
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Remarks
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+                {% for record in records %}
+
+                    <tr>
+
+
+                        <td>
+                            {{ forloop.counter }}
+                        </td>
+
+
+                        <td>
+                            {{ record.student.admission_no|default:"-" }}
+                        </td>
+
+
+                        <td class="fw-semibold">
+
+                            {{ record.student.first_name }}
+
+                            {% if record.student.middle_name %}
+                                {{ record.student.middle_name }}
+                            {% endif %}
+
+                            {% if record.student.last_name %}
+                                {{ record.student.last_name }}
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ record.student.class_name|default:"-" }}
+                        </td>
+
+
+                        <td>
+                            {{ record.student.stream|default:"-" }}
+                        </td>
+
+
+                        <td>
+                            {{ record.date|date:"d/m/Y" }}
+                        </td>
+
+
+                        <td>
+
+
+                            {% if record.status == "PRESENT" %}
+
+                                <span class="status-badge status-present">
+                                    Present
+                                </span>
+
+
+                            {% elif record.status == "ABSENT" %}
+
+                                <span class="status-badge status-absent">
+                                    Absent
+                                </span>
+
+
+                            {% elif record.status == "LATE" %}
+
+                                <span class="status-badge status-late">
+                                    Late
+                                </span>
+
+
+                            {% elif record.status == "EXCUSED" %}
+
+                                <span class="status-badge status-excused">
+                                    Excused
+                                </span>
+
+
+                            {% else %}
+
+                                <span class="status-badge status-other">
+                                    {{ record.status }}
+                                </span>
+
+                            {% endif %}
+
+
+                        </td>
+
+
+                        <td>
+                            {{ record.remarks|default:"-" }}
+                        </td>
+
+
+                    </tr>
+
+
+                {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="8"
+                            class="text-center py-4"
+                        >
+
+                            No attendance records found.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PRINT FOOTER
+    ====================================================== -->
+
+    <div class="print-footer">
+
+        Luhan School — Attendance Management System
+
+        &nbsp; | &nbsp;
+
+        Attendance Report
+
+        &nbsp; | &nbsp;
+
+        Generated:
+        {% now "d/m/Y H:i" %}
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SCREEN FOOTER / NAVIGATION
+    ====================================================== -->
+
+    <div class="screen-footer no-print">
+
+        <a
+            href="{% url 'school_attendance:attendance_dashboard' %}"
+            class="btn btn-outline-secondary"
+        >
+            ← Attendance Dashboard
+        </a>
+
+
+        <a
+            href="{% url 'school_attendance:daily_attendance' %}"
+            class="btn btn-primary"
+        >
+            📝 Daily Attendance
+        </a>
+
+
+        <a
+            href="{% url 'school_attendance:attendance_analysis' %}"
+            class="btn btn-outline-success"
+        >
+            📈 Attendance Analysis
+        </a>
+
+    </div>
+
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

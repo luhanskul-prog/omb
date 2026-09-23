@@ -1,0 +1,62 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="text-center mb-5">
+        <h2 class="fw-bold">Add Staff Member</h2>
+        <p class="text-muted">
+            Select the type of staff member you want to register.
+        </p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+        <div class="col-md-5">
+            <a
+                href="{% url 'accounts:fresh_staff_teaching' %}"
+                class="text-decoration-none"
+            >
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body text-center p-5">
+                        <div class="display-4 mb-3">👨‍🏫</div>
+                        <h3 class="fw-bold">Teaching Staff</h3>
+                        <p class="text-muted">
+                            Teachers who handle subjects, classes,
+                            marks, results and attendance.
+                        </p>
+                        <span class="btn btn-primary px-4">
+                            Continue
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-5">
+            <a
+                href="{% url 'accounts:fresh_staff_support' %}"
+                class="text-decoration-none"
+            >
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-body text-center p-5">
+                        <div class="display-4 mb-3">👤</div>
+                        <h3 class="fw-bold">Support Staff</h3>
+                        <p class="text-muted">
+                            Administrative and operational
+                            support staff.
+                        </p>
+                        <span class="btn btn-outline-primary px-4">
+                            Continue
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,158 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="mb-3">
+        <a href="{% url back_url %}" class="btn btn-outline-secondary">
+            ? Back to Automatic Payments
+        </a>
+    </div>
+
+    <div class="mb-4">
+        <h2 class="fw-bold">{{ method_name }}</h2>
+        <p class="text-muted">{{ method_description }}</p>
+    </div>
+
+
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                GENERAL AUTOMATIC PAYMENT SETTINGS
+            </h5>
+
+            <div class="alert alert-light border">
+                <strong>Environment:</strong>
+                {{ form.environment.value|default:"sandbox"|title }}
+            </div>
+
+            <div class="form-check mb-1">
+                {{ form.is_active }}
+
+                <label class="form-check-label fw-semibold">
+                    ENABLE AUTOMATIC PAYMENTS SYSTEM
+                </label>
+            </div>
+
+            <small class="text-muted">
+                Turn this OFF to temporarily disable all automatic payment methods.
+            </small>
+
+        </div>
+    </div>
+
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+
+                <h5 class="fw-bold mb-4">
+                    {{ method_name }} SETTINGS
+                </h5>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+
+                {% for field in form %}
+                    {% if field.name != "environment" and field.name != "is_active" %}
+
+                        <div class="mb-3">
+
+                            {% if field.field.widget.input_type == "checkbox" %}
+
+                                <div class="form-check">
+                                    {{ field }}
+
+                                    <label class="form-check-label fw-semibold">
+                                        {{ field.label }}
+                                    </label>
+                                </div>
+
+                            {% else %}
+
+                                <label class="form-label fw-semibold">
+                                    {{ field.label }}
+                                </label>
+
+                                {{ field }}
+
+                            {% endif %}
+
+                            {% if field.help_text %}
+                                <small class="text-muted d-block">
+                                    {{ field.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% for error in field.errors %}
+                                <div class="text-danger small">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+
+                        </div>
+
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_type == "paybill" %}
+                    <hr class="my-4">
+
+                    <h5 class="fw-bold">
+                        PAYBILL C2B TOOLS
+                    </h5>
+
+                    <p class="text-muted">
+                        Use these tools to test credentials and register
+                        the PayBill C2B callback configuration.
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        <a
+                            href="{% url 'fees:mpesa_paybill_test_credentials' %}"
+                            class="btn btn-outline-primary"
+                        >
+                            TEST PAYBILL CREDENTIALS
+                        </a>
+
+                        <a
+                            href="{% url 'fees:mpesa_paybill_register_callbacks' %}"
+                            class="btn btn-outline-success"
+                        >
+                            REGISTER C2B CALLBACKS
+                        </a>
+
+                    </div>
+                {% endif %}
+
+
+                <div class="mt-4 d-flex gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary px-4">
+                        Save Settings
+                    </button>
+
+                    <a href="{% url back_url %}"
+                       class="btn btn-outline-secondary">
+                        Cancel
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+</div>
+{% endblock %}

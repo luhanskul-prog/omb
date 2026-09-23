@@ -1,0 +1,216 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 25px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 0;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .btn-primary {
+        background: #1769e0;
+        color: #fff;
+    }
+
+    .btn-success {
+        background: #198754;
+        color: #fff;
+    }
+
+    .btn-warning {
+        background: #f0ad00;
+        color: #111;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    .btn-info {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e8e8e8;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f5f7fa;
+        font-weight: 700;
+    }
+
+    tr:hover td {
+        background: #fafafa;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #eef2f7;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.07);
+    }
+
+    .stat-card .label {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+        font-size: 28px;
+        font-weight: 800;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+
+        <h1>HR & Payroll Reports</h1>
+
+        <a class="btn btn-secondary"
+           href="{% url 'hr_payroll:dashboard' %}">
+            Dashboard
+        </a>
+
+    </div>
+
+    <div class="stats">
+
+        <div class="stat-card">
+            <div class="label">Total Employees</div>
+            <div class="value">{{ total_employees }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Active Employees</div>
+            <div class="value">{{ active_employees }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Departments</div>
+            <div class="value">{{ departments }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Attendance Records</div>
+            <div class="value">{{ attendance_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Leave Applications</div>
+            <div class="value">{{ leave_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Active Loans</div>
+            <div class="value">{{ active_loan_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Payroll Records</div>
+            <div class="value">{{ payroll_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Payslips</div>
+            <div class="value">{{ payslip_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Appraisals</div>
+            <div class="value">{{ appraisal_count }}</div>
+        </div>
+
+        <div class="stat-card">
+            <div class="label">Documents</div>
+            <div class="value">{{ document_count }}</div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block title %}Hostels{% endblock %}
+{% block heading %}Hostels{% endblock %}
+{% block subheading %}Manage boarding facilities and wardens{% endblock %}
+
+{% block content %}
+
+<div class="card-box">
+
+    <div class="card-head">
+
+        <div>
+            <h2 class="card-title">Hostel Facilities</h2>
+            <div class="card-sub">Buildings, capacity and occupancy</div>
+        </div>
+
+        {% if erp_permission.add_hostel %}
+        <a href="{% url 'hostel:hostel_create' %}" class="btn-main">
+            + Add Hostel
+        </a>
+        {% endif %}
+
+    </div>
+
+    <div class="card-body">
+
+        <form method="get" class="search-box">
+
+            <div class="row g-2">
+
+                <div class="col-md-10">
+                    <input
+                        type="text"
+                        name="search"
+                        value="{{ search }}"
+                        class="form-control"
+                        placeholder="Search hostel, location or warden..."
+                    >
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn-main w-100">
+                        Search
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+        <div class="table-responsive">
+
+            <table class="table">
+
+                <thead>
+                <tr>
+                    <th>Hostel</th>
+                    <th>Type</th>
+                    <th>Location</th>
+                    <th>Warden</th>
+                    <th>Capacity</th>
+                    <th>Rooms</th>
+                    <th>Beds</th>
+                    <th>Occupied</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+                </thead>
+
+                <tbody>
+
+                {% for hostel in hostels %}
+
+                <tr>
+
+                    <td><strong>{{ hostel.name }}</strong></td>
+
+                    <td>{{ hostel.get_hostel_type_display }}</td>
+
+                    <td>{{ hostel.location|default:"—" }}</td>
+
+                    <td>
+                        {{ hostel.warden_name|default:"—" }}
+                        {% if hostel.warden_phone %}
+                            <br>
+                            <small class="text-muted">
+                                {{ hostel.warden_phone }}
+                            </small>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ hostel.capacity }}</td>
+
+                    <td>{{ hostel.room_count }}</td>
+
+                    <td>{{ hostel.bed_count }}</td>
+
+                    <td>
+                        <span class="badge-soft red">
+                            {{ hostel.occupied_count }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if hostel.is_active %}
+                            <span class="badge-soft green">Active</span>
+                        {% else %}
+                            <span class="badge-soft red">Inactive</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if erp_permission.change_hostel %}
+                        <a href="{% url 'hostel:hostel_edit' hostel.pk %}" class="btn-lightx">
+                            Edit
+                        </a>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="10" class="text-center text-muted p-5">
+                        No hostels found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

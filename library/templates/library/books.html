@@ -1,0 +1,121 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}Books{% endblock %}
+
+{% block content %}
+<div style="
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:15px;
+">
+    <a href="{% url 'library_book_all_list' %}"
+       style="
+           display:inline-block;
+           background:#0d6efd;
+           color:#fff;
+           padding:11px 18px;
+           border-radius:7px;
+           text-decoration:none;
+           font-weight:700;
+       ">
+        📚 VIEW ALL BOOKS
+    </a>
+</div>
+
+<div class="actions">
+    <a class="btn" href="{% url 'library_book_add' %}">+ Add Book</a>
+    <a class="btn secondary" href="{% url 'library_categories' %}">Manage Categories</a>
+</div>
+
+<form class="search" method="get">
+
+    <input
+        type="text"
+        name="q"
+        value="{{ q }}"
+        placeholder="Search title, author, ISBN...">
+
+    <select name="category">
+        <option value="">All Categories</option>
+
+        {% for category in categories %}
+        <option
+            value="{{ category.pk }}"
+            {% if selected_category == category.pk|stringformat:"s" %}selected{% endif %}>
+            {{ category }}
+        </option>
+        {% endfor %}
+    </select>
+
+    <button class="btn" type="submit">Search</button>
+
+    <a class="btn light" href="{% url 'library_books' %}">Clear</a>
+
+</form>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+    <th>Title</th>
+    <th>Author</th>
+    <th>ISBN</th>
+    <th>Category</th>
+    <th>Publisher</th>
+    <th>Shelf</th>
+    <th>Total Copies</th>
+    <th>Available</th>
+    <th>Status</th>
+    <th>Actions</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for book in books %}
+
+<tr>
+    <td><strong>{{ book.title }}</strong></td>
+    <td>{{ book.author }}</td>
+    <td>{{ book.isbn }}</td>
+    <td>{{ book.category }}</td>
+    <td>{{ book.publisher }}</td>
+    <td>{{ book.shelf_number }}</td>
+    <td>{{ book.total_copies }}</td>
+    <td>{{ book.available_copies }}</td>
+    <td>{{ book.get_status_display }}</td>
+
+    <td>
+        <a class="btn light"
+           href="{% url 'library_book_edit' book.pk %}">
+            Edit
+        </a>
+
+        <a class="btn danger"
+           href="{% url 'library_book_delete' book.pk %}">
+            Delete
+        </a>
+    </td>
+</tr>
+
+{% empty %}
+
+<tr>
+    <td colspan="9" style="text-align:center;padding:30px;">
+        No books found.
+    </td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+{% endblock %}
+
+
+

@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance Analysis | Luhan School</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f5f7fa;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .page-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .top-header {
+            background: white;
+            border-bottom: 1px solid #ddd;
+            padding: 20px 0;
+            margin-bottom: 25px;
+        }
+
+        .card-box {
+            background: white;
+            border: 1px solid #d5d5d5;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .stat-card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            height: 100%;
+        }
+
+        .stat-title {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-number {
+            font-size: 27px;
+            font-weight: bold;
+        }
+
+        .percentage-card {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            height: 100%;
+        }
+
+        .percentage-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .analysis-table {
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .analysis-table table {
+            margin-bottom: 0;
+        }
+
+        .analysis-table th {
+            background: #212529;
+            color: white;
+            font-size: 13px;
+            white-space: nowrap;
+            padding: 9px 8px;
+        }
+
+        .analysis-table td {
+            font-size: 13px;
+            padding: 8px;
+            vertical-align: middle;
+        }
+
+        .learner-name {
+            font-weight: 600;
+            min-width: 180px;
+        }
+
+        .badge-present {
+            color: #198754;
+            font-weight: bold;
+        }
+
+        .badge-absent {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .badge-late {
+            color: #d39e00;
+            font-weight: bold;
+        }
+
+        .badge-excused {
+            color: #0dcaf0;
+            font-weight: bold;
+        }
+
+        .filter-card {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        .school-title {
+            font-weight: bold;
+            font-size: 20px;
+        }
+
+        .print-title {
+            display: none;
+        }
+
+        .footer-print {
+            display: none;
+        }
+
+
+        /* =====================================================
+           PRINT SETTINGS - A4
+        ===================================================== */
+
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
+
+        @media print {
+
+            body {
+                background: white !important;
+                margin: 0;
+                padding: 0;
+                font-size: 10px;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            .print-title {
+                display: block;
+                text-align: center;
+                margin-bottom: 8px;
+            }
+
+            .print-title h2 {
+                font-size: 17px;
+                margin: 0;
+                font-weight: bold;
+            }
+
+            .print-title p {
+                font-size: 10px;
+                margin: 2px 0;
+            }
+
+            .page-container {
+                max-width: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+
+            .card-box {
+                border: none;
+                padding: 0;
+            }
+
+            .section-title {
+                font-size: 12px;
+                margin: 6px 0 4px 0;
+            }
+
+            .stat-card {
+                border: 1px solid #999;
+                padding: 5px;
+                border-radius: 3px;
+            }
+
+            .stat-title {
+                font-size: 8px;
+                margin: 0;
+            }
+
+            .stat-number {
+                font-size: 15px;
+            }
+
+            .percentage-card {
+                border: 1px solid #999;
+                padding: 5px;
+                border-radius: 3px;
+            }
+
+            .percentage-value {
+                font-size: 13px;
+            }
+
+            /* Keep percentage cards in ONE ROW */
+            .percentage-row {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 5px !important;
+            }
+
+            .summary-row {
+                display: grid !important;
+                grid-template-columns: repeat(5, 1fr) !important;
+                gap: 5px !important;
+            }
+
+            .analysis-table {
+                border: 1px solid #777;
+                border-radius: 3px;
+                overflow: visible;
+            }
+
+            .analysis-table table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+
+            .analysis-table th {
+                background: #222 !important;
+                color: white !important;
+                font-size: 8px;
+                padding: 4px 3px;
+                border: 1px solid #777;
+            }
+
+            .analysis-table td {
+                font-size: 8px;
+                padding: 4px 3px;
+                border: 1px solid #aaa;
+            }
+
+            .learner-name {
+                min-width: auto;
+                font-weight: 600;
+            }
+
+            .footer-print {
+                display: block;
+                text-align: center;
+                margin-top: 8px;
+                font-size: 8px;
+                color: #555;
+            }
+
+            .page-break {
+                page-break-before: always;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     PRINT HEADER
+========================================================= -->
+
+<div class="print-title">
+
+    <h2>LUHAN SCHOOL</h2>
+
+    <p>
+        LEARNER ATTENDANCE ANALYSIS REPORT
+    </p>
+
+    {% if selected_class %}
+        <p>
+            Class: <strong>{{ selected_class }}</strong>
+        </p>
+    {% endif %}
+
+    {% if selected_stream %}
+        <p>
+            Stream: <strong>{{ selected_stream }}</strong>
+        </p>
+    {% endif %}
+
+    <p>
+        Period:
+        <strong>{{ start_date }}</strong>
+        to
+        <strong>{{ end_date }}</strong>
+    </p>
+
+</div>
+
+
+
+<!-- =========================================================
+     SCREEN HEADER
+========================================================= -->
+
+<div class="top-header no-print">
+
+    <div class="container page-container">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <div class="school-title">
+                    📈 Learner Attendance Analysis
+                </div>
+
+                <small class="text-muted">
+                    Attendance performance and learner analysis
+                </small>
+
+            </div>
+
+
+            <div class="d-flex gap-2">
+
+                <button
+                    onclick="window.print()"
+                    class="btn btn-outline-dark"
+                >
+                    🖨 Print
+                </button>
+
+                <a
+                    href="{% url 'school_attendance:attendance_dashboard' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    ← Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<div class="page-container container pb-4">
+
+
+    <!-- =====================================================
+         FILTERS
+    ====================================================== -->
+
+    <div class="filter-card no-print">
+
+        <h5 class="fw-bold mb-3">
+            🔎 Analysis Filters
+        </h5>
+
+        <form method="GET">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Class
+                    </label>
+
+                    <select
+                        name="class_name"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Classes
+                        </option>
+
+                        {% for class_name in classes %}
+
+                            <option
+                                value="{{ class_name }}"
+                                {% if selected_class == class_name %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ class_name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Stream
+                    </label>
+
+                    <select
+                        name="stream"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            All Streams
+                        </option>
+
+                        {% for stream in streams %}
+
+                            <option
+                                value="{{ stream }}"
+                                {% if selected_stream == stream %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ stream }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        Start Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="start_date"
+                        value="{{ start_date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <label class="form-label fw-semibold">
+                        End Date
+                    </label>
+
+                    <input
+                        type="date"
+                        name="end_date"
+                        value="{{ end_date }}"
+                        class="form-control"
+                    >
+
+                </div>
+
+
+                <div class="col-12">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                    >
+                        🔎 Generate Analysis
+                    </button>
+
+                    <a
+                        href="{% url 'school_attendance:attendance_analysis' %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Clear
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         REPORT PERIOD
+    ====================================================== -->
+
+    <div class="card-box mb-3">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+
+                <h5 class="section-title mb-1">
+                    Attendance Summary
+                </h5>
+
+                <small class="text-muted">
+
+                    Period:
+                    {{ start_date }}
+                    to
+                    {{ end_date }}
+
+                    {% if selected_class %}
+                        | Class: {{ selected_class }}
+                    {% endif %}
+
+                    {% if selected_stream %}
+                        | Stream: {{ selected_stream }}
+                    {% endif %}
+
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         SUMMARY CARDS
+    ====================================================== -->
+
+    <div class="summary-row row g-3 mb-3">
+
+
+        <!-- TOTAL -->
+
+        <div class="col">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Total Records
+                </div>
+
+                <div class="stat-number text-primary">
+                    {{ total_records|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRESENT -->
+
+        <div class="col">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Present
+                </div>
+
+                <div class="stat-number text-success">
+                    {{ present_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABSENT -->
+
+        <div class="col">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Absent
+                </div>
+
+                <div class="stat-number text-danger">
+                    {{ absent_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LATE -->
+
+        <div class="col">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Late
+                </div>
+
+                <div class="stat-number text-warning">
+                    {{ late_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXCUSED -->
+
+        <div class="col">
+
+            <div class="stat-card">
+
+                <div class="stat-title">
+                    Excused
+                </div>
+
+                <div class="stat-number text-info">
+                    {{ excused_count|default:"0" }}
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PERCENTAGE CARDS - ONE ROW
+    ====================================================== -->
+
+    <h5 class="section-title">
+        Attendance Percentages
+    </h5>
+
+
+    <div class="percentage-row row g-3 mb-4">
+
+
+        <!-- PRESENT % -->
+
+        <div class="col">
+
+            <div class="percentage-card">
+
+                <div class="stat-title">
+                    Present %
+                </div>
+
+                <div class="percentage-value text-success">
+                    {% if total_records %}
+                        {{ present_count|floatformat:1 }}%
+                    {% else %}
+                        0%
+                    {% endif %}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ABSENT % -->
+
+        <div class="col">
+
+            <div class="percentage-card">
+
+                <div class="stat-title">
+                    Absent %
+                </div>
+
+                <div class="percentage-value text-danger">
+
+                    {% if total_records %}
+
+                        {% widthratio absent_count total_records 100 %}%
+
+                    {% else %}
+
+                        0%
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LATE % -->
+
+        <div class="col">
+
+            <div class="percentage-card">
+
+                <div class="stat-title">
+                    Late %
+                </div>
+
+                <div class="percentage-value text-warning">
+
+                    {% if total_records %}
+
+                        {% widthratio late_count total_records 100 %}%
+
+                    {% else %}
+
+                        0%
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- EXCUSED % -->
+
+        <div class="col">
+
+            <div class="percentage-card">
+
+                <div class="stat-title">
+                    Excused %
+                </div>
+
+                <div class="percentage-value text-info">
+
+                    {% if total_records %}
+
+                        {% widthratio excused_count total_records 100 %}%
+
+                    {% else %}
+
+                        0%
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- OVERALL -->
+
+        <div class="col">
+
+            <div class="percentage-card">
+
+                <div class="stat-title">
+                    Overall Attendance
+                </div>
+
+                <div class="percentage-value text-primary">
+
+                    {{ attendance_percentage|default:"0" }}%
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         LEARNER ANALYSIS
+    ====================================================== -->
+
+    <h5 class="section-title">
+        Learner Attendance Analysis
+    </h5>
+
+
+    <div class="analysis-table">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width:35px;">
+                            #
+                        </th>
+
+                        <th>
+                            Admission No.
+                        </th>
+
+                        <th>
+                            Learner
+                        </th>
+
+                        <th>
+                            Class
+                        </th>
+
+                        <th>
+                            Stream
+                        </th>
+
+                        <th class="text-center">
+                            Present
+                        </th>
+
+                        <th class="text-center">
+                            Absent
+                        </th>
+
+                        <th class="text-center">
+                            Late
+                        </th>
+
+                        <th class="text-center">
+                            Excused
+                        </th>
+
+                        <th class="text-center">
+                            %
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for item in learner_analysis %}
+
+                        <tr>
+
+
+                            <!-- NUMBER -->
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+
+                            <!-- ADMISSION NUMBER -->
+
+                            <td>
+
+                                {{ item.student.admission_no|default:"-" }}
+
+                            </td>
+
+
+                            <!-- LEARNER NAME -->
+
+                            <td class="learner-name">
+
+                                {{ item.student.first_name }}
+
+                                {% if item.student.middle_name %}
+                                    {{ item.student.middle_name }}
+                                {% endif %}
+
+                                {% if item.student.last_name %}
+                                    {{ item.student.last_name }}
+                                {% endif %}
+
+                            </td>
+
+
+                            <!-- CLASS -->
+
+                            <td>
+
+                                {{ item.student.class_name|default:"-" }}
+
+                            </td>
+
+
+                            <!-- STREAM -->
+
+                            <td>
+
+                                {{ item.student.stream|default:"-" }}
+
+                            </td>
+
+
+                            <!-- PRESENT -->
+
+                            <td class="text-center badge-present">
+
+                                {{ item.present }}
+
+                            </td>
+
+
+                            <!-- ABSENT -->
+
+                            <td class="text-center badge-absent">
+
+                                {{ item.absent }}
+
+                            </td>
+
+
+                            <!-- LATE -->
+
+                            <td class="text-center badge-late">
+
+                                {{ item.late }}
+
+                            </td>
+
+
+                            <!-- EXCUSED -->
+
+                            <td class="text-center badge-excused">
+
+                                {{ item.excused }}
+
+                            </td>
+
+
+                            <!-- PERCENTAGE -->
+
+                            <td class="text-center fw-bold">
+
+                                {{ item.percentage|floatformat:1 }}%
+
+                            </td>
+
+
+                        </tr>
+
+
+                    {% empty %}
+
+
+                        <tr>
+
+                            <td
+                                colspan="10"
+                                class="text-center py-4 text-muted"
+                            >
+
+                                No learner attendance records
+                                found for the selected period.
+
+                            </td>
+
+                        </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         CLASS ANALYSIS
+    ====================================================== -->
+
+    {% if class_analysis %}
+
+        <div class="mt-4">
+
+            <h5 class="section-title">
+                Class Attendance Analysis
+            </h5>
+
+
+            <div class="analysis-table">
+
+                <div class="table-responsive">
+
+                    <table class="table table-bordered">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Class
+                                </th>
+
+                                <th>
+                                    Total
+                                </th>
+
+                                <th>
+                                    Present
+                                </th>
+
+                                <th>
+                                    Absent
+                                </th>
+
+                                <th>
+                                    Late
+                                </th>
+
+                                <th>
+                                    Excused
+                                </th>
+
+                                <th>
+                                    Attendance %
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for item in class_analysis %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+
+                                    <td class="fw-bold">
+                                        {{ item.student__class_name }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.total }}
+                                    </td>
+
+                                    <td class="text-success">
+                                        {{ item.present }}
+                                    </td>
+
+                                    <td class="text-danger">
+                                        {{ item.absent }}
+                                    </td>
+
+                                    <td class="text-warning">
+                                        {{ item.late }}
+                                    </td>
+
+                                    <td class="text-info">
+                                        {{ item.excused }}
+                                    </td>
+
+                                    <td class="fw-bold">
+                                        {{ item.percentage|floatformat:1 }}%
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- =====================================================
+         NAVIGATION
+    ====================================================== -->
+
+    <div class="mt-4 no-print">
+
+        <a
+            href="{% url 'school_attendance:attendance_dashboard' %}"
+            class="btn btn-outline-secondary"
+        >
+            ← Dashboard
+        </a>
+
+        <a
+            href="{% url 'school_attendance:daily_attendance' %}"
+            class="btn btn-primary"
+        >
+            📝 Daily Attendance
+        </a>
+
+        <a
+            href="{% url 'school_attendance:attendance_reports' %}"
+            class="btn btn-outline-primary"
+        >
+            📊 Attendance Reports
+        </a>
+
+    </div>
+
+
+
+    <!-- =====================================================
+         PRINT FOOTER
+    ====================================================== -->
+
+    <div class="footer-print">
+
+        Luhan School — Attendance Analysis Report
+
+        <br>
+
+        Generated on:
+        {% now "d/m/Y H:i" %}
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

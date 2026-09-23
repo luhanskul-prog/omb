@@ -1,0 +1,231 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+venv_old/
+.venv/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Local databases
+*.sqlite3
+*.sqlite3-*
+db.sqlite3
+
+# Backups
+backups/
+*_backups/
+backup/
+*.bak
+
+# Django generated files
+staticfiles/
+media/
+
+# IDE / editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Temporary files
+*.tmp
+*.temp
+
+# ---------------------------------------------------------
+# Local development / repair artifacts
+# ---------------------------------------------------------
+
+# Root-level automated repair/install scripts
+/_*.py
+/_*.ps1
+/_*.txt
+/_*.b64
+
+# Temporary diagnostic/reference files
+/_current_*
+/_prompt_*
+/_step3_*
+/_marks_entry_backup.txt
+/project_structure.txt
+/payment_portal_audit.txt
+/library_code_check.txt
+/fees_models_backup_view.txt
+/parent_portal_current.txt
+/parent_views_additions.txt
+/staff_code.txt
+/staff_files.txt
+/staff_portal_reference.txt
+/student_portal_reference.txt
+
+# Temporary HTML fragments created during development
+/child_fees.html
+/child_portal.html
+/learner_lessons.html
+/lesson_detail.html
+/lesson_form.html
+/lessons.html
+/my_lessons.html
+
+# Temporary/generated root files
+/40
+/55
+/80
+/'
+/'''
+/b.classList.remove('active'))
+/showSlide(current+1)
+
+# Local backup directories
+*_backup/
+*_backups/
+*_backup_*/
+backup_*/
+backup-*/
+
+# Additional payment/library/hostel development backups
+/fees_backup_*/
+/hostel_*_backup_*/
+/payslip_*_backup_*/
+/weekly_reports_*_backup_*/
+
+# Root-level development scripts
+/*.py
+!manage.py
+
+# Root-level PowerShell development scripts
+/*.ps1
+
+# Database recovery copies
+*.sqlite3.recovery_copy
+db.sqlite3.recovery_copy
+
+# Miscellaneous development text artifacts
+/fees_models_backup_view.txt
+/payment_portal_audit.txt
+/library_code_check.txt
+/parent_portal_current.txt
+/parent_views_additions.txt
+/staff_code.txt
+/staff_files.txt
+/staff_portal_reference.txt
+/student_portal_reference.txt
+/project_structure.txt
+
+# ---------------------------------------------------------
+# Production secrets and local database copies
+# ---------------------------------------------------------
+
+.env
+.env.*
+!.env.example
+
+*.sqlite3
+*.sqlite3-*
+*.sqlite3.recovery_copy
+db.sqlite3
+db.sqlite3.recovery_copy
+
+backups/
+*_backup/
+*_backups/
+backup/
+backup_*/
+backup-*/
+
+# ---------------------------------------------------------
+# Backup and historical repair files
+# ---------------------------------------------------------
+
+*.backup
+*.backup_*
+*.bak
+*.bak_*
+*.old
+*.orig
+
+*_backup.*
+*_backup_*
+*backup_*.*
+*backup_*
+*_before_*.*
+*.before_*
+*_before_*
+*_permissions_step*
+*_repair_*
+*_damaged_*
+
+*.ps1.backup
+*.ps1.bak
+*.txt.backup
+*.txt.bak
+
+# Django/local generated data
+*.sqlite3
+*.sqlite3-*
+*.sqlite3.recovery_copy
+db.sqlite3
+db.sqlite3.recovery_copy
+
+backups/
+*_backup/
+*_backups/
+backup/
+backup_*/
+backup-*/
+media/
+staticfiles/
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Remaining development / repair artifacts
+/_weekly_reports_admin_safe_*/
+accounts/profile_view.txt
+accounts/views.py.parent_backup
+accounts/views.py.parent_features_backup
+accounts/views.py.pre_portal_integration_20260910_235305.py
+hostel/urls.py.hostel_backup
+hostel/views.py.hostel_backup
+messaging/urls.py.broken
+fees/TILL_AUTOMATIC_PAYMENTS_COMPLETE.txt
+templates/academic/dashboard.html.spacing-backup
+templates/accounts/admin_dashboard.html.before-dashboard-repair
+templates/accounts/admin_dashboard.html.before-final-timetabling-repair
+templates/accounts/admin_dashboard.html.before-timetabling
+templates/accounts/admin_dashboard.html.icons-backup
+templates/accounts/parent_dashboard.html.parent_features_backup
+
+# Generic backup/history extensions
+**/*.backup
+**/*.backup_*
+**/*.bak
+**/*.bak_*
+**/*.old
+**/*.orig
+**/*.broken
+**/*-backup
+**/*-backup.*
+**/*spacing-backup
+**/*_permissions_step*
+**/*_repair_*
+**/*_damaged_*

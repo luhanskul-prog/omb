@@ -1,0 +1,153 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4" style="max-width:1100px;">
+
+    <div class="mb-3">
+        <a
+            href="{% url 'fees:automatic_payment_settings' %}"
+            class="btn btn-outline-secondary"
+        >
+            ? Back to Automatic Payments
+        </a>
+    </div>
+
+    <h2 class="fw-bold">M-PESA ONLINE</h2>
+
+    <p class="text-muted">
+        M-Pesa STK Push configuration.
+        Keep the existing working callback URL unless you intentionally
+        change the integration.
+    </p>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-dark text-white fw-bold">
+                GENERAL AUTOMATIC PAYMENT SETTINGS
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Environment
+                        </label>
+
+                        {{ form.environment }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-check form-switch mt-4">
+                            {{ form.is_active }}
+
+                            <label class="form-check-label fw-bold">
+                                ENABLE AUTOMATIC PAYMENTS SYSTEM
+                            </label>
+                        </div>
+
+                        <small class="text-muted">
+                            Turn this OFF to temporarily disable all
+                            automatic payment methods.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-success text-white fw-bold
+                        d-flex justify-content-between">
+
+                <span>M-PESA ONLINE</span>
+
+                <span>
+                    {{ form.mpesa_online_enabled }}
+                    <label class="ms-1">
+                        ENABLE
+                    </label>
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">
+                            Short Code
+                        </label>
+                        {{ form.mpesa_online_shortcode }}
+                    </div>
+
+                    <div class="col-md-8">
+                        <label class="form-label fw-bold">
+                            Account Reference
+                        </label>
+                        {{ form.mpesa_online_account_reference }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Consumer Key
+                        </label>
+                        {{ form.mpesa_online_consumer_key }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Consumer Secret
+                        </label>
+                        {{ form.mpesa_online_consumer_secret }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Passkey
+                        </label>
+                        {{ form.mpesa_online_passkey }}
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">
+                            Callback URL
+                        </label>
+                        {{ form.mpesa_online_callback_url }}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button class="btn btn-success btn-lg fw-bold">
+            SAVE M-PESA ONLINE SETTINGS
+        </button>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Published Timetable</h2>
+            <p class="text-muted mb-0">
+                Current timetable published by the school administration.
+            </p>
+        </div>
+    </div>
+
+    {% if entries %}
+
+    {% for day in days %}
+    <div class="card shadow-sm mb-4">
+
+        <div class="card-header">
+            <h4 class="mb-0">{{ day.get_name_display }}</h4>
+        </div>
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>Period</th>
+                            <th>Class</th>
+                            <th>Subject</th>
+                            <th>Teacher</th>
+                            <th>Room</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for entry in entries %}
+                        {% if entry.day_id == day.id %}
+                        <tr>
+                            <td>
+                                <strong>{{ entry.period.name }}</strong><br>
+                                <small>
+                                    {{ entry.period.start_time|time:"H:i" }}
+                                    -
+                                    {{ entry.period.end_time|time:"H:i" }}
+                                </small>
+                            </td>
+
+                            <td>
+                                {{ entry.class_name }}
+                                {% if entry.stream %}
+                                    {{ entry.stream }}
+                                {% endif %}
+                            </td>
+
+                            <td>{{ entry.subject.name }}</td>
+
+                            <td>
+                                {% if entry.teacher %}
+                                    {{ entry.teacher.name }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if entry.room %}
+                                    {{ entry.room.name }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+
+    <div class="alert alert-info">
+        No timetable has been published yet.
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

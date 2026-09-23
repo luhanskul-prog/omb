@@ -1,0 +1,397 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<div style="
+    background:#ffffff;
+    border:1px solid #d7e1ee; background:linear-gradient(135deg,#ffffff,#edf6ff);
+    border-radius:14px;
+    padding:22px;
+    margin-bottom:20px;
+    text-align:center;
+">
+
+    {% if branding and branding.logo %}
+        <img
+            src="{{ branding.logo.url }}"
+            alt="{{ branding.school_name }}"
+            style="
+                max-width:90px;
+                max-height:90px;
+                object-fit:contain;
+                margin-bottom:10px;
+            "
+        >
+    {% endif %}
+
+    <div style="
+        font-size:26px;
+        font-weight:800;
+        color:#123b7a;
+    ">
+        {% if branding %}
+            {{ branding.school_name }}
+        {% else %}
+            School
+        {% endif %}
+    </div>
+
+    {% if branding.motto %}
+        <div style="
+            margin-top:4px;
+            font-size:14px;
+            font-style:italic;
+            color:#555;
+        ">
+            {{ branding.motto }}
+        </div>
+    {% endif %}
+
+    <div style="
+        margin-top:8px;
+        font-size:12px;
+        color:#666;
+        line-height:1.6;
+    ">
+        {% if branding.phone %}
+            {{ branding.phone }}
+        {% endif %}
+
+        {% if branding.alternative_phone %}
+            {% if branding.phone %} | {% endif %}
+            {{ branding.alternative_phone }}
+        {% endif %}
+
+        {% if branding.email %}
+            {% if branding.phone or branding.alternative_phone %} | {% endif %}
+            {{ branding.email }}
+        {% endif %}
+
+        {% if branding.website %}
+            {% if branding.phone or branding.alternative_phone or branding.email %} | {% endif %}
+            {{ branding.website }}
+        {% endif %}
+    </div>
+
+    {% if branding.physical_address or branding.postal_address %}
+        <div style="
+            margin-top:3px;
+            font-size:12px;
+            color:#666;
+        ">
+            {% if branding.physical_address %}
+                {{ branding.physical_address }}
+            {% endif %}
+
+            {% if branding.postal_address %}
+                {% if branding.physical_address %} | {% endif %}
+                {{ branding.postal_address }}
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if branding.school_code %}
+        <div style="
+            margin-top:3px;
+            font-size:11px;
+            color:#777;
+        ">
+            School Code: {{ branding.school_code }}
+        </div>
+    {% endif %}
+
+</div>
+
+
+<style>
+    .payslip-page {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+    }
+
+    .payslip-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 35px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.10);
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 20px;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 20px;
+        margin-bottom: 25px;
+    }
+
+    .header h1 {
+        margin: 0;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 9px 13px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 0;
+        cursor: pointer;
+        font-weight: 700;
+    }
+
+    .btn-primary {
+        background: #1769e0;
+        color: #fff;
+    }
+
+    .btn-warning {
+        background: #f0ad00;
+        color: #111;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    .section {
+        margin-top: 25px;
+    }
+
+    .section h2 {
+        font-size: 18px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 8px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 11px;
+        border-bottom: 1px solid #eee;
+        text-align: left;
+    }
+
+    th {
+        width: 45%;
+        background: #f8f9fa;
+    }
+
+    .net {
+        font-size: 22px;
+        font-weight: 800;
+    }
+</style>
+
+<div class="payslip-page">
+
+    <div class="payslip-card">
+
+        <div class="header">
+
+            <div>
+                <h1>Payslip</h1>
+                <p>
+                    <strong>{{ payslip.payslip_number }}</strong>
+                </p>
+            </div>
+
+            <div class="actions">
+
+                <a class="btn btn-warning"
+                   href="{% url 'hr_payroll:payslip_edit' payslip.pk %}">
+                    Edit
+                </a>
+
+                <a class="btn btn-primary"
+                   href="{% url 'hr_payroll:payslip_print' payslip.pk %}">
+                    Print
+                </a>
+
+                <a class="btn btn-danger"
+                   href="{% url 'hr_payroll:payslip_delete' payslip.pk %}">
+                    Delete
+                </a>
+
+                <a class="btn btn-secondary"
+                   href="{% url 'hr_payroll:payslip_list' %}">
+                    Back
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2>Employee Information</h2>
+
+            <table>
+
+                <tr>
+                    <th>Employee Number</th>
+                    <td>{{ employee.employee_number }}</td>
+                </tr>
+
+                <tr>
+                    <th>Employee</th>
+                    <td>{{ employee.full_name }}</td>
+                </tr>
+
+                <tr>
+                    <th>Email</th>
+                    <td>{{ employee.email|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Phone</th>
+                    <td>{{ employee.phone|default:"—" }}</td>
+                </tr>
+
+                <tr>
+                    <th>Payroll Period</th>
+                    <td>{{ period.name }}</td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2>Salary Breakdown</h2>
+
+            <table>
+
+                <tr>
+                    <th>Basic Salary</th>
+                    <td>{{ record.basic_salary|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>Total Allowances</th>
+                    <td>{{ record.total_allowances|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>Gross Salary</th>
+                    <td>{{ record.gross_salary|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>Taxable Income</th>
+                    <td>{{ record.taxable_income|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>PAYE</th>
+                    <td>{{ record.paye|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>NSSF</th>
+                    <td>{{ record.nssf|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>SHA</th>
+                    <td>{{ record.sha|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>Housing Levy</th>
+                    <td>{{ record.housing_levy|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>
+                        Loan Deduction
+                        <small style="display:block;font-weight:normal;">
+                            Balance Remaining:
+                            KSh {{ loan_remaining_balance|floatformat:2 }}
+                        </small>
+                    </th>
+                    <td>
+                        KSh {{ record.loan_deductions|floatformat:2 }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Other Deductions</th>
+                    <td>{{ record.other_deductions|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>Total Deductions</th>
+                    <td>{{ record.total_deductions|floatformat:2 }}</td>
+                </tr>
+
+                <tr>
+                    <th>Net Salary</th>
+                    <td class="net">
+                        {{ record.net_salary|floatformat:2 }}
+                    </td>
+                </tr>
+
+            </table>
+
+        </div>
+
+
+        <div class="section">
+
+            <h2>Payslip Status</h2>
+
+            <table>
+
+                <tr>
+                    <th>Generated</th>
+                    <td>{{ payslip.generated_at }}</td>
+                </tr>
+
+                <tr>
+                    <th>Sent</th>
+                    <td>
+                        {% if payslip.is_sent %}
+                            Yes
+                        {% else %}
+                            No
+                        {% endif %}
+                    </td>
+                </tr>
+
+                {% if payslip.sent_at %}
+                <tr>
+                    <th>Sent At</th>
+                    <td>{{ payslip.sent_at }}</td>
+                </tr>
+                {% endif %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

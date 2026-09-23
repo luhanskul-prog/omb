@@ -1,0 +1,350 @@
+﻿
+{% extends "termly_submission/base.html" %}
+
+{% block termly_content %}
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h2>View Submission</h2>
+
+        <p class="text-muted">
+            Search a teacher using the employee number.
+        </p>
+
+        <form method="get"
+              class="row g-3">
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Academic Year
+                </label>
+
+                <select name="academic_year"
+                        class="form-select">
+
+                    {% for year in academic_years %}
+
+                    <option value="{{ year.pk }}"
+                        {% if selected_year.pk == year.pk %}
+                            selected
+                        {% endif %}>
+
+                        {{ year.year }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-3">
+
+                <label class="form-label">
+                    Term
+                </label>
+
+                <select name="term"
+                        class="form-select">
+
+                    {% for term in terms %}
+
+                    <option value="{{ term.pk }}"
+                        {% if selected_term.pk == term.pk %}
+                            selected
+                        {% endif %}>
+
+                        {{ term.name }}
+
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Employee Number
+                </label>
+
+                <input type="text"
+                       name="employee_number"
+                       value="{{ employee_number }}"
+                       class="form-control"
+                       placeholder="Enter employee number"
+                       required>
+
+            </div>
+
+
+            <div class="col-md-2 d-flex align-items-end">
+
+                <button class="btn btn-primary w-100">
+                    View Submission
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+{% if selected_teacher and report %}
+
+<div class="alert alert-primary">
+
+    <h4>
+        {{ selected_teacher.name }}
+    </h4>
+
+    Employee Number:
+    <strong>{{ employee_number }}</strong>
+
+    <br>
+
+    {{ selected_year.year }} â€”
+    {{ selected_term.name }}
+
+</div>
+
+
+<div class="row mb-4">
+
+    <div class="col-md-3">
+
+        <div class="card">
+
+            <div class="card-body text-center">
+
+                <h6>Expected</h6>
+
+                <h2>
+                    {{ report.total_expected }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <div class="card">
+
+            <div class="card-body text-center">
+
+                <h6>Approved</h6>
+
+                <h2>
+                    {{ report.total_approved }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <div class="card">
+
+            <div class="card-body text-center">
+
+                <h6>Outstanding</h6>
+
+                <h2>
+                    {{ report.total_outstanding }}
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="col-md-3">
+
+        <div class="card">
+
+            <div class="card-body text-center">
+
+                <h6>Submission</h6>
+
+                <h2>
+                    {{ report.overall_percentage }}%
+                </h2>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card mb-4">
+
+    <div class="card-body">
+
+        <h4>
+            Subject Submission Breakdown
+        </h4>
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-striped">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Class</th>
+                        <th>Stream</th>
+                        <th>Subject</th>
+
+                        <th>Schemes<br>Approved / Expected</th>
+                        <th>Records<br>Approved / Expected</th>
+                        <th>Lesson Plans<br>Approved / Expected</th>
+
+                        <th>Expected</th>
+                        <th>Approved</th>
+                        <th>Outstanding</th>
+                        <th>%</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for row in report.rows %}
+
+                    <tr>
+
+                        <td>
+                            {{ row.requirement.class_name }}
+                        </td>
+
+                        <td>
+                            {{ row.requirement.stream|default:"-" }}
+                        </td>
+
+                        <td>
+                            {{ row.requirement.subject }}
+                        </td>
+
+                        <td>
+                            {{ row.schemes_approved }}
+                            /
+                            {{ row.requirement.expected_schemes }}
+                        </td>
+
+                        <td>
+                            {{ row.records_approved }}
+                            /
+                            {{ row.requirement.expected_records }}
+                        </td>
+
+                        <td>
+                            {{ row.lessons_approved }}
+                            /
+                            {{ row.requirement.expected_lesson_plans }}
+                        </td>
+
+                        <td>
+                            {{ row.expected }}
+                        </td>
+
+                        <td>
+                            {{ row.approved }}
+                        </td>
+
+                        <td>
+                            {{ row.outstanding }}
+                        </td>
+
+                        <td>
+                            <strong>
+                                {{ row.percentage }}%
+                            </strong>
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+
+                        <td colspan="10"
+                            class="text-center">
+
+                            No requirements have been
+                            configured for this teacher
+                            and term.
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h4>
+            Admin Feedback
+        </h4>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <textarea name="general_feedback"
+                      class="form-control"
+                      rows="5"
+                      placeholder="Enter feedback for this teacher...">{{ general_feedback }}</textarea>
+
+            <button class="btn btn-primary mt-3">
+                Save Feedback
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
+

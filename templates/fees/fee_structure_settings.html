@@ -1,0 +1,1162 @@
+
+<style>
+    /* Compact fee structure result panels */
+    .fee-results-scroll {
+        max-height: 420px;
+        overflow-y: auto;
+        overflow-x: auto;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+    }
+
+    .fee-results-scroll table {
+        margin-bottom: 0;
+    }
+
+    .fee-results-scroll thead th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        white-space: nowrap;
+    }
+
+    .fee-results-scroll tbody td {
+        white-space: nowrap;
+    }
+
+    .fee-results-summary {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+</style>
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-cash-stack me-2"></i>
+                Fee Structure Settings
+            </h2>
+
+            <p class="text-muted mb-0">
+                Configure fees by academic year, term and class.
+            </p>
+        </div>
+
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- TERM MANAGEMENT -->
+
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+
+        <h5 class="fw-bold mb-1">
+            <i class="bi bi-calendar3 me-1"></i>
+            Term Management
+        </h5>
+
+        <p class="text-muted mb-4">
+            Set term dates, open a term and close it when the term ends.
+            Closing a term carries outstanding learner balances forward.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_term">
+
+            <div class="row g-3">
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Academic Year</label>
+
+                    <select name="term_year"
+                            class="form-select"
+                            required>
+                        <option value="">Select Year</option>
+
+                        {% for year in years %}
+                            <option value="{{ year.id }}">
+                                {{ year.year }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Term</label>
+
+                    <select name="term_setup"
+                            class="form-select"
+                            required>
+                        <option value="">Select Term</option>
+
+                        {% for term in terms %}
+                            <option value="{{ term.id }}">
+                                {{ term.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Start Date</label>
+
+                    <input type="date"
+                           name="start_date"
+                           class="form-control"
+                           required>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">End Date</label>
+
+                    <input type="date"
+                           name="end_date"
+                           class="form-control"
+                           required>
+                </div>
+
+            </div>
+
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-unlock-fill me-1"></i>
+                    Save / Open Term
+                </button>
+            </div>
+        </form>
+
+        <hr class="my-4">
+
+        <h6 class="fw-bold mb-3">
+            <i class="bi bi-list-check me-1"></i>
+            Term Status
+        </h6>
+
+        <div class="table-responsive">
+            <table class="table table-bordered align-middle mb-0">
+
+                <thead class="table-primary">
+                    <tr>
+                        <th>Term</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for term in terms %}
+
+                        <tr>
+
+                            <td>{{ term.name }}</td>
+
+                            <td>
+                                {% if term.start_date %}
+                                    {{ term.start_date|date:"d M Y" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if term.end_date %}
+                                    {{ term.end_date|date:"d M Y" }}
+                                {% else %}
+                                    -
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if term.is_closed %}
+                                    <span class="badge bg-secondary">
+                                        Closed
+                                    </span>
+                                {% elif term.is_active %}
+                                    <span class="badge bg-success">
+                                        Open
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        Inactive
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if not term.is_closed %}
+
+                                    <form method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Close this term and carry outstanding learner balances to the next term?');">
+
+                                        {% csrf_token %}
+
+                                        <input type="hidden"
+                                               name="action"
+                                               value="close_term">
+
+                                        <input type="hidden"
+                                               name="close_year"
+                                               value="{{ selected_year }}">
+
+                                        <input type="hidden"
+                                               name="close_term"
+                                               value="{{ term.id }}">
+
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-lock-fill me-1"></i>
+                                            Close Term
+                                        </button>
+
+                                    </form>
+
+                                {% else %}
+
+                                    <span class="text-muted">
+                                        Term closed
+                                    </span>
+
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5"
+                                class="text-center text-muted py-3">
+                                No terms configured.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+<!-- BULK FEE STRUCTURE -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <h5 class="fw-bold mb-1">
+            <i class="bi bi-grid-3x3-gap-fill me-1"></i>
+            Bulk Fee Structure
+        </h5>
+
+        <p class="text-muted mb-4">
+            Select an academic year and term, then enter fee items
+            and amounts for all configured classes at once.
+        </p>
+
+        <form method="post" id="bulkFeeForm">
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="action"
+                   value="bulk_add">
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Academic Year
+                    </label>
+
+                    <select name="bulk_year"
+                            id="bulkYear"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Select Year
+                        </option>
+
+                        {% for year in years %}
+
+                            <option value="{{ year.id }}"
+                                {% if selected_year|stringformat:"s" == year.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}>
+                                {{ year.year }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-bold">
+                        Term
+                    </label>
+
+                    <select name="bulk_term"
+                            id="bulkTerm"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Select Term
+                        </option>
+
+                        {% for term in terms %}
+
+                            <option value="{{ term.id }}"
+                                {% if selected_term|stringformat:"s" == term.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}>
+                                {{ term.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered align-middle">
+
+                    <thead class="table-primary">
+
+                        <tr>
+                            <th style="width: 25%;">
+                                Class
+                            </th>
+
+                            <th style="width: 35%;">
+                                Fee Item
+                            </th>
+
+                            <th style="width: 25%;">
+                                Amount (KSh)
+                            </th>
+
+                            <th style="width: 15%;">
+                                Status
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for class_name in classes %}
+
+                        <tr>
+
+                            <td>
+                                <span class="fw-bold">
+                                    {{ class_name }}
+                                </span>
+
+                                <input type="hidden"
+                                       name="bulk_class_{{ forloop.counter0 }}"
+                                       value="{{ class_name }}">
+                            </td>
+
+                            <td>
+
+                                <input type="text"
+                                       name="bulk_fee_item"
+                                       class="form-control"
+                                       value="Tuition"
+                                       required>
+
+                            </td>
+
+                            <td>
+
+                                <input type="number"
+                                       name="bulk_amount_{{ forloop.counter0 }}"
+                                       class="form-control"
+                                       min="0"
+                                       step="0.01"
+                                       placeholder="0.00"
+                                       required>
+
+                            </td>
+
+                            <td>
+                                <span class="badge bg-light text-dark">
+                                    Ready
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td colspan="4"
+                                class="text-center text-muted py-4">
+
+                                No active classes have been configured.
+
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            {% if classes %}
+
+            <div class="mt-3 d-flex gap-2 flex-wrap">
+
+                <button type="submit"
+                        class="btn btn-primary"
+                        onclick="return confirm('Save this fee structure for all listed classes?');">
+
+                    <i class="bi bi-save me-1"></i>
+                    Save Fee Structure for All Classes
+
+                </button>
+
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        onclick="fillSameAmount();">
+
+                    <i class="bi bi-arrow-down-up me-1"></i>
+                    Same Amount for All
+
+                </button>
+
+            </div>
+
+            {% endif %}
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+function fillSameAmount() {
+
+    const amount = prompt(
+        "Enter the same amount for all classes (KSh):"
+    );
+
+    if (amount === null || amount.trim() === "") {
+        return;
+    }
+
+    document
+        .querySelectorAll('input[name^="bulk_amount_"]')
+        .forEach(function(input) {
+            input.value = amount;
+        });
+}
+
+document
+    .getElementById("bulkYear")
+    ?.addEventListener("change", function() {
+
+        const year = this.value;
+
+        if (!year) {
+            return;
+        }
+
+        const url = new URL(
+            window.location.href
+        );
+
+        url.searchParams.set("year", year);
+        url.searchParams.delete("term");
+
+        window.location.href = url.toString();
+
+    });
+
+</script>
+
+
+
+<!-- CONFIGURED FEE ITEMS -->
+
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body d-flex
+                justify-content-between
+                align-items-center">
+
+        <div>
+
+            <h5 class="fw-bold mb-1">
+                <i class="bi bi-list-check me-1"></i>
+                Configured Fee Items
+            </h5>
+
+            <p class="text-muted mb-0">
+                View fee items by Year, Term and Class.
+            </p>
+
+        </div>
+
+        <a href="{% url 'fees:configured_fee_items' %}"
+           class="btn btn-primary btn-lg">
+
+            <i class="bi bi-list-check me-2"></i>
+            Configured Fee Items
+
+        </a>
+
+    </div>
+
+</div>
+
+<!-- ADD FEE -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-plus-circle-fill me-1"></i>
+                Add Fee Item
+            </h5>
+
+            <form method="post">
+{% csrf_token %}
+<input type="hidden"
+                       name="action"
+                       value="add">
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Academic Year
+                        </label>
+
+                        <select name="academic_year"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Year
+                            </option>
+
+                            {% for year in years %}
+
+                                <option value="{{ year.id }}">
+                                    {{ year.year }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Term
+                        </label>
+
+                        <select name="term"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Term
+                            </option>
+
+                            {% for term in terms %}
+
+                                <option value="{{ term.id }}">
+                                    {{ term.name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Class
+                        </label>
+
+                        <select name="class_name"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            {% for class_name in classes %}
+
+                                <option value="{{ class_name }}">
+                                    {{ class_name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Fee Item
+                        </label>
+
+                        <input type="text"
+                               name="fee_item"
+                               class="form-control"
+                               placeholder="e.g. Tuition"
+                               required>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Amount
+                        </label>
+
+                        <input type="number"
+                               name="amount"
+                               class="form-control"
+                               min="0"
+                               step="0.01"
+                               placeholder="0.00"
+                               required>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <button class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>
+                        Add Fee Item
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- COPY STRUCTURE -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-copy me-1"></i>
+                Copy Fee Structure
+            </h5>
+
+            <form method="post">
+{% csrf_token %}
+<input type="hidden"
+                       name="action"
+                       value="copy">
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            From Year
+                        </label>
+
+                        <select name="source_year"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            {% for year in years %}
+                                <option value="{{ year.id }}">
+                                    {{ year.year }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            From Term
+                        </label>
+
+                        <select name="source_term"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            {% for term in terms %}
+                                <option value="{{ term.id }}">
+                                    {{ term.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            To Year
+                        </label>
+
+                        <select name="target_year"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            {% for year in years %}
+                                <option value="{{ year.id }}">
+                                    {{ year.year }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-3">
+
+                        <label class="form-label">
+                            To Term
+                        </label>
+
+                        <select name="target_term"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            {% for term in terms %}
+                                <option value="{{ term.id }}">
+                                    {{ term.name }}
+                                </option>
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-3">
+
+                    <button class="btn btn-outline-primary">
+                        <i class="bi bi-copy me-1"></i>
+                        Copy Structure
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- FILTER -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-funnel-fill me-1"></i>
+                Filter Fee Structures
+            </h5>
+
+            <form method="get">
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <select name="year"
+                                class="form-select">
+
+                            <option value="">
+                                All Academic Years
+                            </option>
+
+                            {% for year in years %}
+
+                                <option value="{{ year.id }}"
+                                    {% if selected_year == year.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ year.year }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <select name="term"
+                                class="form-select">
+
+                            <option value="">
+                                All Terms
+                            </option>
+
+                            {% for term in terms %}
+
+                                <option value="{{ term.id }}"
+                                    {% if selected_term == term.id|stringformat:"s" %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ term.name }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <select name="class"
+                                class="form-select">
+
+                            <option value="">
+                                All Classes
+                            </option>
+
+                            {% for class_name in classes %}
+
+                                <option value="{{ class_name }}"
+                                    {% if selected_class == class_name %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ class_name }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary mt-3">
+                    <i class="bi bi-search me-1"></i>
+                    Apply Filters
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- STRUCTURES -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h5 class="fw-bold mb-0">
+                    Configured Fee Items
+                </h5>
+
+                <span class="badge bg-primary">
+                    {{ structures|length }}
+                </span>
+
+            </div>
+
+            <div class="fee-results-summary mb-2">Showing configured fee items. Scroll inside the panel to view all records.</div>
+<div class="fee-results-scroll">
+<div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead class="table-primary">
+
+                        <tr>
+                            <th>Year</th>
+                            <th>Term</th>
+                            <th>Class</th>
+                            <th>Fee Item</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+    {% for item in structures %}
+
+    <tr>
+
+        <td>
+            {{ item.academic_year.year }}
+        </td>
+
+        <td>
+            {{ item.term.name }}
+        </td>
+
+        <td>
+            <strong>{{ item.class_name }}</strong>
+        </td>
+
+        <td>
+            <strong>{{ item.fee_item }}</strong>
+        </td>
+
+        <td>
+            KSh {{ item.amount|floatformat:2 }}
+        </td>
+
+        <td>
+            {% if item.is_active %}
+                <span class="badge bg-success">Active</span>
+            {% else %}
+                <span class="badge bg-secondary">Inactive</span>
+            {% endif %}
+        </td>
+
+        <td class="text-nowrap">
+
+            <a href="{% url 'fees:edit_fee_structure' item.id %}"
+               class="btn btn-sm btn-outline-primary">
+                Edit
+            </a>
+
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden"
+                       name="action"
+                       value="toggle">
+                <input type="hidden"
+                       name="structure_id"
+                       value="{{ item.id }}">
+
+                <button type="submit"
+                        class="btn btn-sm btn-outline-warning">
+                    {% if item.is_active %}
+                        Disable
+                    {% else %}
+                        Activate
+                    {% endif %}
+                </button>
+            </form>
+
+            <form method="post"
+                  class="d-inline"
+                  onsubmit="return confirm('Delete this fee item?');">
+
+                {% csrf_token %}
+
+                <input type="hidden"
+                       name="action"
+                       value="delete">
+
+                <input type="hidden"
+                       name="structure_id"
+                       value="{{ item.id }}">
+
+                <button type="submit"
+                        class="btn btn-sm btn-outline-danger">
+                    Delete
+                </button>
+
+            </form>
+
+        </td>
+
+    </tr>
+
+    {% empty %}
+
+    <tr>
+        <td colspan="7" class="text-center text-muted py-4">
+            No fee structures configured yet.
+        </td>
+    </tr>
+
+    {% endfor %}
+
+</tbody>
+
+                </table>
+
+            </div>
+</div>
+
+        </div>
+
+    </div>
+
+    <!-- TOTALS -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <h5 class="fw-bold mb-3">
+                <i class="bi bi-calculator-fill me-1"></i>
+                Fee Totals by Class
+            </h5>
+
+            <div class="fee-results-summary mb-2">Class totals for the selected fee structures.</div>
+<div class="fee-results-scroll">
+<div class="table-responsive">
+
+                <table class="table table-sm align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Academic Year</th>
+                            <th>Term</th>
+                            <th>Class</th>
+                            <th>Total Structure</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for total in totals %}
+
+                            <tr>
+
+                                <td>
+                                    {{ total.academic_year__year }}
+                                </td>
+
+                                <td>
+                                    {{ total.term__name }}
+                                </td>
+
+                                <td>
+                                    {{ total.class_name }}
+                                </td>
+
+                                <td class="fw-bold">
+                                    KSh {{ total.total|floatformat:2 }}
+                                </td>
+
+                            </tr>
+
+                        {% empty %}
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="text-center text-muted">
+
+                                    No totals available.
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+</div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

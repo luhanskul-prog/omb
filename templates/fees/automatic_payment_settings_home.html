@@ -1,0 +1,250 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4" style="max-width:1200px;">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">Activate Automatic Payments</h2>
+
+        <p class="text-muted mb-0">
+            Configure and control all automatic payment methods.
+            Changes saved here apply to future payments immediately.
+        </p>
+    </div>
+
+
+    <!-- GENERAL -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-header bg-dark text-white fw-bold">
+            GENERAL AUTOMATIC PAYMENT SETTINGS
+        </div>
+
+        <div class="card-body">
+
+            <form method="post">
+
+                {% csrf_token %}
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Environment
+                        </label>
+
+                        <select
+                            name="environment"
+                            class="form-select"
+                        >
+
+                            <option
+                                value="sandbox"
+                                {% if settings.environment == "sandbox" %}
+                                selected
+                                {% endif %}
+                            >
+                                Sandbox
+                            </option>
+
+                            <option
+                                value="production"
+                                {% if settings.environment == "production" %}
+                                selected
+                                {% endif %}
+                            >
+                                Production
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="form-check form-switch mt-4">
+
+                            <input
+                                type="checkbox"
+                                name="is_active"
+                                class="form-check-input"
+                                id="automaticPaymentsActive"
+                                {% if settings.is_active %}
+                                checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label fw-bold"
+                                for="automaticPaymentsActive"
+                            >
+                                ENABLE AUTOMATIC PAYMENTS SYSTEM
+                            </label>
+
+                        </div>
+
+                        <div class="small text-muted mt-1">
+                            Turn this OFF to temporarily disable all
+                            automatic payment methods.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success mt-3 fw-bold"
+                >
+                    SAVE GENERAL SETTINGS
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- SELECT METHOD -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-primary text-white fw-bold">
+            SELECT AUTOMATIC PAYMENT METHOD
+        </div>
+
+        <div class="card-body">
+
+            <div class="row g-4">
+
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 border">
+
+                        <div class="card-body">
+
+                            <h4 class="fw-bold">
+                                M-PESA ONLINE
+                            </h4>
+
+                            <p class="text-muted">
+                                Configure M-Pesa STK Push.
+                            </p>
+
+                            <a
+                                href="{% url 'fees:mpesa_online_settings' %}"
+                                class="btn btn-primary"
+                            >
+                                CONFIGURE M-PESA ONLINE ?
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 border">
+
+                        <div class="card-body">
+
+                            <h4 class="fw-bold">
+                                M-PESA TILL
+                            </h4>
+
+                            <p class="text-muted">
+                                Configure M-Pesa Till / Buy Goods payments.
+                            </p>
+
+                            <a
+                                href="{% url 'fees:mpesa_till_settings' %}"
+                                class="btn btn-primary"
+                            >
+                                CONFIGURE M-PESA TILL ?
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 border">
+
+                        <div class="card-body">
+
+                            <h4 class="fw-bold">
+                                M-PESA PAYBILL
+                            </h4>
+
+                            <p class="text-muted">
+                                Configure PayBill credentials,
+                                C2B callbacks and automation.
+                            </p>
+
+                            <a
+                                href="{% url 'fees:mpesa_paybill_settings' %}"
+                                class="btn btn-primary"
+                            >
+                                CONFIGURE M-PESA PAYBILL ?
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <div class="card h-100 border">
+
+                        <div class="card-body">
+
+                            <h4 class="fw-bold">
+                                BANK
+                            </h4>
+
+                            <p class="text-muted">
+                                Configure bank payments,
+                                verification and reconciliation.
+                            </p>
+
+                            <a
+                                href="{% url 'fees:bank_settings' %}"
+                                class="btn btn-primary"
+                            >
+                                CONFIGURE BANK ?
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

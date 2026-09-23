@@ -1,0 +1,106 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Subject Marks Excel</title>
+    <style>
+        body{font-family:Arial,sans-serif;background:#f4f7fb;margin:0;padding:30px}
+        .box{max-width:850px;margin:auto;background:white;padding:30px;border-radius:12px;box-shadow:0 4px 18px #0001}
+        h1{margin-top:0}
+        label{display:block;font-weight:bold;margin-top:18px}
+        select,input,button{width:100%;padding:12px;margin-top:7px;border:1px solid #ccc;border-radius:6px;box-sizing:border-box}
+        button{background:#16834a;color:white;font-weight:bold;border:0;margin-top:25px;cursor:pointer}
+        .info{background:#eef5ff;padding:15px;border-radius:8px;margin-bottom:20px}
+        .warning{background:#fff4d6;padding:15px;border-radius:8px;margin-top:20px}
+        .messages{margin:15px 0}
+        .message{padding:12px 15px;border-radius:7px;margin-bottom:8px;font-weight:600}
+        .message.error{background:#fff1f1;border:1px solid #dc3545;color:#842029}
+        .message.success{background:#edf9f0;border:1px solid #198754;color:#146c43}
+        .message.warning{background:#fff4d6;border:1px solid #ffc107;color:#664d03}
+        .message.info{background:#eef5ff;border:1px solid #0d6efd;color:#084298}
+        .back{display:inline-block;margin-bottom:20px}
+    </style>
+</head>
+<body>
+<div class="box">
+
+    <a class="back" href="/academic/assessments/">← Assessment & Marks Management</a>
+
+    <h1>Upload Subject Marks Excel</h1>
+
+    <div class="info">
+        Upload a completed Subject Marks Excel file.
+        The selected assessment, class, stream and subject must match the workbook.
+        Only authorized teachers can upload marks.
+    </div>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <label>Active Assessment</label>
+        <select name="window" required>
+            <option value="">-- Select Assessment --</option>
+            {% for window in windows %}
+            <option value="{{ window.id }}"
+                {% if selected_window_id|stringformat:"s" == window.id|stringformat:"s" %}selected{% endif %}>
+                {{ window.academic_year }} — {{ window.term }} — {{ window.assessment_type }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Class</label>
+        <select name="class_name" onchange="this.form.method='get'; this.form.submit()" required>
+            <option value="">-- Select Class --</option>
+            {% for item in classes %}
+            <option value="{{ item }}" {% if selected_class == item %}selected{% endif %}>
+                {{ item }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Stream</label>
+        <select name="stream">
+            <option value="">All Streams</option>
+            {% for item in streams %}
+            <option value="{{ item }}" {% if selected_stream == item %}selected{% endif %}>
+                {{ item }}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Subject</label>
+        <select name="subject" required>
+            <option value="">-- Select Subject --</option>
+            {% for subject in subjects %}
+            <option value="{{ subject.id }}"
+                {% if selected_subject_id|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
+                {{ subject.name }}{% if subject.code %} ({{ subject.code }}){% endif %}
+            </option>
+            {% endfor %}
+        </select>
+
+        <label>Excel File</label>
+        <input type="file" name="excel_file" accept=".xlsx" required>
+
+        <button type="submit">Upload Subject Marks</button>
+    </form>
+
+    <div class="warning">
+        <strong>Important:</strong>
+        Only enter marks in the Mark column of the generated Excel file.
+        Marks must be between 0 and 100.
+    </div>
+
+</div>
+</body>
+</html>

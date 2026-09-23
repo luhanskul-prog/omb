@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-inbox-fill me-2"></i>
+                Online Admission Applications
+            </h2>
+            <p class="text-muted mb-0">
+                Review and admit applicants into the school.
+            </p>
+        </div>
+
+        <a href="{% url 'student_management' %}"
+           class="btn btn-outline-secondary">
+            ← Student Management
+        </a>
+    </div>
+
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">PENDING APPLICATIONS</div>
+                    <div class="fs-2 fw-bold">
+                        {{ pending_count }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">ADMITTED</div>
+                    <div class="fs-2 fw-bold">
+                        {{ admitted_count }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="text-muted small">REJECTED</div>
+                    <div class="fs-2 fw-bold">
+                        {{ rejected_count }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="get" class="row g-2">
+
+                <div class="col-md-7">
+                    <input type="text"
+                           name="search"
+                           value="{{ search }}"
+                           class="form-control"
+                           placeholder="Search applicant, application number or parent...">
+                </div>
+
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Statuses</option>
+                        <option value="Pending"
+                            {% if selected_status == "Pending" %}selected{% endif %}>
+                            Pending
+                        </option>
+                        <option value="Admitted"
+                            {% if selected_status == "Admitted" %}selected{% endif %}>
+                            Admitted
+                        </option>
+                        <option value="Rejected"
+                            {% if selected_status == "Rejected" %}selected{% endif %}>
+                            Rejected
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <button class="btn btn-primary w-100">
+                        Search
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm border-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>No.</th>
+                        <th>Applicant</th>
+                        <th>Application No.</th>
+                        <th>Class</th>
+                        <th>Stream</th>
+                        <th>Parent</th>
+                        <th>Phone</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for application in applications %}
+
+                    <tr>
+
+                        <td>{{ forloop.counter }}</td>
+
+                        <td class="fw-semibold">
+                            {{ application.get_full_name }}
+                        </td>
+
+                        <td>{{ application.application_no }}</td>
+
+                        <td>{{ application.requested_class }}</td>
+
+                        <td>{{ application.requested_stream|default:"—" }}</td>
+
+                        <td>{{ application.parent_name }}</td>
+
+                        <td>{{ application.parent_phone }}</td>
+
+                        <td>
+
+                            {% if application.status == "Pending" %}
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+                            {% elif application.status == "Admitted" %}
+                                <span class="badge bg-success">
+                                    Admitted
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            <a href="{% url 'online_application_detail' application.id %}"
+                               class="btn btn-sm btn-primary">
+                                Review
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="9"
+                            class="text-center py-5 text-muted">
+                            No online applications found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,261 @@
+﻿{% extends "library/base.html" %}
+{% load library_extras %}
+
+{% block page_title %}
+Library Dashboard
+{% endblock %}
+
+{% block content %}
+
+<div class="actions">
+
+    <a class="btn" href="{% url 'library_book_add' %}">
+        + Add Book
+    </a>
+
+    <a class="btn" href="{% url 'library_issue_add' %}">
+        Issue Book
+    </a>
+
+    <a class="btn secondary" href="{% url 'library_member_add' %}">
+        + Add Member
+    </a>
+
+    <a class="btn light" href="{% url 'library_reports' %}">
+        Reports
+    </a>
+
+</div>
+
+<div class="cards">
+
+    <div class="card">
+        <div class="muted">Total Books</div>
+        <div class="stat">{{ books_count }}</div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Categories</div>
+        <div class="stat">{{ categories_count }}</div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Members</div>
+        <div class="stat">{{ members_count }}</div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Total Issues</div>
+        <div class="stat">{{ issues_count }}</div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Currently Issued</div>
+        <div class="stat">{{ active_issues }}</div>
+    </div>
+
+    <div class="card">
+        <div class="muted">Overdue</div>
+        <div class="stat">{{ overdue_count }}</div>
+    </div>
+
+</div>
+
+<div class="table-wrap">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th colspan="3">Recently Added Books</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for book in recent_books %}
+
+            <tr>
+                <td>{{ book }}</td>
+                <td>
+                    <a class="btn light"
+                       href="{% url 'library_book_edit' book.pk %}">
+                        Edit
+                    </a>
+                </td>
+                <td>
+                    <a class="btn light"
+                       href="{% url 'library_books' %}">
+                        View
+                    </a>
+                </td>
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td>No books available.</td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
+
+
+
+
+<!-- =====================================================
+     LIBRARY MEMBER FUNCTIONS
+     ===================================================== -->
+
+<style>
+
+.library-member-functions {
+    margin-top: 25px;
+}
+
+.library-member-functions-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.library-member-functions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.library-member-card {
+    display: block;
+    text-decoration: none;
+    border-radius: 14px;
+    padding: 22px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 5px 18px rgba(0,0,0,.07);
+    transition: .2s ease;
+}
+
+.library-member-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 9px 25px rgba(0,0,0,.12);
+}
+
+.library-member-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef4ff;
+    font-size: 23px;
+    margin-bottom: 13px;
+}
+
+.library-member-card h3 {
+    margin: 0 0 7px;
+    font-size: 17px;
+    color: #111827;
+}
+
+.library-member-card p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+
+    .library-member-functions-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+</style>
+
+
+<section class="library-member-functions">
+
+    <div class="library-member-functions-title">
+        Library Members
+    </div>
+
+
+    <div class="library-member-functions-grid">
+
+
+        <a
+            href="{% url 'library_members' %}"
+            class="library-member-card"
+        >
+
+            <div class="library-member-icon">
+                🔎
+            </div>
+
+            <h3>
+                Search Members
+            </h3>
+
+            <p>
+                Search, edit and manage registered library members.
+            </p>
+
+        </a>
+
+
+        <a
+            href="{% url 'library_student_members' %}"
+            class="library-member-card"
+        >
+
+            <div class="library-member-icon">
+                🎓
+            </div>
+
+            <h3>
+                Student Members
+            </h3>
+
+            <p>
+                Filter student library members by class and stream,
+                then print student registers.
+            </p>
+
+        </a>
+
+
+        <a
+            href="{% url 'library_staff_members' %}"
+            class="library-member-card"
+        >
+
+            <div class="library-member-icon">
+                👨‍🏫
+            </div>
+
+            <h3>
+                Staff Members
+            </h3>
+
+            <p>
+                Search staff library members and print staff registers.
+            </p>
+
+        </a>
+
+
+    </div>
+
+</section>
+

@@ -1,0 +1,189 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+
+.payroll-create-page {
+    max-width: 900px;
+    margin: 35px auto;
+    padding: 20px;
+}
+
+.payroll-create-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 35px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.09);
+}
+
+.payroll-create-header {
+    background: linear-gradient(135deg,#1769e0,#0d47a1);
+    color: white;
+    padding: 25px;
+    border-radius: 14px;
+    margin-bottom: 30px;
+}
+
+.payroll-create-header h1 {
+    margin: 0 0 8px;
+}
+
+.payroll-create-header p {
+    margin: 0;
+    opacity: .9;
+}
+
+.payroll-fields {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+    gap: 22px;
+}
+
+.field-box label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.field-box select {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid #d5dbe3;
+    border-radius: 9px;
+    background: white;
+    font-size: 15px;
+}
+
+.notice {
+    margin-top: 25px;
+    padding: 15px;
+    background: #eef6ff;
+    border-radius: 10px;
+    color: #174a7a;
+}
+
+.errors {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #fff1f0;
+    border-radius: 10px;
+    color: #b42318;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: 0;
+    border-radius: 9px;
+    padding: 13px 22px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #1769e0;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+@media(max-width:700px) {
+    .payroll-fields {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+<div class="payroll-create-page">
+
+    <div class="payroll-create-card">
+
+        <div class="payroll-create-header">
+            <h1>➕ Create Monthly Payroll</h1>
+            <p>Select the payroll month and active school year.</p>
+        </div>
+
+        {% if form.non_field_errors %}
+            <div class="errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="payroll-fields">
+
+                <div class="field-box">
+
+                    <label for="{{ form.year.id_for_label }}">
+                        Payroll Year
+                    </label>
+
+                    {{ form.year }}
+
+                    {% if form.year.errors %}
+                        <div class="errors">
+                            {{ form.year.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+                <div class="field-box">
+
+                    <label for="{{ form.month.id_for_label }}">
+                        Payroll Month
+                    </label>
+
+                    {{ form.month }}
+
+                    {% if form.month.errors %}
+                        <div class="errors">
+                            {{ form.month.errors }}
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="notice">
+                <strong>Automatic payroll details</strong><br>
+                The system will automatically generate the payroll name,
+                first date, last date and Draft status from your selection.
+            </div>
+
+            <div class="actions">
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    🔄 Load Monthly Payroll
+                </button>
+
+                <a href="{% url 'hr_payroll:payroll_list' %}"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

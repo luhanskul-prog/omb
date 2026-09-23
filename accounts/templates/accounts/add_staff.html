@@ -1,0 +1,452 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Add Staff | Luhan ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        body {
+            background: #f4f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0d6efd, #084298);
+            color: white;
+            padding: 25px 0;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: 700;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .form-label {
+            font-weight: 600;
+        }
+
+        .required {
+            color: #dc3545;
+        }
+
+        .employee-info {
+            background: #eef5ff;
+            border: 1px solid #cfe2ff;
+            border-radius: 10px;
+            padding: 15px;
+            color: #084298;
+        }
+
+        .btn-create {
+            min-width: 180px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="container">
+
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+            <div>
+                <h2 class="mb-1">Add Staff Member</h2>
+
+                <p class="mb-0 opacity-75">
+                    Create a staff account and automatically link it to HR & Payroll.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'accounts:staff_management' %}"
+                class="btn btn-outline-light"
+            >
+                ← Staff Management
+            </a>
+
+        </div>
+
+    </div>
+</header>
+
+
+<main class="container pb-5">
+
+    {% if messages %}
+        {% for message in messages %}
+
+            <div
+                class="alert
+                {% if message.tags %}
+                    alert-{{ message.tags }}
+                {% else %}
+                    alert-info
+                {% endif %}
+                alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+    {% endif %}
+
+
+    <div class="card p-4">
+
+        <div class="employee-info mb-4">
+
+            <strong>Automatic HR Integration</strong>
+
+            <div class="small mt-1">
+                Saving this form creates one HR & Payroll Employee record,
+                one User account, and one linked Staff Profile.
+            </div>
+
+            <div class="small mt-1">
+                The Employee Number is generated automatically.
+            </div>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <!-- PERSONAL INFORMATION -->
+
+            <div class="section-title">
+                Personal Information
+            </div>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        First Name <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="first_name"
+                        class="form-control"
+                        value="{{ request.POST.first_name }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Last Name <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="last_name"
+                        class="form-control"
+                        value="{{ request.POST.last_name }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- CONTACT INFORMATION -->
+
+            <div class="section-title">
+                Contact Information
+            </div>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="text"
+                        name="phone"
+                        class="form-control"
+                        value="{{ request.POST.phone }}"
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        class="form-control"
+                        value="{{ request.POST.email }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- EMPLOYMENT -->
+
+            <div class="section-title">
+                Employment Information
+            </div>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Job Title
+                    </label>
+
+                    <input
+                        type="text"
+                        name="job_title"
+                        class="form-control"
+                        value="{{ request.POST.job_title }}"
+                        placeholder="e.g. Mathematics Teacher"
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Department
+                    </label>
+
+                    <select
+                        name="department"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            -- Select Department --
+                        </option>
+
+                        {% for department in departments %}
+
+                            <option
+                                value="{{ department.id }}"
+                                {% if request.POST.department == department.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ department.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Staff Role
+                    </label>
+
+                    <select
+                        name="custom_role"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            -- Select Role --
+                        </option>
+
+                        {% for role in roles %}
+
+                            <option
+                                value="{{ role.id }}"
+                                {% if request.POST.custom_role == role.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ role.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        User Group
+                    </label>
+
+                    <select
+                        name="group"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            -- Select Group --
+                        </option>
+
+                        {% for group in groups %}
+
+                            <option
+                                value="{{ group.id }}"
+                                {% if request.POST.group == group.id|stringformat:"s" %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ group.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGIN -->
+
+            <div class="section-title">
+                Staff Login Account
+            </div>
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Username <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="username"
+                        class="form-control"
+                        value="{{ request.POST.username }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3 mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Password <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="password"
+                        name="password"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        Confirm Password <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="password"
+                        name="confirm_password"
+                        class="form-control"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ACTIONS -->
+
+            <div class="border-top pt-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <a
+                    href="{% url 'accounts:staff_management' %}"
+                    class="btn btn-outline-secondary"
+                >
+                    Cancel
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-create"
+                >
+                    Create Staff Member
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</main>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+</body>
+</html>

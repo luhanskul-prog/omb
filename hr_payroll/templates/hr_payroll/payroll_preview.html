@@ -1,0 +1,406 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+
+.payroll-preview-page {
+    padding: 25px;
+    max-width: 1600px;
+    margin: auto;
+}
+
+.payroll-header {
+    background: linear-gradient(135deg,#1769e0,#0d47a1);
+    color: white;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.payroll-header h1 {
+    margin: 0 0 8px;
+}
+
+.meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.meta span {
+    background: rgba(255,255,255,.15);
+    padding: 7px 12px;
+    border-radius: 20px;
+}
+
+.status-draft {
+    background: #fff3cd !important;
+    color: #664d03;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(170px,1fr));
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+.summary-card {
+    background: white;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.07);
+}
+
+.summary-card .label {
+    color: #666;
+    font-size: 12px;
+    margin-bottom: 7px;
+}
+
+.summary-card .value {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.08);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1450px;
+}
+
+th, td {
+    padding: 11px 12px;
+    border-bottom: 1px solid #e7eaf0;
+    white-space: nowrap;
+}
+
+th {
+    background: #f1f5f9;
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+td {
+    font-size: 13px;
+}
+
+tbody tr:hover td {
+    background: #f8fbff;
+}
+
+.money {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.employee {
+    font-weight: 700;
+}
+
+.total-row td {
+    background: #eef6ff;
+    font-weight: 800;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 22px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: 0;
+    border-radius: 9px;
+    padding: 12px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-success {
+    background: #198754;
+    color: white;
+}
+
+.btn-primary {
+    background: #1769e0;
+    color: white;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+.empty {
+    padding: 45px;
+    text-align: center;
+    color: #777;
+}
+
+.warning {
+    margin-bottom: 20px;
+    background: #fff3cd;
+    color: #664d03;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+</style>
+
+<div class="payroll-preview-page">
+
+    <div class="payroll-header">
+
+        <h1>📊 {{ period.name }}</h1>
+
+        <div class="meta">
+            <span>
+                {{ period.start_date|date:"d M Y" }}
+                –
+                {{ period.end_date|date:"d M Y" }}
+            </span>
+
+            <span class="status-draft">
+                STATUS: {{ period.status }}
+            </span>
+
+            <span>
+                {{ employee_count }} Active Employees
+            </span>
+        </div>
+
+    </div>
+
+    {% if period.status == "PAID" %}
+
+    <div class="warning">
+        <strong>? Payroll Finalized</strong><br>
+        This payroll has been marked as PAID.
+        Staff loan deductions were applied during finalization.
+        The payroll is now read-only.
+    </div>
+
+    {% else %}
+
+    <div class="warning">
+        <strong>Payroll Preview</strong><br>
+        This calculation does not change staff loan balances.
+        Loan balances will only be updated when payroll is formally paid/finalized.
+    </div>
+
+    {% endif %}
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+            <div class="label">Basic Salary</div>
+            <div class="value">{{ totals.basic|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">Allowances</div>
+            <div class="value">{{ totals.allowances|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">Gross Salary</div>
+            <div class="value">{{ totals.gross|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">PAYE</div>
+            <div class="value">{{ totals.paye|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">NSSF</div>
+            <div class="value">{{ totals.nssf|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">SHA</div>
+            <div class="value">{{ totals.sha|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">Loans</div>
+            <div class="value">{{ totals.loans|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">Total Deductions</div>
+            <div class="value">{{ totals.deductions|floatformat:2 }}</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="label">Net Payroll</div>
+            <div class="value">{{ totals.net|floatformat:2 }}</div>
+        </div>
+
+    </div>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Employee</th>
+                    <th class="money">Basic</th>
+                    <th class="money">Allowances</th>
+                    <th class="money">Gross</th>
+                    <th class="money">PAYE</th>
+                    <th class="money">NSSF</th>
+                    <th class="money">SHA</th>
+                    <th class="money">Housing</th>
+                    <th class="money">Loans</th>
+                    <th class="money">Other</th>
+                    <th class="money">Total Ded.</th>
+                    <th class="money">Net Salary</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for row in preview %}
+
+                <tr>
+
+                    <td class="employee">
+                        {{ row.employee.full_name }}
+                    </td>
+
+                    <td class="money">{{ row.basic|floatformat:2 }}</td>
+                    <td class="money">{{ row.allowances|floatformat:2 }}</td>
+                    <td class="money">{{ row.gross|floatformat:2 }}</td>
+                    <td class="money">{{ row.paye|floatformat:2 }}</td>
+                    <td class="money">{{ row.nssf|floatformat:2 }}</td>
+                    <td class="money">{{ row.sha|floatformat:2 }}</td>
+                    <td class="money">{{ row.housing_levy|floatformat:2 }}</td>
+                    <td class="money">{{ row.loans|floatformat:2 }}</td>
+                    <td class="money">{{ row.other|floatformat:2 }}</td>
+                    <td class="money">{{ row.deductions|floatformat:2 }}</td>
+                    <td class="money"><strong>{{ row.net|floatformat:2 }}</strong></td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="12" class="empty">
+                        No active employees were found.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            {% if preview %}
+
+                <tr class="total-row">
+
+                    <td>TOTAL</td>
+
+                    <td class="money">{{ totals.basic|floatformat:2 }}</td>
+                    <td class="money">{{ totals.allowances|floatformat:2 }}</td>
+                    <td class="money">{{ totals.gross|floatformat:2 }}</td>
+                    <td class="money">{{ totals.paye|floatformat:2 }}</td>
+                    <td class="money">{{ totals.nssf|floatformat:2 }}</td>
+                    <td class="money">{{ totals.sha|floatformat:2 }}</td>
+                    <td class="money">{{ totals.housing_levy|floatformat:2 }}</td>
+                    <td class="money">{{ totals.loans|floatformat:2 }}</td>
+                    <td class="money">{{ totals.other|floatformat:2 }}</td>
+                    <td class="money">{{ totals.deductions|floatformat:2 }}</td>
+                    <td class="money">{{ totals.net|floatformat:2 }}</td>
+
+                </tr>
+
+            {% endif %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <div class="actions">
+
+        {% if period.status == "PAID" %}
+
+        <span class="btn btn-success">
+            ? PAYROLL PAID ? READ ONLY
+        </span>
+
+        {% else %}
+
+        <form method="post"
+              action="{% url 'hr_payroll:payroll_process' period.pk %}"
+              style="display:inline;">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="btn btn-success"
+                    onclick="return confirm('Save this payroll as Draft? Loan balances will not be changed.');">
+                ?? Save Payroll as Draft
+            </button>
+
+        </form>
+
+        <form method="post"
+              action="{% url 'hr_payroll:payslip_generate_all' period.pk %}"
+              style="display:inline;"
+              onsubmit="return confirm('Generate payslips for all saved payroll records in this period? Existing payslips will not be duplicated. Payroll figures and loan balances will not be changed.');">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="btn btn-primary">
+                ?? Generate All Payslips
+            </button>
+
+        </form>
+
+        <form method="post"
+              action="{% url 'hr_payroll:finalize_payroll' period.pk %}"
+              style="display:inline;">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="btn btn-success"
+                    onclick="return confirm('Finalize and PAY this payroll? This will mark the payroll as PAID and apply the saved staff loan deductions. This action cannot be undone from this page.');">
+                ?? Finalize & Pay Payroll
+            </button>
+
+        </form>
+
+        <a href="{% url 'hr_payroll:payroll_process' period.pk %}"
+           class="btn btn-primary">
+            ?? Recalculate
+        </a>
+
+        {% endif %}
+
+        <a href="{% url 'hr_payroll:payroll_list' %}"
+           class="btn btn-secondary">
+            ? Payroll List
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

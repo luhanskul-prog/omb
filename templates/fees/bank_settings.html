@@ -1,0 +1,637 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-4" style="max-width:1200px;">
+
+    <div class="mb-3">
+
+        <a
+            href="{% url 'fees:automatic_payment_settings' %}"
+            class="btn btn-outline-secondary"
+        >
+            ? Back to Automatic Payments
+        </a>
+
+    </div>
+
+
+    <h2 class="fw-bold">
+        BANK AUTOMATIC PAYMENT & VERIFICATION
+    </h2>
+
+    <p class="text-muted">
+        Configure bank payment, verification and reconciliation.
+    </p>
+
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <!-- GENERAL -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-dark text-white fw-bold">
+                GENERAL AUTOMATIC PAYMENT SETTINGS
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Environment
+                        </label>
+
+                        {{ form.environment }}
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <div class="form-check form-switch mt-4">
+
+                            {{ form.is_active }}
+
+                            <label class="form-check-label fw-bold">
+                                ENABLE AUTOMATIC PAYMENTS SYSTEM
+                            </label>
+
+                        </div>
+
+                        <small class="text-muted">
+                            Turn this OFF to temporarily disable all
+                            automatic payment methods.
+                        </small>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BANK CONFIGURATION -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-dark text-white fw-bold
+                        d-flex justify-content-between">
+
+                <span>
+                    BANK AUTOMATIC PAYMENT & VERIFICATION
+                </span>
+
+                <span>
+
+                    {{ form.bank_enabled }}
+
+                    <label class="ms-1">
+                        ENABLE
+                    </label>
+
+                </span>
+
+            </div>
+
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Bank
+                        </label>
+
+                        {{ form.bank_name }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Account Name
+                        </label>
+
+                        {{ form.bank_account_name }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Account Number
+                        </label>
+
+                        {{ form.bank_account_number }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Account Type
+                        </label>
+
+                        {{ form.bank_account_type }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Branch
+                        </label>
+
+                        {{ form.bank_branch }}
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Branch Code
+                        </label>
+
+                        {{ form.bank_branch_code }}
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <label class="form-label fw-bold">
+                            Currency
+                        </label>
+
+                        {{ form.bank_currency }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            SWIFT / BIC
+                        </label>
+
+                        {{ form.bank_swift_bic }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Reference Mode
+                        </label>
+
+                        {{ form.bank_reference_mode }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Reference Prefix
+                        </label>
+
+                        {{ form.bank_reference_prefix }}
+
+                    </div>
+
+
+                    <div class="col-md-12">
+
+                        <label class="form-label fw-bold">
+                            Manual Reference
+                        </label>
+
+                        {{ form.bank_manual_reference }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BANK API -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-secondary text-white fw-bold">
+                BANK API / INTEGRATION
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Bank API URL
+                        </label>
+
+                        {{ form.bank_api_url }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Authentication Method
+                        </label>
+
+                        {{ form.bank_authentication_method }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Client ID
+                        </label>
+
+                        {{ form.bank_client_id }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Client Secret
+                        </label>
+
+                        {{ form.bank_client_secret }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            API Key
+                        </label>
+
+                        {{ form.bank_api_key }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Access Token URL
+                        </label>
+
+                        {{ form.bank_access_token_url }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Transaction Endpoint
+                        </label>
+
+                        {{ form.bank_transaction_endpoint }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Account Validation Endpoint
+                        </label>
+
+                        {{ form.bank_account_validation_endpoint }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Statement Endpoint
+                        </label>
+
+                        {{ form.bank_statement_endpoint }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Balance Endpoint
+                        </label>
+
+                        {{ form.bank_balance_endpoint }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Webhook URL
+                        </label>
+
+                        {{ form.bank_webhook_url }}
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label class="form-label fw-bold">
+                            Webhook Secret
+                        </label>
+
+                        {{ form.bank_webhook_secret }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- AUTOMATION -->
+
+        <div class="card shadow-sm border-0 mb-4">
+
+            <div class="card-header bg-secondary text-white fw-bold">
+                BANK AUTOMATION
+            </div>
+
+            <div class="card-body">
+
+                <div class="row g-3">
+
+                    <div class="col-md-3">
+
+                        <div class="form-check form-switch">
+                            {{ form.bank_auto_reconciliation }}
+
+                            <label class="form-check-label fw-bold">
+                                Auto Reconciliation
+                            </label>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <div class="form-check form-switch">
+                            {{ form.bank_auto_receipt }}
+
+                            <label class="form-check-label fw-bold">
+                                Auto Receipt
+                            </label>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <div class="form-check form-switch">
+                            {{ form.bank_duplicate_protection }}
+
+                            <label class="form-check-label fw-bold">
+                                Duplicate Protection
+                            </label>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-3">
+
+                        <div class="form-check form-switch">
+                            {{ form.bank_transaction_polling }}
+
+                            <label class="form-check-label fw-bold">
+                                Transaction Polling
+                            </label>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-bold">
+                            Polling Interval (seconds)
+                        </label>
+
+                        {{ form.bank_polling_interval }}
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-bold">
+                            Minimum Payment
+                        </label>
+
+                        {{ form.bank_minimum_payment }}
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-bold">
+                            Maximum Payment
+                        </label>
+
+                        {{ form.bank_maximum_payment }}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="btn btn-success btn-lg fw-bold"
+        >
+            SAVE BANK SETTINGS
+        </button>
+
+    </form>
+
+
+    <!-- BANK PROFILE -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <h4 class="fw-bold">
+                Bank Integration Profile
+            </h4>
+
+
+            <div class="row g-4 mt-1">
+
+                <div class="col-md-3">
+
+                    <strong>Selected Bank</strong>
+
+                    <div>
+                        {{ settings.bank_name|default:"Not selected" }}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <strong>Integration Status</strong>
+
+                    <div>
+
+                        {% if settings.bank_verification_status %}
+                            {{ settings.bank_verification_status }}
+                        {% else %}
+                            Not tested
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <strong>Transaction Service</strong>
+
+                    <div>
+
+                        {% if settings.bank_transaction_endpoint %}
+                            Configured
+                        {% else %}
+                            Not configured
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-3">
+
+                    <strong>Webhook / ITN</strong>
+
+                    <div>
+
+                        {% if settings.bank_webhook_url %}
+                            Configured
+                        {% else %}
+                            Not configured
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="alert alert-light border mt-4">
+
+                The selected bank determines the integration profile.
+                Credentials and API endpoints must be supplied by the bank.
+                The ERP does not assume or invent production endpoints.
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- BANK CONNECTION TEST -->
+
+    <div class="card shadow-sm border-0 mt-4">
+
+        <div class="card-body">
+
+            <h4 class="fw-bold">
+                Bank Integration Test
+            </h4>
+
+            <p class="text-muted">
+
+                Test the configured bank transaction endpoint and
+                authentication. This test does not create or alter
+                learner payments.
+
+            </p>
+
+
+            <button
+                  type="submit"
+                  name="action"
+                  value="test_bank"
+                  class="btn btn-primary fw-bold"
+              >
+                  TEST BANK CONNECTION
+              </button>
+
+
+            {% if settings.bank_verification_status %}
+
+                <div class="alert alert-info mt-3 mb-0">
+
+                    <strong>Integration Status:</strong>
+
+                    {{ settings.bank_verification_status }}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

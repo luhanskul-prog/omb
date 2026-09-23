@@ -1,0 +1,158 @@
+﻿{% extends "accounts/parent_dashboard.html" %}
+
+{% block content %}
+<div class="container-fluid py-3">
+<style>
+.hostel-portal-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.hostel-hero {
+    background: linear-gradient(135deg,#0f766e,#2563eb);
+    color: white;
+    border-radius: 18px;
+    padding: 25px;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 30px rgba(15,23,42,.12);
+}
+
+.hostel-card {
+    border: 0;
+    border-radius: 16px;
+    background: white;
+    box-shadow: 0 8px 24px rgba(15,23,42,.08);
+    padding: 20px;
+    height: 100%;
+}
+
+.hostel-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-pending {
+    background:#fff3cd;
+    color:#856404;
+}
+
+.status-approved {
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.status-rejected {
+    background:#f8d7da;
+    color:#842029;
+}
+
+.status-cancelled {
+    background:#e2e3e5;
+    color:#41464b;
+}
+
+.hostel-action {
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.hostel-table th {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+</style>
+
+<div class="hostel-card">
+
+    <h3 class="fw-bold">🏠 Hostel & Room Application</h3>
+
+    <p class="text-muted">
+        Applying for:
+        <strong>{{ child.first_name }} {{ child.last_name }}</strong>
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Preferred Hostel
+                </label>
+
+                <select name="hostel"
+                        id="parentHostelSelect"
+                        class="form-select"
+                        required>
+
+                    <option value="">Select hostel</option>
+
+                    {% for hostel in hostels %}
+                    <option value="{{ hostel.id }}">
+                        {{ hostel.name }}
+                    </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Preferred Room
+                </label>
+
+                <select name="room"
+                        id="parentRoomSelect"
+                        class="form-select">
+
+                    <option value="">
+                        Any available room
+                    </option>
+
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label fw-semibold">
+                    Requested Admission Date
+                </label>
+
+                <input type="date"
+                       name="requested_date"
+                       class="form-control"
+                       required>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label fw-semibold">
+                    Reason / Additional Information
+                </label>
+
+                <textarea name="reason"
+                          rows="5"
+                          class="form-control"></textarea>
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-primary hostel-action">
+                Submit Application
+            </button>
+
+            <a href="{% url 'accounts:parent_hostel' %}"
+               class="btn btn-light hostel-action">
+                Cancel
+            </a>
+        </div>
+
+    </form>
+</div>
+
+</div>
+{% endblock %}

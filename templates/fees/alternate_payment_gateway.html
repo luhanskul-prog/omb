@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Alternate Payment</title>
+
+<style>
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    min-height:100vh;
+    background:#f4f6f9;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#172033;
+}
+
+.wrapper{
+    max-width:900px;
+    margin:60px auto;
+    padding:20px;
+}
+
+.card{
+    background:#fff;
+    border-radius:18px;
+    padding:38px;
+    box-shadow:0 8px 30px rgba(0,0,0,.08);
+}
+
+.header{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.logo{
+    max-width:120px;
+    max-height:80px;
+    object-fit:contain;
+    margin-bottom:15px;
+}
+
+.title{
+    color:#c40000;
+    font-size:30px;
+    font-weight:900;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    color:#667085;
+    font-size:16px;
+    line-height:1.6;
+}
+
+.options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:24px;
+}
+
+.option{
+    text-decoration:none;
+    border:2px solid #d9dde3;
+    border-radius:16px;
+    padding:30px 25px;
+    text-align:center;
+    transition:.2s ease;
+    background:#fff;
+}
+
+.option:hover{
+    transform:translateY(-3px);
+    box-shadow:0 8px 24px rgba(0,0,0,.10);
+}
+
+.automatic{
+    border-color:#198754;
+}
+
+.automatic:hover{
+    border-color:#198754;
+}
+
+.manual{
+    border-color:#c40000;
+}
+
+.manual:hover{
+    border-color:#c40000;
+}
+
+.icon{
+    width:70px;
+    height:70px;
+    border-radius:50%;
+    margin:0 auto 20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:32px;
+    font-weight:900;
+}
+
+.automatic .icon{
+    background:#e8f7ef;
+    color:#198754;
+}
+
+.manual .icon{
+    background:#fff0f0;
+    color:#c40000;
+}
+
+.option-title{
+    font-size:21px;
+    font-weight:900;
+    margin-bottom:12px;
+}
+
+.option-text{
+    color:#667085;
+    line-height:1.6;
+    font-size:14px;
+    min-height:68px;
+}
+
+.button{
+    display:block;
+    margin-top:22px;
+    padding:14px 20px;
+    border-radius:9px;
+    font-weight:900;
+    color:#fff;
+}
+
+.automatic .button{
+    background:#198754;
+}
+
+.manual .button{
+    background:#c40000;
+}
+
+.notice{
+    margin-top:28px;
+    padding:15px;
+    background:#f8f9fa;
+    border-radius:10px;
+    text-align:center;
+    color:#667085;
+    font-size:13px;
+}
+
+@media(max-width:700px){
+    .wrapper{
+        margin:25px auto;
+    }
+
+    .card{
+        padding:25px 18px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="wrapper">
+
+<div class="card">
+
+<div class="header">
+
+{% if branding and branding.logo %}
+<img
+    src="{{ branding.logo.url }}"
+    class="logo"
+    alt="{{ branding.school_name }}"
+>
+{% endif %}
+
+<div class="title">
+ALTERNATE PAYMENT
+</div>
+
+<div class="subtitle">
+Choose how you would like to make your school fee payment.
+</div>
+
+</div>
+
+
+<div class="options">
+
+<!-- AUTOMATIC PAYMENT -->
+
+<a
+    href="{% url 'fees:alternate_payment_auto' %}{% if request.GET.admission_no %}?admission_no={{ request.GET.admission_no }}{% endif %}"
+    class="option automatic"
+>
+
+<div class="icon">
+â†—
+</div>
+
+<div class="option-title">
+AUTOMATIC PAYMENT
+</div>
+
+<div class="option-text">
+Make your payment through the automatic M-Pesa process.
+The payment will be processed and verified by the system.
+</div>
+
+<div class="button">
+START AUTOMATIC PAYMENT
+</div>
+
+</a>
+
+
+<!-- MANUAL PAYMENT -->
+
+<a
+    href="{% url 'fees:alternate_payment' %}{% if request.GET.admission_no %}?admission_no={{ request.GET.admission_no }}{% endif %}"
+    class="option manual"
+>
+
+<div class="icon">
+✓
+</div>
+
+<div class="option-title">
+MANUAL PAYMENT
+</div>
+
+<div class="option-text">
+Pay using the configured M-Pesa PayBill, Till Number,
+or Bank account, then submit your payment request for verification.
+</div>
+
+<div class="button">
+CONTINUE MANUAL PAYMENT
+</div>
+
+</a>
+
+</div>
+
+
+<div class="notice">
+Automatic Payment will be activated in the next stage.
+Your existing Manual / Wire Payment process remains available.
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+function automaticComingSoon(event){
+
+    event.preventDefault();
+
+    alert(
+        "Automatic Payment is being prepared. " +
+        "Please use Manual / Wire Payment for now."
+    );
+}
+</script>
+
+</body>
+</html>

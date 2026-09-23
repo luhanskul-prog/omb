@@ -1,0 +1,443 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Attendance Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            color: #222;
+        }
+
+        .header {
+            background: #1f4e78;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 25px auto;
+            padding: 0 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 10px;
+            font-size: 15px;
+            color: #666;
+        }
+
+        .card .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .filters {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filters form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        input,
+        select,
+        button {
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        button {
+            border: none;
+            background: #1f4e78;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #163a5a;
+        }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 10px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 13px 15px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+        }
+
+        th {
+            background: #1f4e78;
+            color: white;
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .present {
+            background: #dff5e3;
+            color: #18753a;
+        }
+
+        .absent {
+            background: #fde2e2;
+            color: #a11a1a;
+        }
+
+        .late {
+            background: #fff0c2;
+            color: #8a5a00;
+        }
+
+        .not-marked {
+            background: #eee;
+            color: #666;
+        }
+
+        .actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .success {
+            background: #dff5e3;
+            color: #18753a;
+            padding: 12px 15px;
+            border-radius: 7px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 0 10px;
+            }
+
+            .filters form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .field {
+                width: 100%;
+            }
+
+            input,
+            select,
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>School Attendance Management</h1>
+</div>
+
+<div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="success">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Learners</h3>
+            <div class="number">
+                {{ total_students }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Present</h3>
+            <div class="number">
+                {{ present_count }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Absent</h3>
+            <div class="number">
+                {{ absent_count }}
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Late</h3>
+            <div class="number">
+                {{ late_count }}
+            </div>
+        </div>
+
+    </div>
+
+
+    <div class="filters">
+
+        <form method="get">
+
+            <div class="field">
+                <label for="date">Date</label>
+
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    value="{{ selected_date|date:'Y-m-d' }}"
+                >
+            </div>
+
+
+            <div class="field">
+                <label for="class_name">Class</label>
+
+                <select
+                    id="class_name"
+                    name="class_name"
+                >
+                    <option value="">
+                        All Classes
+                    </option>
+
+                    {% for class in classes %}
+                        <option
+                            value="{{ class }}"
+                            {% if selected_class == class %}
+                                selected
+                            {% endif %}
+                        >
+                            {{ class }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+
+            <button type="submit">
+                Filter
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <form
+        method="post"
+        action="{% url 'attendance:mark_attendance' %}"
+    >
+
+        {% csrf_token %}
+
+        <input
+            type="hidden"
+            name="date"
+            value="{{ selected_date|date:'Y-m-d' }}"
+        >
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>#</th>
+                        <th>Admission No.</th>
+                        <th>Learner</th>
+                        <th>Class</th>
+                        <th>Attendance</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for student in students %}
+
+                        {% with record=attendance_by_student|default_if_none:"" %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+                            <td>
+                                {{ student.admission_no }}
+                            </td>
+
+                            <td>
+                                {{ student.first_name }}
+                                {{ student.middle_name }}
+                                {{ student.last_name }}
+                            </td>
+
+                            <td>
+                                {{ student.class_name }}
+                            </td>
+
+                            <td>
+
+                                <input
+                                    type="hidden"
+                                    name="student_ids"
+                                    value="{{ student.id }}"
+                                >
+
+                                <select
+                                    name="status_{{ student.id }}"
+                                >
+
+                                    <option value="PRESENT">
+                                        Present
+                                    </option>
+
+                                    <option value="ABSENT">
+                                        Absent
+                                    </option>
+
+                                    <option value="LATE">
+                                        Late
+                                    </option>
+
+                                </select>
+
+                            </td>
+
+                        </tr>
+
+                        {% endwith %}
+
+                    {% empty %}
+
+                        <tr>
+                            <td colspan="5">
+                                No learners found.
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% if students %}
+
+            <div class="actions">
+
+                <button type="submit">
+                    Save Attendance
+                </button>
+
+                <a
+                    href="{% url 'attendance:report' %}?date={{ selected_date|date:'Y-m-d' }}"
+                >
+                    <button type="button">
+                        View Report
+                    </button>
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </form>
+
+</div>
+
+</body>
+</html>
+```

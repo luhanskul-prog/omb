@@ -1,0 +1,32 @@
+﻿{% extends "hr_payroll/base.html" %}
+{% block content %}
+<div class="page-wrap">
+    <h1>Departments</h1>
+    <p><a class="btn-link" href="{% url 'hr_payroll:department_add' %}">+ Add Department</a></p>
+
+    <div class="table-wrap">
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Code</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+            {% for item in departments %}
+            <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.is_active|yesno:"Active,Inactive" }}</td>
+                <td>
+                    <a href="{% url 'hr_payroll:department_edit' item.pk %}">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No departments found.</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

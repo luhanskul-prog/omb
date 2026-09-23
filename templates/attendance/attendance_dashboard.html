@@ -1,0 +1,489 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Attendance | Luhan ERP</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .header {
+            background: linear-gradient(
+                135deg,
+                #0f172a,
+                #1e3a8a
+            );
+
+            color: white;
+
+            padding: 24px 35px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header-left p {
+            margin: 6px 0 0;
+            opacity: 0.85;
+            font-size: 14px;
+        }
+
+        .back-button {
+            color: white;
+            text-decoration: none;
+
+            border: 1px solid
+                rgba(255,255,255,0.35);
+
+            padding: 10px 18px;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            transition: 0.2s;
+        }
+
+        .back-button:hover {
+            background:
+                rgba(255,255,255,0.12);
+        }
+
+        /* =====================================================
+           PAGE
+        ===================================================== */
+
+        .page {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 45px 25px;
+        }
+
+        .intro {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .intro h2 {
+            margin: 0 0 10px;
+
+            font-size: 30px;
+
+            color: #111827;
+        }
+
+        .intro p {
+            margin: 0;
+
+            color: #6b7280;
+
+            font-size: 15px;
+        }
+
+        /* =====================================================
+           OPTIONS
+        ===================================================== */
+
+        .options {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 30px;
+
+            max-width: 900px;
+
+            margin: 0 auto;
+        }
+
+        .option-card {
+
+            background: white;
+
+            border-radius: 16px;
+
+            padding: 40px 35px;
+
+            text-decoration: none;
+
+            color: inherit;
+
+            border: 1px solid
+                #e5e7eb;
+
+            box-shadow:
+                0 8px 25px
+                rgba(15,23,42,0.07);
+
+            transition:
+                transform 0.2s,
+                box-shadow 0.2s,
+                border-color 0.2s;
+
+            text-align: center;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+        .option-card::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+            top: 0;
+
+            width: 100%;
+            height: 5px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #2563eb,
+                    #4f46e5
+                );
+        }
+
+        .option-card:hover {
+
+            transform:
+                translateY(-5px);
+
+            box-shadow:
+                0 15px 35px
+                rgba(15,23,42,0.12);
+
+            border-color:
+                #bfdbfe;
+        }
+
+        .option-icon {
+
+            width: 75px;
+            height: 75px;
+
+            margin: 0 auto 22px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            font-size: 34px;
+
+            background:
+                #eff6ff;
+
+            color:
+                #2563eb;
+        }
+
+        .option-card h3 {
+
+            margin: 0 0 12px;
+
+            font-size: 22px;
+
+            color:
+                #111827;
+        }
+
+        .option-card p {
+
+            margin: 0 auto 25px;
+
+            max-width: 330px;
+
+            line-height: 1.6;
+
+            color:
+                #6b7280;
+
+            font-size: 14px;
+        }
+
+        .option-button {
+
+            display: inline-block;
+
+            padding:
+                11px 24px;
+
+            border-radius: 8px;
+
+            color: white;
+
+            background:
+                #2563eb;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+        .option-card.view .option-icon {
+
+            background:
+                #ecfdf5;
+
+            color:
+                #059669;
+        }
+
+        .option-card.view::before {
+
+            background:
+                linear-gradient(
+                    90deg,
+                    #059669,
+                    #0d9488
+                );
+        }
+
+        .option-card.view
+        .option-button {
+
+            background:
+                #059669;
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+
+            text-align: center;
+
+            margin-top: 55px;
+
+            color:
+                #9ca3af;
+
+            font-size: 12px;
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .header {
+                padding: 20px;
+            }
+
+            .header-left h1 {
+                font-size: 22px;
+            }
+
+            .page {
+                padding:
+                    30px 18px;
+            }
+
+            .intro h2 {
+                font-size: 25px;
+            }
+
+            .options {
+                grid-template-columns:
+                    1fr;
+
+                gap: 20px;
+            }
+
+            .option-card {
+                padding:
+                    32px 25px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="header">
+
+    <div class="header-left">
+
+        <h1>
+            Attendance Management
+        </h1>
+
+        <p>
+            Manage learner attendance records
+        </p>
+
+    </div>
+
+
+    <a
+        href="{% url 'admin_dashboard' %}"
+        class="back-button"
+    >
+        â† Dashboard
+    </a>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="page">
+
+
+    <div class="intro">
+
+        <h2>
+            Attendance
+        </h2>
+
+        <p>
+            Choose what you would like to do.
+        </p>
+
+    </div>
+
+
+
+    <div class="options">
+
+
+        <!-- =================================================
+             RECORD ATTENDANCE
+        ================================================== -->
+
+        {% if erp_permission.add_attendance or erp_permission.change_attendance %}
+        <a
+            href="{% url 'attendance:mark_attendance' %}"
+            class="option-card"
+        >
+
+            <div class="option-icon">
+                &#128203;
+            </div>
+
+
+            <h3>
+                Record Attendance
+            </h3>
+
+
+            <p>
+                Select a class, stream and date,
+                load the learners and record their
+                daily attendance.
+            </p>
+
+
+            <span class="option-button">
+                Record Attendance &#8594;
+            </span>
+
+        </a>
+        {% endif %}
+
+
+
+        <!-- =================================================
+             VIEW ATTENDANCE
+        ================================================== -->
+
+        {% if erp_permission.view_attendance %}
+        <a
+            href="{% url 'attendance:view_attendance' %}"
+            class="option-card view"
+        >
+
+            <div class="option-icon">
+                &#128202;
+            </div>
+
+
+            <h3>
+                View Attendance
+            </h3>
+
+
+            <p>
+                View attendance by class, stream or
+                the whole school, select a period,
+                analyse attendance and print reports.
+            </p>
+
+
+            <span class="option-button">
+                View Attendance &#8594;
+            </span>
+
+        </a>
+        {% endif %}
+
+
+    </div>
+
+
+
+    <div class="footer">
+
+        Luhan ERP &#8226; Attendance Management System
+
+    </div>
+
+
+</main>
+
+
+</body>
+</html>

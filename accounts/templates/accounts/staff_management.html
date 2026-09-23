@@ -1,0 +1,741 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Staff Management | Luhan School</title>
+
+    <!-- Bootstrap 5 -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        body {
+            background: #f4f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .top-header {
+            background: linear-gradient(
+                135deg,
+                #0d6efd,
+                #0b5ed7
+            );
+
+            color: white;
+            padding: 22px 0;
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 4px 15px rgba(13, 110, 253, 0.20);
+        }
+
+        .page-title {
+            font-weight: 700;
+        }
+
+        .welcome-text {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .back-btn {
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: white;
+            color: #0d6efd;
+        }
+
+        /* =====================================================
+           CARDS
+        ===================================================== */
+
+        .management-card {
+            background: white;
+            border: 1px solid #e1e6ed;
+            border-radius: 12px;
+            padding: 22px;
+
+            box-shadow:
+                0 4px 15px rgba(0, 0, 0, 0.04);
+        }
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .staff-table th {
+            background: #f8f9fa;
+            color: #495057;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .staff-table td {
+            vertical-align: middle;
+        }
+
+        .staff-name {
+            font-weight: 700;
+            color: #263238;
+        }
+
+        .staff-email {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        /* =====================================================
+           STATUS BADGES
+        ===================================================== */
+
+        .badge-active {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .badge-inactive {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
+            padding: 60px 20px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        /* =====================================================
+           ACTION BUTTONS
+        ===================================================== */
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons .btn {
+            min-width: 70px;
+        }
+
+        /* =====================================================
+           ALERTS
+        ===================================================== */
+
+        .alert {
+            border-radius: 10px;
+        }
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 768px) {
+
+            .management-card {
+                padding: 15px;
+            }
+
+            .top-header .header-content {
+                flex-direction: column;
+                align-items: flex-start !important;
+            }
+
+            .action-buttons {
+                justify-content: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+
+<header class="top-header">
+    <div class="container">
+        <div class="d-flex justify-content-end gap-2 flex-wrap">
+
+            <a
+                href="{% url 'number_formats:settings' %}"
+                class="btn btn-light"
+            >
+                Number Format Settings
+            </a>
+
+        </div>
+    </div>
+
+
+    <div class="container">
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    gap-3
+                    header-content">
+
+            <div>
+
+                <h2 class="page-title mb-1">
+                    Staff Management
+                </h2>
+
+                <div class="welcome-text">
+
+                    Manage school administrators,
+                    teachers and staff members.
+
+                </div>
+
+            </div>
+
+
+            <div>
+
+                <a
+                    href="{% url 'accounts:admin_dashboard' %}"
+                    class="btn back-btn"
+                >
+                    â† Admin Dashboard
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="container pb-5">
+
+
+    <!-- =====================================================
+         MESSAGES
+    ====================================================== -->
+
+    {% if messages %}
+
+        {% for message in messages %}
+
+            <div
+                class="alert
+                {% if message.tags %}
+                    alert-{{ message.tags }}
+                {% else %}
+                    alert-info
+                {% endif %}
+                alert-dismissible fade show"
+                role="alert"
+            >
+
+                {{ message }}
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                ></button>
+
+            </div>
+
+        {% endfor %}
+
+    {% endif %}
+
+
+    <!-- =====================================================
+         TOP ACTIONS
+    ====================================================== -->
+
+    <div class="management-card mb-4">
+
+        <div class="d-flex
+                    justify-content-between
+                    align-items-center
+                    flex-wrap
+                    gap-3">
+
+            <div>
+
+                <h4 class="mb-1">
+                    Staff Accounts
+                </h4>
+
+                <p class="text-muted mb-0">
+                    Add and manage school administrators,
+                    teachers and staff members.
+                </p>
+
+            </div>
+
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <a
+                    href="{% url 'accounts:department_management' %}"
+                    class="btn btn-outline-primary"
+                >
+                    ðŸ¢ Departments
+                </a>
+
+                <a
+                    href="{% url 'accounts:fresh_staff_start' %}"
+                    class="btn btn-primary"
+                >
+                    âž• Add Staff
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         STAFF TABLE
+    ====================================================== -->
+
+    <div class="management-card">
+
+        <div class="table-responsive">
+
+            {% if staff_members %}
+
+                <table
+                    class="table
+                           table-hover
+                           staff-table
+                           mb-0"
+                >
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Staff Member
+                            </th>
+
+                            <th>
+                                Employee No.
+                            </th>
+
+                            <th>
+                                Department
+                            </th>
+
+                            <th>
+                                Job Title
+                            </th>
+
+                            <th>
+                                Account Type
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for staff in staff_members %}
+
+                            <tr>
+
+
+                                <!-- =================================================
+                                     STAFF MEMBER
+                                ================================================== -->
+
+                                <td>
+
+                                    <div class="staff-name">
+
+                                        {% if staff.get_full_name %}
+
+                                            {{ staff.get_full_name }}
+
+                                        {% else %}
+
+                                            {{ staff.username }}
+
+                                        {% endif %}
+
+                                    </div>
+
+
+                                    {% if staff.email %}
+
+                                        <div class="staff-email">
+
+                                            {{ staff.email }}
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                    <div class="small text-muted">
+
+                                        Username:
+                                        {{ staff.username }}
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     EMPLOYEE NUMBER
+                                ================================================== -->
+
+                                <td>
+
+                                    {% if staff.profile.employee_number %}
+
+                                        <span class="fw-semibold">
+
+                                            {{ staff.profile.employee_number }}
+
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            â€”
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     DEPARTMENT
+                                ================================================== -->
+
+                                <td>
+
+                                    {% if staff.profile.department %}
+
+                                        {{ staff.profile.department.name }}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            Not assigned
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     JOB TITLE
+                                ================================================== -->
+
+                                <td>
+
+                                    {% if staff.profile.job_title %}
+
+                                        {{ staff.profile.job_title }}
+
+                                    {% else %}
+
+                                        <span class="text-muted">
+                                            â€”
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     ACCOUNT TYPE
+                                ================================================== -->
+
+                                <td>
+
+                                    {% if staff.profile.role == "ADMIN" %}
+
+                                        <span class="badge text-bg-primary">
+                                            Administrator
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge text-bg-secondary">
+                                            Staff
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     STATUS
+                                ================================================== -->
+
+                                <td>
+
+                                    {% if staff.is_active and staff.profile.is_active %}
+
+                                        <span class="badge badge-active">
+                                            Active
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge badge-inactive">
+                                            Inactive
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- =================================================
+                                     ACTIONS
+                                ================================================== -->
+
+                                <td>
+
+                                    <div class="action-buttons">
+
+
+                                        <!-- ================================
+                                             VIEW
+                                        ================================= -->
+
+                                        <a
+                                            href="{% url 'accounts:view_staff' staff.id %}"
+                                            class="btn btn-sm btn-outline-info"
+                                            title="View staff details"
+                                        >
+                                            View
+                                        </a>
+
+
+                                        <!-- ================================
+                                             EDIT
+                                        ================================= -->
+
+                                        <a
+                                            href="{% url 'accounts:edit_staff' staff.id %}"
+                                            class="btn btn-sm btn-outline-primary"
+                                            title="Edit staff information"
+                                        >
+                                            Edit
+                                        </a>
+
+
+                                        <!-- ================================
+                                             ACTIVATE / DEACTIVATE
+                                        ================================= -->
+
+                                        {% if staff.id != request.user.id %}
+
+                                            <form
+                                                method="post"
+                                                action="{% url 'accounts:toggle_staff_status' staff.id %}"
+                                                class="d-inline"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                {% if staff.is_active and staff.profile.is_active %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-sm btn-outline-danger"
+                                                        title="Deactivate staff account"
+                                                        onclick="return confirm('Are you sure you want to deactivate this staff account?');"
+                                                    >
+                                                        Deactivate
+                                                    </button>
+
+                                                {% else %}
+
+                                                    <button
+                                                        type="submit"
+                                                        class="btn btn-sm btn-outline-success"
+                                                        title="Activate staff account"
+                                                    >
+                                                        Activate
+                                                    </button>
+
+                                                {% endif %}
+
+                                            </form>
+
+
+                                            <!-- ================================
+                                                 DELETE
+                                            ================================= -->
+
+                                            <form
+                                                method="post"
+                                                action="{% url 'accounts:delete_staff' staff.id %}"
+                                                class="d-inline"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="Delete staff account"
+                                                    onclick="return confirm('WARNING: This will permanently delete this staff account. Are you sure you want to continue?');"
+                                                >
+                                                    Delete
+                                                </button>
+
+                                            </form>
+
+                                        {% else %}
+
+                                            <span
+                                                class="badge text-bg-light border"
+                                                title="You cannot deactivate or delete your own account"
+                                            >
+                                                Current Account
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+
+            {% else %}
+
+                <!-- =================================================
+                     EMPTY STATE
+                ================================================== -->
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        ðŸ‘¥
+                    </div>
+
+                    <h4>
+                        No Staff Accounts Yet
+                    </h4>
+
+                    <p>
+                        Start by adding your first staff member.
+                    </p>
+
+                    <a
+                        href="{% url 'accounts:fresh_staff_start' %}"
+                        class="btn btn-primary"
+                    >
+                        âž• Add First Staff Member
+                    </a>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="text-center
+                text-muted
+                small
+                mt-4">
+
+        Luhan School Management System
+
+    </div>
+
+
+</main>
+
+
+<!-- =========================================================
+     BOOTSTRAP JAVASCRIPT
+========================================================= -->
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+></script>
+
+
+</body>
+
+</html>
+
+
+
+

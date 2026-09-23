@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Track Previous Request</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+</head>
+
+<body class="bg-light">
+
+<div class="container py-5">
+
+    <div class="card shadow-sm">
+
+        <div class="card-body p-4">
+
+            <h3 class="fw-bold mb-2">
+                <i class="bi bi-search"></i>
+                Track Previous Alternate Payment
+            </h3>
+
+            <p class="text-muted">
+                Enter your Request Reference to view the payment request status.
+            </p>
+
+            <form method="get" class="row g-2 mb-4">
+
+                <div class="col-md-9">
+                    <input
+                        type="text"
+                        name="reference"
+                        value="{{ reference }}"
+                        class="form-control form-control-lg"
+                        placeholder="ALT-20260919180546-LUH002"
+                        required
+                    >
+                </div>
+
+                <div class="col-md-3">
+                    <button
+                        type="submit"
+                        class="btn btn-success btn-lg w-100"
+                    >
+                        <i class="bi bi-search"></i>
+                        LOAD REQUEST
+                    </button>
+                </div>
+
+            </form>
+
+            {% if error %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    {{ error }}
+                </div>
+            {% endif %}
+
+
+            {% if payment %}
+
+            <div class="border rounded p-4">
+
+                <h4 class="fw-bold mb-4">
+                    Payment Request Details
+                </h4>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <strong>Learner</strong>
+                        <div>{{ payment.student }}</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Admission Number</strong>
+                        <div>{{ payment.student.admission_no }}</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Request Reference</strong>
+                        <div>{{ payment.reference }}</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Amount</strong>
+                        <div>KSh {{ payment.amount|floatformat:2 }}</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Payment Method</strong>
+                        <div>{{ payment.payment_method|upper }}</div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <strong>Date Submitted</strong>
+                        <div>{{ payment.created_at|date:"d M Y, H:i" }}</div>
+                    </div>
+
+                    <div class="col-12">
+
+                        <strong>Status</strong>
+
+                        <div class="mt-2">
+
+                            {% if payment.status == "PENDING" %}
+
+                                <span class="badge bg-warning text-dark fs-6">
+                                    PENDING VERIFICATION
+                                </span>
+
+                            {% elif payment.status == "CONFIRMED" %}
+
+                                <span class="badge bg-success fs-6">
+                                    CONFIRMED
+                                </span>
+
+                            {% elif payment.status == "REJECTED" %}
+
+                                <span class="badge bg-danger fs-6">
+                                    REJECTED
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge bg-secondary fs-6">
+                                    {{ payment.status }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    {% if payment.external_reference %}
+
+                    <div class="col-md-6">
+                        <strong>Transaction Reference</strong>
+                        <div>{{ payment.external_reference }}</div>
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if payment.verified_at %}
+
+                    <div class="col-md-6">
+                        <strong>Verified Date</strong>
+                        <div>
+                            {{ payment.verified_at|date:"d M Y, H:i" }}
+                        </div>
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if payment.notes %}
+
+                    <div class="col-12">
+                        <strong>Notes</strong>
+                        <div>{{ payment.notes }}</div>
+                    </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                {% if payment.status == "PENDING" %}
+
+                <div class="alert alert-warning mt-4 mb-0">
+                    <i class="bi bi-clock"></i>
+                    Your payment request has been received and is
+                    awaiting verification.
+                </div>
+
+                {% elif payment.status == "CONFIRMED" %}
+
+                <div class="alert alert-success mt-4 mb-0">
+                    <i class="bi bi-check-circle"></i>
+                    Your payment has been confirmed successfully.
+                </div>
+
+                {% elif payment.status == "REJECTED" %}
+
+                <div class="alert alert-danger mt-4 mb-0">
+                    <i class="bi bi-x-circle"></i>
+                    This payment request was rejected.
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

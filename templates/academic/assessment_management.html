@@ -1,0 +1,1248 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Assessment Management</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #f4f7fb;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #1f2937;
+}
+
+.header {
+    background: linear-gradient(
+        135deg,
+        #123b78,
+        #1769aa
+    );
+    color: white;
+    padding: 22px 28px;
+}
+
+.header-inner {
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 58px;
+    height: 58px;
+    object-fit: contain;
+    background: white;
+    border-radius: 8px;
+    padding: 5px;
+}
+
+.school-name {
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.school-subtitle {
+    opacity: .85;
+    margin-top: 3px;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 25px auto;
+    padding: 0 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.title {
+    font-size: 25px;
+    font-weight: 800;
+    color: #123b78;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-top: 4px;
+}
+
+.actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: #1769aa;
+    color: white;
+}
+
+.btn-green {
+    background: #198754;
+    color: white;
+}
+
+.btn-dark {
+    background: #243447;
+    color: white;
+}
+
+.btn-warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc3545;
+    color: white;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.07);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #123b78;
+    margin-bottom: 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: #475569;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: white;
+}
+
+.assessment {
+    border: 1px solid #dbe3ec;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 14px;
+}
+
+.assessment-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.assessment-name {
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.meta {
+    color: #64748b;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.status {
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.open {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.passed {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.reopened {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.closed {
+    background: #e2e8f0;
+    color: #475569;
+}
+
+.progress-row {
+    margin-top: 18px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+.progress {
+    height: 12px;
+    background: #e5e7eb;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: #1769aa;
+    border-radius: 20px;
+}
+
+.countdown {
+    font-size: 20px;
+    font-weight: 900;
+    color: #123b78;
+    margin-top: 12px;
+}
+
+.countdown small {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+}
+
+.assessment-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.messages {
+    margin-bottom: 15px;
+}
+
+.message {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 7px;
+    background: #e0f2fe;
+    color: #075985;
+}
+
+.upload-note {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+@media(max-width:700px) {
+
+    .container {
+        padding: 0 10px;
+    }
+
+    .header {
+        padding: 15px;
+    }
+
+    .assessment-head {
+        display: block;
+    }
+
+}
+
+</style>
+
+
+
+
+
+<style id="assessment-clean-actionbar">
+.assessment-actionbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin: 18px 0 24px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #dbe3ef;
+    border-radius: 12px;
+}
+
+.assessment-actionbar a,
+.assessment-actionbar button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 9px 15px !important;
+    border-radius: 8px !important;
+    border: 1px solid #d5dce8 !important;
+    text-decoration: none !important;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.assessment-actionbar .directory-btn {
+    background: #ffffff !important;
+    color: #173b7a !important;
+}
+
+.assessment-actionbar .marks-btn {
+    background: #173b7a !important;
+    color: #ffffff !important;
+    border-color: #173b7a !important;
+}
+
+.assessment-actionbar .template-btn {
+    background: #ffffff !important;
+    color: #17633a !important;
+}
+
+.assessment-actionbar .dashboard-btn {
+    background: #ffffff !important;
+    color: #475569 !important;
+}
+
+.assessment-actionbar a:hover,
+.assessment-actionbar button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 9px rgba(15,23,42,.10);
+}
+
+@media (max-width: 700px) {
+    .assessment-actionbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .assessment-actionbar a,
+    .assessment-actionbar button {
+        width: 100%;
+    }
+}
+
+<style id="assessment-control-centre">
+
+.control-centre {
+    border-left: 5px solid #1769aa;
+}
+
+.control-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+}
+
+.control-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+.control-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #e0ecff;
+    font-size: 20px;
+}
+
+.control-item strong {
+    display: block;
+    color: #123b78;
+    margin-bottom: 4px;
+}
+
+.control-item span {
+    display: block;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+</style>
+</style>
+
+
+<style id="clickable-assessment-controls">
+.control-link {
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+
+.control-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    border-color: #1769aa;
+}
+
+.control-link:focus {
+    outline: 3px solid rgba(23,105,170,.25);
+    outline-offset: 2px;
+}
+
+.control-link strong {
+    color: #123b78;
+}
+
+.control-link span {
+    color: #64748b;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="assessment-actionbar">
+    <a href="{% url 'academic:class_list' %}" class="directory-btn">
+        📁 Directory
+    </a>
+
+    <a href="#upload-marks" class="marks-btn">
+        📝 Enter Marks
+    </a>
+
+    <a href="{% url 'academic:assessment_marks_template' %}" class="template-btn">
+        📊 Excel Template
+    </a>
+
+    <a href="{% url 'academic:dashboard' %}" class="dashboard-btn">
+        🏠 Academic Dashboard
+    </a>
+</div>
+
+
+
+
+
+
+<div class="card control-centre">
+    <div class="card-title">Assessment Control Centre</div>
+
+    <div class="control-grid">
+
+        <a href="{% url 'academic:marks_entry' %}" class="control-item control-link">
+            <div class="control-icon">??</div>
+            <div>
+                <strong>Manual Mark Entry</strong>
+                <span>Open the existing individual or whole-class mark entry.</span>
+            </div>
+        </a>
+
+        <a href="{% url 'academic:assessment_marks_template' %}" class="control-item control-link">
+            <div class="control-icon">??</div>
+            <div>
+                <strong>Excel Mark Entry</strong>
+                <span>Generate the learner-and-subject Excel marks workbook.</span>
+            </div>
+        </a>
+
+        <a href="#assessment-windows" class="control-item control-link">
+            <div class="control-icon">??</div>
+            <div>
+                <strong>Recording Control</strong>
+                <span>Open, close or reopen assessment recording windows.</span>
+            </div>
+        </a>
+
+        <a href="#assessment-windows" class="control-item control-link">
+            <div class="control-icon">??</div>
+            <div>
+                <strong>Progress Monitoring</strong>
+                <span>View recorded and missing marks for every assessment.</span>
+            </div>
+        </a>
+
+    </div>
+</div>
+
+<header class="header">
+
+    <div class="header-inner">
+
+        {% if branding and branding.logo %}
+            <img
+                src="{{ branding.logo.url }}"
+                class="logo"
+                alt="School Logo"
+            >
+        {% endif %}
+
+        <div>
+
+            <div class="school-name">
+                {% if branding %}
+                    {{ branding.school_name }}
+                {% else %}
+                    School ERP
+                {% endif %}
+            </div>
+
+            <div class="school-subtitle">
+                Academic Assessment & Marks Management
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+<main class="container">
+
+    <div class="topbar">
+
+        <div>
+
+            <div class="title">
+                Assessment & Marks Management
+            </div>
+
+            <div class="subtitle">
+                Configure examinations, monitor marks recording
+                and manage recording deadlines.
+            </div>
+
+        </div>
+
+        <div class="actions">
+
+            <a
+                href="{% url 'academic:marks_entry' %}"
+                class="btn btn-primary"
+            >
+                Enter Marks
+            </a>
+
+            <a
+                href="{% url 'academic:assessment_marks_template' %}"
+                class="btn btn-green"
+            >
+                Excel Template
+            </a>
+
+            <a
+                href="/academic/"
+                class="btn btn-dark"
+            >
+                Academic Dashboard
+            </a>
+
+        </div>
+
+    </div>
+
+
+    {% if messages %}
+
+    <div class="messages">
+
+        {% for message in messages %}
+
+            <div class="message">
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+    {% endif %}
+
+
+    {% if can_configure %}
+
+    <div class="card">
+
+        <div class="card-title">
+            Create / Configure Assessment Recording Window
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <input
+                type="hidden"
+                name="action"
+                value="save_window"
+            >
+
+            <div class="grid">
+
+                <div>
+
+                    <label>
+                        Academic Year
+                    </label>
+
+                    <select
+                        name="academic_year"
+                        required
+                    >
+
+                        <option value="">
+                            Select academic year
+                        </option>
+
+                        {% for year in academic_years %}
+
+                            <option value="{{ year.id }}">
+                                {{ year }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Term
+                    </label>
+
+                    <select
+                        name="term"
+                        required
+                    >
+
+                        <option value="">
+                            Select term
+                        </option>
+
+                        {% for term in terms %}
+
+                            <option value="{{ term.id }}">
+                                {{ term }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Assessment
+                    </label>
+
+                    <select
+                        name="assessment_type"
+                        required
+                    >
+
+                        <option value="">
+                            Select assessment
+                        </option>
+
+                        {% for assessment in assessment_types %}
+
+                            <option value="{{ assessment.id }}">
+                                {{ assessment.name }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Recording Deadline
+                    </label>
+
+                    <input
+                        type="datetime-local"
+                        name="deadline"
+                        required
+                    >
+
+                </div>
+
+
+                <div>
+
+                    <label>
+                        Warning Period (minutes)
+                    </label>
+
+                    <input
+                        type="number"
+                        name="warning_minutes"
+                        value="1440"
+                        min="0"
+                    >
+
+                </div>
+
+            </div>
+
+            <br>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Save Assessment Window
+            </button>
+
+        </form>
+
+    </div>
+
+    {% endif %}
+
+
+    <div id="assessment-windows" class="card">
+
+        <div class="card-title">
+            Active Assessment Windows
+        </div>
+
+
+        {% for item in assessment_data %}
+
+        <div class="assessment">
+
+            <div class="assessment-head">
+
+                <div>
+
+                    <div class="assessment-name">
+                        {{ item.window.assessment_type.name }}
+                    </div>
+
+                    <div class="meta">
+
+                        {{ item.window.academic_year }}
+                        •
+                        {{ item.window.term }}
+
+                    </div>
+
+                    <div class="meta">
+
+                        Deadline:
+                        {{ item.window.deadline|date:"d M Y, H:i" }}
+
+                    </div>
+
+                </div>
+
+
+                {% if item.status == "OPEN" %}
+
+                    <span class="status open">
+                        OPEN
+                    </span>
+
+                {% elif item.status == "CLOSING SOON" %}
+
+                    <span class="status warning">
+                        CLOSING SOON
+                    </span>
+
+                {% elif item.status == "DEADLINE PASSED" %}
+
+                    <span class="status passed">
+                        DEADLINE PASSED
+                    </span>
+
+                {% elif item.status == "REOPENED" %}
+
+                    <span class="status reopened">
+                        REOPENED
+                    </span>
+
+                {% else %}
+
+                    <span class="status closed">
+                        CLOSED
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="progress-row">
+
+                <div class="progress-info">
+
+                    <span>
+                        Marks Recording Progress
+                    </span>
+
+                    <span>
+                        {{ item.percentage }}%
+                    </span>
+
+                </div>
+
+                <div class="progress">
+
+                    <div
+                        class="progress-bar"
+                        style="width: {{ item.percentage }}%;"
+                    ></div>
+
+                </div>
+
+                <div class="meta">
+
+                    {{ item.recorded }} recorded
+                    •
+                    {{ item.missing }} missing
+
+                </div>
+
+            </div>
+
+
+            {% if item.status == "OPEN" or item.status == "CLOSING SOON" or item.status == "REOPENED" %}
+
+                <div
+                    class="countdown"
+                    data-deadline="{{ item.deadline_iso }}"
+                >
+                    Calculating...
+                    <small>until deadline</small>
+                </div>
+
+            {% endif %}
+
+
+            <div class="assessment-actions">
+
+                {% if item.status == "OPEN" or item.status == "CLOSING SOON" or item.status == "REOPENED" %}
+
+                    <a
+                        href="{% url 'academic:marks_entry' %}?year={{ item.window.academic_year.id }}&term={{ item.window.term.id }}&assessment_type={{ item.window.assessment_type.id }}"
+                        class="btn btn-primary"
+                    >
+                        ?? Enter Marks
+                    </a>
+
+                    <button
+                        type="button"
+                        class="btn btn-green"
+                        onclick="document.getElementById('upload-{{ item.window.id }}').style.display='block'"
+                    >
+                        ?? Upload Excel
+                    </button>
+
+                    <a
+                        href="{% url 'academic:assessment_marks_template' %}?assessment={{ item.window.assessment_type.id }}"
+                        class="btn btn-dark"
+                    >
+                        ?? Excel Template
+                    </a>
+
+                {% else %}
+
+                    <button
+                        type="button"
+                        class="btn btn-dark"
+                        disabled
+                        style="opacity:.55;cursor:not-allowed;"
+                    >
+                        ?? Mark Entry Closed
+                    </button>
+
+                    <span class="meta" style="align-self:center;">
+                        Reopen this assessment to resume recording.
+                    </span>
+
+                {% endif %}
+
+
+                {% if can_configure %}
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="reopen"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="window_id"
+                            value="{{ item.window.id }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-warning"
+                        >
+                            Reopen
+                        </button>
+
+                    </form>
+
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="close"
+                        >
+
+                        <input
+                            type="hidden"
+                            name="window_id"
+                            value="{{ item.window.id }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-danger"
+                        >
+                            Close
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+
+            <div
+                id="upload-{{ item.window.id }}"
+                style="display:none;margin-top:15px;"
+            >
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                >
+
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="upload_marks"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="upload_window"
+                        value="{{ item.window.id }}"
+                    >
+
+                    <input
+                        type="file"
+                        name="marks_file"
+                        accept=".xlsx"
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="btn btn-green"
+                    >
+                        Import Excel Marks
+                    </button>
+
+                    <div class="upload-note">
+
+                        Excel columns:
+                        <strong>
+                            Admission No, Learner Name, Subject, Mark
+                        </strong>
+                        <br>
+                        Only <strong>Mark</strong> should be edited in the generated workbook.
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+            <div class="meta">
+                No assessment recording windows have been configured yet.
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+
+<script>
+
+function updateCountdowns() {
+
+    document
+        .querySelectorAll(".countdown")
+        .forEach(function(element) {
+
+            const deadline =
+                new Date(
+                    element.dataset.deadline
+                ).getTime();
+
+            const now =
+                new Date().getTime();
+
+            const distance =
+                deadline - now;
+
+            if (distance <= 0) {
+
+                element.innerHTML =
+                    "DEADLINE PASSED " +
+                    "<small>recording window has ended</small>";
+
+                element.style.color =
+                    "#dc3545";
+
+                return;
+            }
+
+            const days =
+                Math.floor(
+                    distance /
+                    (1000 * 60 * 60 * 24)
+                );
+
+            const hours =
+                Math.floor(
+                    (distance %
+                    (1000 * 60 * 60 * 24)) /
+                    (1000 * 60 * 60)
+                );
+
+            const minutes =
+                Math.floor(
+                    (distance %
+                    (1000 * 60 * 60)) /
+                    (1000 * 60)
+                );
+
+            const seconds =
+                Math.floor(
+                    (distance %
+                    (1000 * 60)) /
+                    1000
+                );
+
+            element.innerHTML =
+                days + "d " +
+                hours + "h " +
+                minutes + "m " +
+                seconds + "s " +
+                "<small>until deadline</small>";
+
+        });
+
+}
+
+updateCountdowns();
+
+setInterval(
+    updateCountdowns,
+    1000
+);
+
+</script>
+
+
+
+
+
+
+
+
+
+<!-- =========================================================
+     LUHAN EXCEL MARK MANAGEMENT
+     ========================================================= -->
+
+<div class="card" style="margin-top:24px;border-radius:14px;overflow:hidden;">
+
+    <div class="card-title"
+         style="padding:18px 20px;font-size:20px;font-weight:700;">
+        Excel Mark Management
+    </div>
+
+    <div style="padding:20px;">
+
+        <p class="text-muted mb-4">
+            Generate or upload assessment marks using Excel.
+            All normal assessment permissions and recording-window
+            rules continue to apply.
+        </p>
+
+        <!-- INDIVIDUAL LEARNER -->
+        <div style="margin-bottom:24px;">
+
+            <h5 style="font-weight:700;margin-bottom:12px;">
+                Individual Learner
+            </h5>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+
+                <a href="{% url 'academic:excel_individual' %}"
+                   class="btn btn-primary"
+                   style="padding:11px 18px;border-radius:8px;">
+                    Generate Individual Learner Excel
+                </a>
+
+                <a href="{% url 'academic:excel_upload_individual' %}"
+                   class="btn btn-success"
+                   style="padding:11px 18px;border-radius:8px;background:#198754;border-color:#198754;color:#fff;">
+                    Upload Individual Learner Excel
+                </a>
+
+            </div>
+        </div>
+
+
+        <!-- WHOLE CLASS -->
+        <div style="margin-bottom:24px;">
+
+            <h5 style="font-weight:700;margin-bottom:12px;">
+                Whole Class
+            </h5>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+
+                <a href="{% url 'academic:excel_class' %}"
+                   class="btn btn-primary"
+                   style="padding:11px 18px;border-radius:8px;">
+                    Generate Whole Class Excel
+                </a>
+
+                <a href="{% url 'academic:excel_upload_class' %}"
+                   class="btn btn-success"
+                   style="padding:11px 18px;border-radius:8px;background:#198754;border-color:#198754;color:#fff;">
+                    Upload Whole Class Excel
+                </a>
+
+            </div>
+        </div>
+
+
+        <!-- SUBJECT MARKS -->
+        <div>
+
+            <h5 style="font-weight:700;margin-bottom:12px;">
+                Subject Marks
+            </h5>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+
+                <a href="{% url 'academic:excel_generate_subject' %}"
+                   class="btn btn-primary"
+                   style="padding:11px 18px;border-radius:8px;">
+                    Generate Subject Marks Excel
+                </a>
+
+                <a href="{% url 'academic:excel_upload_subject' %}"
+                   class="btn btn-success"
+                   style="padding:11px 18px;border-radius:8px;background:#198754;border-color:#198754;color:#fff;">
+                    Upload Subject Marks Excel
+                </a>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- END LUHAN EXCEL MARK MANAGEMENT -->
+
+
+</body>
+</html>

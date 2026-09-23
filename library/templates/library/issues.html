@@ -1,0 +1,140 @@
+﻿{% extends "library/base.html" %}
+
+{% block page_title %}Library Issues & Returns{% endblock %}
+
+{% block content %}
+
+<style>
+.library-choice {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+.choice-box {
+    width: 100%;
+    max-width: 850px;
+    text-align: center;
+}
+
+.choice-title {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.choice-subtitle {
+    color: #64748b;
+    font-size: 16px;
+    margin-bottom: 35px;
+}
+
+.choice-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.choice-button {
+    min-height: 180px;
+    border-radius: 18px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: transform .2s ease, box-shadow .2s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,.10);
+}
+
+.choice-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 30px rgba(0,0,0,.16);
+}
+
+.issue-button {
+    background: #174ea6;
+    color: white;
+}
+
+.return-button {
+    background: #198754;
+    color: white;
+}
+
+.choice-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.choice-label {
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.choice-description {
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: .9;
+}
+
+@media (max-width: 700px) {
+    .choice-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="library-choice">
+
+    <div class="choice-box">
+
+        <div class="choice-title">
+            Library Books
+        </div>
+
+        <div class="choice-subtitle">
+            Choose an operation
+        </div>
+
+        <div class="choice-buttons">
+
+            <a
+                href="{% url 'library_issue_add' %}"
+                class="choice-button issue-button"
+            >
+                <div class="choice-icon">📚</div>
+
+                <div class="choice-label">
+                    ISSUE BOOK
+                </div>
+
+                <div class="choice-description">
+                    Issue a book to a student or staff member
+                </div>
+            </a>
+
+            <a
+                href="{% url 'library_returns' %}"
+                class="choice-button return-button"
+            >
+                <div class="choice-icon">↩️</div>
+
+                <div class="choice-label">
+                    RETURN BOOK
+                </div>
+
+                <div class="choice-description">
+                    Process a returned library book
+                </div>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

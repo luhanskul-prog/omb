@@ -1,0 +1,84 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div style="max-width:1200px;margin:30px auto;padding:20px;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div>
+            <h1>Payroll Deduction Rules</h1>
+            <p style="color:#666;">
+                Configure compulsory and additional payroll deductions.
+            </p>
+        </div>
+
+        <a href="{% url 'hr_payroll:deduction_type_add' %}"
+           style="padding:11px 18px;background:#1565c0;color:white;text-decoration:none;border-radius:6px;">
+            + Add Deduction Rule
+        </a>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table style="width:100%;border-collapse:collapse;">
+            <thead>
+                <tr style="background:#f1f5f9;">
+                    <th style="padding:12px;text-align:left;">Name</th>
+                    <th style="padding:12px;text-align:left;">Code</th>
+                    <th style="padding:12px;text-align:left;">Type</th>
+                    <th style="padding:12px;text-align:left;">Base</th>
+                    <th style="padding:12px;text-align:right;">Rate</th>
+                    <th style="padding:12px;text-align:center;">Compulsory</th>
+                    <th style="padding:12px;text-align:center;">Active</th>
+                    <th style="padding:12px;text-align:center;">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for item in deduction_types %}
+                <tr style="border-bottom:1px solid #e5e7eb;">
+                    <td style="padding:12px;">{{ item.name }}</td>
+                    <td style="padding:12px;">{{ item.code|default:"-" }}</td>
+                    <td style="padding:12px;">{{ item.get_calculation_method_display }}</td>
+                    <td style="padding:12px;">{{ item.get_calculation_base_display }}</td>
+                    <td style="padding:12px;text-align:right;">
+                        {% if item.calculation_method == "PERCENTAGE" %}
+                            {{ item.percentage }}%
+                        {% else %}
+                            KSh {{ item.fixed_amount|floatformat:2 }}
+                        {% endif %}
+                    </td>
+                    <td style="padding:12px;text-align:center;">
+                        {% if item.is_compulsory %}
+                            YES
+                        {% else %}
+                            NO
+                        {% endif %}
+                    </td>
+                    <td style="padding:12px;text-align:center;">
+                        {% if item.is_active %}
+                            YES
+                        {% else %}
+                            NO
+                        {% endif %}
+                    </td>
+                    <td style="padding:12px;text-align:center;">
+                        <a href="{% url 'hr_payroll:deduction_type_edit' item.pk %}">
+                            Edit
+                        </a>
+                    </td>
+                </tr>
+
+                {% empty %}
+                <tr>
+                    <td colspan="8" style="padding:20px;text-align:center;">
+                        No deduction rules configured yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+{% endblock %}

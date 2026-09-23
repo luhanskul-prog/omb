@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Weekly Student Report</title>
+
+<style>
+body {
+    font-family:Arial, sans-serif;
+    margin:35px;
+    color:#222;
+}
+
+.header {
+    text-align:center;
+    border-bottom:2px solid #222;
+    padding-bottom:15px;
+    margin-bottom:20px;
+}
+
+table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,td {
+    border:1px solid #aaa;
+    padding:8px;
+    text-align:left;
+}
+
+th {
+    background:#f0f0f0;
+}
+
+.section {
+    margin-top:20px;
+}
+
+@media print {
+    .no-print {
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="no-print">
+<button onclick="window.print()">
+Print Report
+</button>
+</div>
+
+<div class="header">
+
+<h1>Weekly Student Assessment Report</h1>
+
+<h2>
+{{ report.student.first_name }}
+{{ report.student.middle_name }}
+{{ report.student.last_name }}
+</h2>
+
+<p>
+Admission No:
+{{ report.student.admission_no }}
+</p>
+
+<p>
+{{ report.class_name }}
+{% if report.stream %}
+— {{ report.stream }}
+{% endif %}
+</p>
+
+<p>
+Week {{ report.week_number }}
+|
+{{ report.from_date }}
+-
+{{ report.to_date }}
+</p>
+
+</div>
+
+<table>
+
+<thead>
+<tr>
+<th>Learning Area</th>
+<th>Assessment</th>
+<th>Score</th>
+<th>Percentage</th>
+<th>Teacher Report</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for assessment in report.assessments.all %}
+
+<tr>
+
+<td>
+{{ assessment.learning_area.name }}
+</td>
+
+<td>
+{{ assessment.assessment_title }}
+</td>
+
+<td>
+{{ assessment.score }}
+/
+{{ assessment.maximum_score }}
+</td>
+
+<td>
+{{ assessment.percentage }}%
+</td>
+
+<td>
+{{ assessment.teacher_report }}
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+
+<div class="section">
+
+<h3>Overall Report</h3>
+
+<p>
+{{ report.overall_comment }}
+</p>
+
+<h3>Strengths</h3>
+
+<p>
+{{ report.strengths }}
+</p>
+
+<h3>Areas for Improvement</h3>
+
+<p>
+{{ report.areas_for_improvement }}
+</p>
+
+<h3>Recommendation</h3>
+
+<p>
+{{ report.recommendation }}
+</p>
+
+</div>
+
+</body>
+</html>

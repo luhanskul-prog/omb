@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Dashboard</title>
+
+    <style>
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+        }
+
+        .header {
+            background: #111827;
+            color: white;
+            padding: 25px 40px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .dashboard {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(220px, 1fr));
+
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .card h2 {
+            margin-top: 0;
+        }
+
+        .card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 11px 18px;
+            background: #2563eb;
+            color: white;
+            text-decoration: none;
+            border-radius: 7px;
+            font-weight: bold;
+        }
+
+        .card a:hover {
+            background: #1d4ed8;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <h1>Administrator Dashboard</h1>
+
+</div>
+
+
+<div class="dashboard">
+
+    <div class="cards">
+
+
+        <!-- =================================================
+             BRANDING
+             ================================================= -->
+
+        <div class="card">
+
+            <h2>ðŸ« Branding</h2>
+
+            <p>
+                Configure the school name, logo, motto,
+                contacts and information used on official
+                ERP reports.
+            </p>
+
+            <a
+                href="{% url 'accounts:branding_management' %}"
+            >
+                Manage Branding
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             HR & PAYROLL
+             ================================================= -->
+
+        <div class="card">
+
+            <h2>ðŸ‘¤ HR & Payroll</h2>
+
+            <p>
+                Manage employees, departments and payroll.
+            </p>
+
+            <a href="{% url 'hr_payroll:dashboard' %}">
+                Open HR & Payroll
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             STAFF
+             ================================================= -->
+
+        <div class="card">
+
+            <h2>Staff Management</h2>
+
+            <p>
+                Manage staff accounts, roles and permissions.
+            </p>
+
+            <a href="{% url 'accounts:staff_management' %}">
+                Manage Staff
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             DEPARTMENTS
+             ================================================= -->
+
+        <div class="card">
+
+            <h2>Departments</h2>
+
+            <p>
+                Manage school departments.
+            </p>
+
+            <a
+                href="{% url 'accounts:department_management' %}"
+            >
+                Manage Departments
+            </a>
+
+        </div>
+
+
+        <!-- =================================================
+             ROLES
+             ================================================= -->
+
+        <div class="card">
+
+            <h2>Roles & Permissions</h2>
+
+            <p>
+                Manage system roles and permissions.
+            </p>
+
+            <a
+                href="{% url 'accounts:role_management' %}"
+            >
+                Manage Roles
+            </a>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<!-- WEEKLY ASSESSMENT REPORTS -->
+
+<div class="col-xl-3 col-lg-4 col-md-6">
+
+    <a href="{% url 'weekly_reports:dashboard' %}"
+       class="module">
+
+        <span class="arrow">&#8594;</span>
+
+        <div class="module-icon blue">
+            <i class="fa-solid fa-chart-line"></i>
+        </div>
+
+        <h3 class="module-name">
+            Weekly Assessment Reports
+        </h3>
+
+        <div class="module-description">
+            Weekly scores, reports and student progress
+        </div>
+
+    </a>
+
+</div>
+
+
+</body>
+
+</html>

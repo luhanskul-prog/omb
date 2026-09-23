@@ -1,0 +1,1045 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+    /* =====================================================
+       MAIN PAGE
+    ===================================================== */
+
+    .attendance-page {
+        min-height: 100vh;
+        background: #f4f7fb;
+        padding: 24px;
+    }
+
+    .attendance-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+
+    /* =====================================================
+       HEADER
+    ===================================================== */
+
+    .attendance-header {
+        background: linear-gradient(
+            135deg,
+            #12345b,
+            #1d5c91
+        );
+
+        color: white;
+        padding: 26px 30px;
+        border-radius: 14px 14px 0 0;
+    }
+
+    .attendance-header h1 {
+        margin: 0;
+        font-size: 27px;
+        font-weight: 700;
+    }
+
+    .attendance-header p {
+        margin: 6px 0 0;
+        opacity: .9;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       FILTER PANEL
+    ===================================================== */
+
+    .filter-card {
+        background: white;
+        padding: 22px 26px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .filter-grid {
+        display: grid;
+        grid-template-columns:
+            repeat(4, minmax(160px, 1fr));
+
+        gap: 16px;
+    }
+
+    .filter-item label {
+        display: block;
+        font-size: 13px;
+        font-weight: 700;
+        color: #374151;
+        margin-bottom: 7px;
+    }
+
+    .filter-item select,
+    .filter-item input {
+        width: 100%;
+        height: 42px;
+        box-sizing: border-box;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        padding: 0 11px;
+        background: white;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .filter-item select:focus,
+    .filter-item input:focus {
+        border-color: #1d5c91;
+        box-shadow: 0 0 0 2px rgba(29,92,145,.12);
+    }
+
+    .filter-actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .view-button {
+        background: #12345b;
+        color: white;
+        border: none;
+        padding: 11px 22px;
+        border-radius: 7px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .view-button:hover {
+        background: #0d2948;
+    }
+
+    .clear-button {
+        text-decoration: none;
+        background: #eef2f7;
+        color: #374151;
+        padding: 11px 18px;
+        border-radius: 7px;
+        font-weight: 600;
+    }
+
+
+    /* =====================================================
+       SELECTED PERIOD
+    ===================================================== */
+
+    .period-bar {
+        background: white;
+        padding: 15px 26px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #4b5563;
+        font-size: 13px;
+    }
+
+    .period-bar strong {
+        color: #111827;
+    }
+
+
+    /* =====================================================
+       SUMMARY STATISTICS
+    ===================================================== */
+
+    .summary-grid {
+        display: grid;
+
+        grid-template-columns:
+            repeat(6, minmax(120px, 1fr));
+
+        gap: 12px;
+
+        padding: 20px 26px;
+
+        background: white;
+    }
+
+    .summary-box {
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 15px 12px;
+        text-align: center;
+        background: #fff;
+    }
+
+    .summary-label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+    }
+
+    .summary-number {
+        display: block;
+        margin-top: 7px;
+        font-size: 25px;
+        font-weight: 800;
+        color: #111827;
+    }
+
+    .summary-sub {
+        display: block;
+        margin-top: 3px;
+        font-size: 11px;
+        color: #9ca3af;
+    }
+
+    .total-box {
+        border-top: 4px solid #12345b;
+    }
+
+    .present-box {
+        border-top: 4px solid #198754;
+    }
+
+    .absent-box {
+        border-top: 4px solid #dc3545;
+    }
+
+    .late-box {
+        border-top: 4px solid #f59e0b;
+    }
+
+    .excused-box {
+        border-top: 4px solid #6f42c1;
+    }
+
+    .percentage-box {
+        border-top: 4px solid #0d6efd;
+    }
+
+    .percentage-box .summary-number {
+        color: #0d6efd;
+    }
+
+
+    /* =====================================================
+       REPORT ACTIONS
+    ===================================================== */
+
+    .report-actions {
+        padding: 0 26px 20px;
+        background: white;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .print-button {
+        border: none;
+        background: #198754;
+        color: white;
+        padding: 11px 20px;
+        border-radius: 7px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .print-button:hover {
+        background: #146c43;
+    }
+
+
+    /* =====================================================
+       TABLE
+    ===================================================== */
+
+    .table-card {
+        background: white;
+        padding: 0 26px 30px;
+        overflow-x: auto;
+    }
+
+    .attendance-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 950px;
+    }
+
+    .attendance-table thead th {
+        background: #eef2f7;
+        color: #374151;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .3px;
+        padding: 12px 10px;
+        text-align: left;
+        border-bottom: 2px solid #d1d5db;
+        white-space: nowrap;
+    }
+
+    .attendance-table tbody td {
+        padding: 11px 10px;
+        border-bottom: 1px solid #e5e7eb;
+        color: #374151;
+        font-size: 13px;
+        vertical-align: middle;
+    }
+
+    .attendance-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .learner-name {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .admission-number {
+        font-family: monospace;
+        font-weight: 600;
+        color: #4b5563;
+    }
+
+
+    /* =====================================================
+       STATUS BADGES
+    ===================================================== */
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .status-present {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-absent {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .status-late {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-excused {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+
+
+    /* =====================================================
+       EMPTY STATE
+    ===================================================== */
+
+    .empty-state {
+        background: white;
+        padding: 65px 25px;
+        text-align: center;
+        color: #6b7280;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 8px;
+        color: #374151;
+    }
+
+    .empty-state p {
+        margin: 0;
+        font-size: 14px;
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 1000px) {
+
+        .summary-grid {
+            grid-template-columns:
+                repeat(3, 1fr);
+        }
+
+        .filter-grid {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 600px) {
+
+        .attendance-page {
+            padding: 10px;
+        }
+
+        .filter-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .summary-grid {
+            grid-template-columns:
+                repeat(2, 1fr);
+        }
+
+        .attendance-header {
+            padding: 20px;
+        }
+
+        .attendance-header h1 {
+            font-size: 22px;
+        }
+    }
+
+
+    /* =====================================================
+       PRINT A4
+    ===================================================== */
+
+    @media print {
+
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
+
+        body {
+            background: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .attendance-page {
+            background: white !important;
+            padding: 0 !important;
+            min-height: auto !important;
+        }
+
+        .attendance-container {
+            max-width: none !important;
+            width: 100% !important;
+        }
+
+        .filter-card,
+        .report-actions,
+        .clear-button,
+        button {
+            display: none !important;
+        }
+
+        .attendance-header {
+            background: white !important;
+            color: #111827 !important;
+            padding: 0 0 8px !important;
+            border-radius: 0 !important;
+            border-bottom: 2px solid #12345b;
+        }
+
+        .attendance-header h1 {
+            font-size: 19px;
+        }
+
+        .attendance-header p {
+            font-size: 10px;
+            color: #555;
+        }
+
+        .period-bar {
+            padding: 7px 0 !important;
+            font-size: 10px;
+            border-bottom: 1px solid #aaa;
+        }
+
+        .summary-grid {
+            padding: 9px 0 !important;
+            gap: 6px;
+            grid-template-columns:
+                repeat(6, 1fr);
+        }
+
+        .summary-box {
+            padding: 7px 3px;
+            border-radius: 3px;
+            border-top-width: 2px;
+        }
+
+        .summary-label {
+            font-size: 7px;
+        }
+
+        .summary-number {
+            font-size: 15px;
+            margin-top: 3px;
+        }
+
+        .summary-sub {
+            font-size: 7px;
+        }
+
+        .table-card {
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        .attendance-table {
+            min-width: 0 !important;
+            width: 100% !important;
+            font-size: 8px;
+        }
+
+        .attendance-table thead th {
+            font-size: 7px;
+            padding: 5px 4px;
+            background: #eeeeee !important;
+            color: #111 !important;
+        }
+
+        .attendance-table tbody td {
+            font-size: 8px;
+            padding: 4px;
+        }
+
+        .status-badge {
+            padding: 2px 5px;
+            font-size: 7px;
+            border-radius: 8px;
+        }
+
+        .attendance-table tr {
+            page-break-inside: avoid;
+        }
+
+        .learner-name {
+            font-weight: 600;
+        }
+
+        .admission-number {
+            font-size: 7px;
+        }
+
+        .attendance-table th:nth-child(7),
+        .attendance-table td:nth-child(7) {
+            max-width: 80px;
+        }
+
+        .attendance-table thead {
+            display: table-header-group;
+        }
+
+        .attendance-table tfoot {
+            display: table-footer-group;
+        }
+    }
+
+</style>
+
+
+<div class="attendance-page">
+
+    <div class="attendance-container">
+
+
+        <!-- =================================================
+             HEADER
+        ================================================== -->
+
+        <div class="attendance-header">
+
+            <h1>
+                Attendance Analysis
+            </h1>
+
+            <p>
+                Attendance records, statistics and period analysis
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             FILTERS
+        ================================================== -->
+
+        <div class="filter-card">
+
+            <form method="GET">
+
+                <div class="filter-grid">
+
+
+                    <!-- CLASS -->
+
+                    <div class="filter-item">
+
+                        <label>
+                            Class
+                        </label>
+
+                        <select name="class_name">
+
+                            <option value="">
+                                Whole School
+                            </option>
+
+                            {% for class_name in classes %}
+
+                                <option
+                                    value="{{ class_name }}"
+                                    {% if selected_class == class_name %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ class_name }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- STREAM -->
+
+                    <div class="filter-item">
+
+                        <label>
+                            Stream
+                        </label>
+
+                        <select name="stream">
+
+                            <option value="">
+                                All Streams
+                            </option>
+
+                            {% for stream in streams %}
+
+                                <option
+                                    value="{{ stream }}"
+                                    {% if selected_stream == stream %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ stream }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- DATE FROM -->
+
+                    <div class="filter-item">
+
+                        <label>
+                            Date From
+                        </label>
+
+                        <input
+                            type="date"
+                            name="date_from"
+                            value="{{ date_from }}"
+                        >
+
+                    </div>
+
+
+                    <!-- DATE TO -->
+
+                    <div class="filter-item">
+
+                        <label>
+                            Date To
+                        </label>
+
+                        <input
+                            type="date"
+                            name="date_to"
+                            value="{{ date_to }}"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="filter-actions">
+
+                    <button
+                        type="submit"
+                        class="view-button"
+                    >
+                        View Attendance
+                    </button>
+
+                    <a
+                        href="{% url 'attendance:view_attendance' %}"
+                        class="clear-button"
+                    >
+                        Clear Filters
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- =================================================
+             PERIOD INFORMATION
+        ================================================== -->
+
+        <div class="period-bar">
+
+            <strong>Report:</strong>
+
+            {% if selected_class %}
+                Class {{ selected_class }}
+            {% else %}
+                Whole School
+            {% endif %}
+
+            {% if selected_stream %}
+                &nbsp;•&nbsp; Stream {{ selected_stream }}
+            {% endif %}
+
+            {% if date_from %}
+                &nbsp;•&nbsp; From {{ date_from }}
+            {% endif %}
+
+            {% if date_to %}
+                &nbsp;•&nbsp; To {{ date_to }}
+            {% endif %}
+
+            {% if not date_from and not date_to %}
+                &nbsp;•&nbsp; All available dates
+            {% endif %}
+
+        </div>
+
+
+        <!-- =================================================
+             SUMMARY
+        ================================================== -->
+
+        <div class="summary-grid">
+
+
+            <div class="summary-box total-box">
+
+                <span class="summary-label">
+                    Total Records
+                </span>
+
+                <span class="summary-number">
+                    {{ total_records }}
+                </span>
+
+                <span class="summary-sub">
+                    Attendance entries
+                </span>
+
+            </div>
+
+
+            <div class="summary-box present-box">
+
+                <span class="summary-label">
+                    Present
+                </span>
+
+                <span class="summary-number">
+                    {{ present_count }}
+                </span>
+
+                <span class="summary-sub">
+                    Present learners
+                </span>
+
+            </div>
+
+
+            <div class="summary-box absent-box">
+
+                <span class="summary-label">
+                    Absent
+                </span>
+
+                <span class="summary-number">
+                    {{ absent_count }}
+                </span>
+
+                <span class="summary-sub">
+                    Absent learners
+                </span>
+
+            </div>
+
+
+            <div class="summary-box late-box">
+
+                <span class="summary-label">
+                    Late
+                </span>
+
+                <span class="summary-number">
+                    {{ late_count }}
+                </span>
+
+                <span class="summary-sub">
+                    Late arrivals
+                </span>
+
+            </div>
+
+
+            <div class="summary-box excused-box">
+
+                <span class="summary-label">
+                    Excused
+                </span>
+
+                <span class="summary-number">
+                    {{ excused_count }}
+                </span>
+
+                <span class="summary-sub">
+                    Excused absence
+                </span>
+
+            </div>
+
+
+            <div class="summary-box percentage-box">
+
+                <span class="summary-label">
+                    Attendance
+                </span>
+
+                <span class="summary-number">
+                    {{ attendance_percentage }}%
+                </span>
+
+                <span class="summary-sub">
+                    Present + Late
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- =================================================
+             ACTIONS
+        ================================================== -->
+
+        <div class="report-actions">
+
+            <button
+                type="button"
+                class="print-button"
+                onclick="printAttendance()"
+            >
+                Print A4 Report
+            </button>
+
+        </div>
+
+
+        <!-- =================================================
+             TABLE
+        ================================================== -->
+
+        {% if records %}
+
+        <div class="table-card">
+
+            <table class="attendance-table">
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Date
+                        </th>
+
+                        <th>
+                            Admission No.
+                        </th>
+
+                        <th>
+                            Learner
+                        </th>
+
+                        <th>
+                            Class
+                        </th>
+
+                        <th>
+                            Stream
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Remarks
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for record in records %}
+
+                    <tr>
+
+                        <td>
+                            {{ record.date|date:"d/m/Y" }}
+                        </td>
+
+
+                        <td class="admission-number">
+                            {{ record.student.admission_no }}
+                        </td>
+
+
+                        <td class="learner-name">
+
+                            {{ record.student.first_name }}
+
+                            {% if record.student.middle_name %}
+                                {{ record.student.middle_name }}
+                            {% endif %}
+
+                            {{ record.student.last_name }}
+
+                        </td>
+
+
+                        <td>
+                            {{ record.student.class_name }}
+                        </td>
+
+
+                        <td>
+                            {{ record.student.stream }}
+                        </td>
+
+
+                        <td>
+
+                            {% if record.status == "present" %}
+
+                                <span class="status-badge status-present">
+                                    Present
+                                </span>
+
+                            {% elif record.status == "absent" %}
+
+                                <span class="status-badge status-absent">
+                                    Absent
+                                </span>
+
+                            {% elif record.status == "late" %}
+
+                                <span class="status-badge status-late">
+                                    Late
+                                </span>
+
+                            {% elif record.status == "excused" %}
+
+                                <span class="status-badge status-excused">
+                                    Excused
+                                </span>
+
+                            {% else %}
+
+                                {{ record.get_status_display }}
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+                            {{ record.remarks|default:"—" }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <!-- =================================================
+             EMPTY STATE
+        ================================================== -->
+
+        <div class="empty-state">
+
+            <h3>
+                No Attendance Records Found
+            </h3>
+
+            <p>
+                Select a class, stream and date period
+                to view attendance records.
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+function printAttendance() {
+
+    const params = new URLSearchParams(
+        window.location.search
+    );
+
+    const printUrl =
+        "{% url 'attendance:print_attendance' %}"
+        + "?"
+        + params.toString();
+
+    window.open(
+        printUrl,
+        "_blank"
+    );
+}
+
+</script>
+
+{% endblock %}

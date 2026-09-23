@@ -1,0 +1,142 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<div style="
+    max-width:900px;
+    margin:30px auto;
+    padding:20px;
+">
+
+    <div style="
+        background:linear-gradient(135deg,#0f3d75,#1769aa);
+        color:white;
+        padding:25px;
+        border-radius:14px;
+        margin-bottom:20px;
+    ">
+
+        <h1 style="margin:0">
+            Assign Lessons
+        </h1>
+
+        <p>
+            Create or update a teacher's weekly teaching assignment.
+        </p>
+
+    </div>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+                repeat(auto-fit,minmax(220px,1fr));
+            gap:15px;
+        ">
+
+            <div>
+                <label>Teacher</label>
+                <select name="teacher" required>
+                    <option value="">Select teacher</option>
+
+                    {% for teacher in teachers %}
+                        <option value="{{ teacher.id }}">
+                            {{ teacher.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div>
+                <label>Subject</label>
+                <select name="subject" required>
+                    <option value="">Select subject</option>
+
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}">
+                            {{ subject.name }}
+                        </option>
+                    {% endfor %}
+
+                </select>
+            </div>
+
+            <div>
+                <label>Grade / Class</label>
+                <input
+                    name="class_name"
+                    required
+                    placeholder="e.g. G5"
+                >
+            </div>
+
+            <div>
+                <label>Stream</label>
+                <input
+                    name="stream"
+                    placeholder="e.g. BLUE"
+                >
+            </div>
+
+            <div>
+                <label>Lessons Per Week</label>
+                <input
+                    type="number"
+                    name="lessons_per_week"
+                    min="1"
+                    value="1"
+                    required
+                >
+            </div>
+
+            <div>
+                <label>Lesson Length</label>
+                <select name="duration">
+                    <option value="SINGLE">
+                        Single Lesson
+                    </option>
+                    <option value="DOUBLE">
+                        Double Lesson
+                    </option>
+                </select>
+            </div>
+
+        </div>
+
+        <br>
+
+        {% if erp_permission.add_teacherteachingassignment %}
+        <button
+            type="submit"
+            style="
+                background:#1769aa;
+                color:white;
+                border:0;
+                border-radius:8px;
+                padding:12px 20px;
+                cursor:pointer;
+            "
+        >
+            Save Assignment
+        </button>
+        {% endif %}
+
+        <a
+            href="{% url 'scheduling:complete_timetable_centre' %}"
+            style="
+                margin-left:10px;
+                text-decoration:none;
+            "
+        >
+            Cancel
+        </a>
+
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="card shadow-lg border-0">
+
+        <div class="card-header bg-primary text-white py-3">
+            <h3 class="mb-0">🏦 Bank School Fees Payment</h3>
+        </div>
+
+        <div class="card-body">
+
+            {% if disabled %}
+
+                <div class="alert alert-warning">
+                    <strong>Automatic bank payments are currently disabled.</strong>
+                    <div class="mt-1">
+                        Please contact the school administration for payment
+                        instructions.
+                    </div>
+                </div>
+
+            {% else %}
+
+                <div class="row g-4">
+
+                    <!-- BANK ACCOUNT -->
+                    <div class="col-lg-6">
+
+                        <h5 class="fw-bold mb-3">
+                            Receiving Bank Account
+                        </h5>
+
+                        <div class="border rounded p-4 bg-light">
+
+                            <div class="mb-2">
+                                <strong>Bank:</strong>
+                                {{ settings.bank_name }}
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Account Name:</strong>
+                                {{ settings.bank_account_name }}
+                            </div>
+
+                            <div class="mb-2">
+                                <strong>Account Number:</strong>
+                                {{ settings.bank_account_number }}
+                            </div>
+
+                            {% if settings.bank_account_type %}
+                            <div class="mb-2">
+                                <strong>Account Type:</strong>
+                                {{ settings.bank_account_type }}
+                            </div>
+                            {% endif %}
+
+                            {% if settings.bank_branch %}
+                            <div class="mb-2">
+                                <strong>Branch:</strong>
+                                {{ settings.bank_branch }}
+                            </div>
+                            {% endif %}
+
+                            {% if settings.bank_branch_code %}
+                            <div class="mb-2">
+                                <strong>Branch Code:</strong>
+                                {{ settings.bank_branch_code }}
+                            </div>
+                            {% endif %}
+
+                            {% if settings.bank_swift_bic %}
+                            <div class="mb-0">
+                                <strong>SWIFT/BIC:</strong>
+                                {{ settings.bank_swift_bic }}
+                            </div>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- STUDENT -->
+                    <div class="col-lg-6">
+
+                        <h5 class="fw-bold mb-3">
+                            Student Payment Details
+                        </h5>
+
+                        <form method="get">
+
+                            <label class="form-label fw-semibold">
+                                Student Admission Number
+                            </label>
+
+                            <input
+                                type="text"
+                                name="admission_no"
+                                value="{{ admission_no }}"
+                                class="form-control form-control-lg"
+                                placeholder="e.g. LUH007"
+                                required
+                            >
+
+                            <button
+                                class="btn btn-primary mt-3 w-100"
+                                type="submit"
+                            >
+                                Find Student
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                {% if admission_no %}
+
+                    <hr class="my-4">
+
+                    {% if student %}
+
+                        <div class="alert alert-success">
+                            <strong>Student found:</strong>
+                            {{ student.first_name }}
+                            {{ student.middle_name }}
+                            {{ student.last_name }}
+                            — {{ student.admission_no }}
+                        </div>
+
+
+                        {% if fee_record %}
+
+                            <div class="row g-3 mb-4">
+
+                                <div class="col-md-6">
+                                    <div class="card border-warning h-100">
+                                        <div class="card-body">
+                                            <div class="text-muted">
+                                                Outstanding Balance
+                                            </div>
+                                            <div class="fs-3 fw-bold text-danger">
+                                                {{ fee_record.balance }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="card border-primary h-100">
+                                        <div class="card-body">
+                                            <div class="text-muted">
+                                                Payment Reference
+                                            </div>
+                                            <div class="fs-3 fw-bold text-primary">
+                                                {{ reference }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            {% if error %}
+                                <div class="alert alert-danger">
+                                    {{ error }}
+                                </div>
+                            {% endif %}
+
+
+                            <div class="card border-primary">
+
+                                <div class="card-body">
+
+                                    <h5 class="fw-bold">
+                                        Make Bank Payment
+                                    </h5>
+
+                                    <p class="text-muted">
+                                        Enter the amount you intend to transfer.
+                                        The reference below must be entered
+                                        exactly in the bank transfer narration/
+                                        reference field.
+                                    </p>
+
+                                    <form method="post">
+                                        {% csrf_token %}
+
+                                        <input
+                                            type="hidden"
+                                            name="admission_no"
+                                            value="{{ student.admission_no }}"
+                                        >
+
+                                        <div class="mb-3">
+
+                                            <label class="form-label fw-semibold">
+                                                Payment Amount
+                                            </label>
+
+                                            <input
+                                                type="number"
+                                                name="amount"
+                                                value="{{ amount|default:'' }}"
+                                                class="form-control form-control-lg"
+                                                min="1"
+                                                step="0.01"
+                                                max="{{ fee_record.balance }}"
+                                                placeholder="Enter amount"
+                                                required
+                                            >
+
+                                        </div>
+
+
+                                        <div class="alert alert-primary">
+
+                                            <div class="small text-muted">
+                                                BANK PAYMENT REFERENCE
+                                            </div>
+
+                                            <div class="fs-3 fw-bold">
+                                                {{ reference }}
+                                            </div>
+
+                                            <div class="small mt-2">
+                                                Use this exact reference when
+                                                making the bank transfer.
+                                            </div>
+
+                                        </div>
+
+
+                                        <button
+                                            type="submit"
+                                            class="btn btn-success btn-lg w-100"
+                                        >
+                                            Confirm Bank Payment Details
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+
+                            {% if amount %}
+
+                                <div class="card border-success mt-4">
+
+                                    <div class="card-body">
+
+                                        <h5 class="fw-bold text-success">
+                                            Payment Instructions
+                                        </h5>
+
+                                        <div class="row g-3">
+
+                                            <div class="col-md-6">
+                                                <strong>Amount</strong>
+                                                <div class="fs-4">
+                                                    {{ amount }}
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-6">
+                                                <strong>Reference</strong>
+                                                <div class="fs-4">
+                                                    {{ reference }}
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        <hr>
+
+                                        <ol class="mb-0">
+                                            <li>
+                                                Transfer the amount shown above
+                                                to the school bank account.
+                                            </li>
+                                            <li>
+                                                Enter
+                                                <strong>{{ reference }}</strong>
+                                                as the payment reference/
+                                                narration.
+                                            </li>
+                                            <li>
+                                                Complete the bank transfer.
+                                            </li>
+                                            <li>
+                                                The ERP will match the incoming
+                                                bank transaction using the
+                                                payment reference.
+                                            </li>
+                                            <li>
+                                                Once verified, the payment will
+                                                be posted to the learner's fee
+                                                account and the official receipt
+                                                can be generated.
+                                            </li>
+                                        </ol>
+
+                                    </div>
+
+                                </div>
+
+                            {% endif %}
+
+                        {% else %}
+
+                            <div class="alert alert-warning">
+                                No active fee record was found for this student.
+                            </div>
+
+                        {% endif %}
+
+                    {% else %}
+
+                        <div class="alert alert-danger">
+                            No active student was found with admission number
+                            <strong>{{ admission_no }}</strong>.
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% endif %}
+
+            <hr class="my-5">
+
+            <div class="card border-success">
+                <div class="card-body">
+                    <h5 class="fw-bold">
+                        Already Paid? Verify Your Bank Transaction
+                    </h5>
+
+                    <p class="text-muted">
+                        If you have completed the bank transfer, enter the
+                        transaction code supplied by the bank. The ERP will
+                        verify the transaction and, when successful, provide
+                        your official receipt.
+                    </p>
+
+                    <a
+                        href="{% url 'fees:bank_self_service_verify' %}"
+                        class="btn btn-success btn-lg"
+                    >
+                        Verify Bank Transaction & Download Receipt
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

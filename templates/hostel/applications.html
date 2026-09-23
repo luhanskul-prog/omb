@@ -1,0 +1,232 @@
+﻿{% extends "hostel/base.html" %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">
+                🏠 Hostel Applications
+            </h2>
+
+            <p class="text-muted mb-0">
+                Review student and parent hostel requests.
+            </p>
+        </div>
+
+        <a href="{% url 'hostel:dashboard' %}"
+           class="btn btn-outline-primary">
+            Hostel Dashboard
+        </a>
+
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mb-4">
+        <div class="card-body">
+
+            <form method="get"
+                  class="row g-2">
+
+                <div class="col-md-6">
+                    <input type="text"
+                           name="search"
+                           value="{{ search }}"
+                           class="form-control"
+                           placeholder="Search student, admission number or hostel...">
+                </div>
+
+                <div class="col-md-3">
+                    <select name="status"
+                            class="form-select">
+
+                        <option value="">All statuses</option>
+
+                        <option value="pending"
+                            {% if status == "pending" %}selected{% endif %}>
+                            Pending
+                        </option>
+
+                        <option value="approved"
+                            {% if status == "approved" %}selected{% endif %}>
+                            Approved
+                        </option>
+
+                        <option value="rejected"
+                            {% if status == "rejected" %}selected{% endif %}>
+                            Rejected
+                        </option>
+
+                    </select>
+                </div>
+
+                <div class="col-md-3 d-flex gap-2">
+
+                    <button class="btn btn-primary flex-fill">
+                        Search
+                    </button>
+
+                    <a href="{% url 'hostel:applications' %}"
+                       class="btn btn-light">
+                        Reset
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Class</th>
+                            <th>Hostel</th>
+                            <th>Room</th>
+                            <th>Requested Date</th>
+                            <th>Status</th>
+                            <th>Submitted</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for application in applications %}
+
+                    <tr>
+
+                        <td>
+                            <strong>
+                                {{ application.student.first_name }}
+                                {{ application.student.middle_name }}
+                                {{ application.student.last_name }}
+                            </strong>
+
+                            <div class="small text-muted">
+                                {{ application.student.admission_no }}
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ application.student.class_name }}
+                            {% if application.student.stream %}
+                                · {{ application.student.stream }}
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ application.hostel.name }}
+                        </td>
+
+                        <td>
+                            {% if application.room %}
+                                Room {{ application.room.room_number }}
+                            {% else %}
+                                Any available
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ application.requested_date }}
+                        </td>
+
+                        <td>
+
+                            {% if application.status == "pending" %}
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+                            {% elif application.status == "approved" %}
+                                <span class="badge bg-success">
+                                    Approved
+                                </span>
+                            {% elif application.status == "rejected" %}
+                                <span class="badge bg-danger">
+                                    Rejected
+                                </span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ application.get_status_display }}
+                                </span>
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ application.created_at|date:"d M Y H:i" }}
+                        </td>
+
+                        <td class="text-end">
+
+                            {% if application.status == "pending" %}
+
+                            <div class="d-flex justify-content-end gap-2">
+
+                                {% if erp_permission.change_hostelapplication %}
+                                <form method="post"
+                                      action="{% url 'hostel:application_approve' application.pk %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-success btn-sm">
+                                        Approve
+                                    </button>
+                                </form>
+                                {% endif %}
+                                {% if erp_permission.change_hostelapplication %}
+                                <form method="post"
+                                      action="{% url 'hostel:application_reject' application.pk %}">
+                                    {% csrf_token %}
+                                    <button class="btn btn-outline-danger btn-sm">
+                                        Reject
+                                    </button>
+                                </form>
+                                {% endif %}
+                                </div>
+
+                            {% else %}
+
+                                <span class="text-muted small">
+                                    Reviewed
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="8"
+                            class="text-center py-5 text-muted">
+                            No hostel applications found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+

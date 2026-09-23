@@ -1,0 +1,375 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly Assessment Reports</title>
+
+<link
+ href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+ rel="stylesheet">
+
+<style>
+body {
+    background:#f4f7fb;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+.header {
+    background:linear-gradient(135deg,#0d6efd,#084298);
+    color:white;
+    padding:25px 0;
+    margin-bottom:25px;
+}
+
+.card {
+    border:0;
+    border-radius:14px;
+    box-shadow:0 4px 18px rgba(0,0,0,.06);
+}
+
+.score {
+    font-weight:700;
+    font-size:18px;
+}
+
+.report-comment {
+    background:#f8f9fa;
+    border-radius:10px;
+    padding:15px;
+}
+
+.badge-draft {
+    background:#6c757d;
+}
+
+.badge-submitted {
+    background:#fd7e14;
+}
+
+.badge-published {
+    background:#198754;
+}
+
+.reply {
+    border-left:4px solid #0d6efd;
+    padding:10px 15px;
+    margin-bottom:12px;
+    background:#f8f9fa;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<div class="container">
+<h2 class="mb-1">Student Weekly Assessment Reports</h2>
+<div>Weekly learning progress, scores and teacher reports</div>
+</div>
+</div>
+
+<main class="container pb-5">
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-info">{{ message }}</div>
+{% endfor %}
+{% endif %}
+
+{% block content %}{% endblock %}
+
+</main>
+
+</body>
+</html>
+
+{% block content %}
+
+<div class="card p-4 mb-4">
+
+<div class="d-flex justify-content-between">
+
+<div>
+
+<h3>
+{{ report.student.first_name }}
+{{ report.student.middle_name }}
+{{ report.student.last_name }}
+</h3>
+
+<p class="text-muted mb-1">
+Admission No: {{ report.student.admission_no }}
+</p>
+
+<p>
+<strong>{{ report.class_name }}</strong>
+{% if report.stream %}
+— {{ report.stream }}
+{% endif %}
+</p>
+
+</div>
+
+<div class="text-end">
+
+<h4>Week {{ report.week_number }}</h4>
+
+<p>
+{{ report.from_date }} -
+{{ report.to_date }}
+</p>
+
+{% if report.status == "PUBLISHED" %}
+<span class="badge badge-published">
+Published
+</span>
+{% elif report.status == "SUBMITTED" %}
+<span class="badge badge-submitted">
+Submitted
+</span>
+{% else %}
+<span class="badge badge-draft">
+Draft
+</span>
+{% endif %}
+
+</div>
+
+</div>
+
+<hr>
+
+{% if can_edit %}
+
+<a href="{% url 'weekly_reports:edit' report.id %}"
+   class="btn btn-outline-primary">
+Edit Report
+</a>
+
+<a href="{% url 'weekly_reports:add_assessment' report.id %}"
+   class="btn btn-primary">
++ Add Learning Area
+</a>
+
+{% if report.status != "PUBLISHED" %}
+
+<form method="post"
+      action="{% url 'weekly_reports:publish' report.id %}"
+      class="d-inline">
+
+{% csrf_token %}
+
+<button class="btn btn-success">
+Publish Report
+</button>
+
+</form>
+
+{% endif %}
+
+{% if is_admin and report.status == "PUBLISHED" %}
+
+<form method="post"
+      action="{% url 'weekly_reports:unpublish' report.id %}"
+      class="d-inline">
+
+{% csrf_token %}
+
+<button class="btn btn-warning">
+Unpublish
+</button>
+
+</form>
+
+{% endif %}
+
+{% endif %}
+
+<a href="{% url 'weekly_reports:print' report.id %}"
+   class="btn btn-outline-dark">
+Print
+</a>
+
+</div>
+
+
+<div class="card p-4 mb-4">
+
+<h4>Learning Area Assessments</h4>
+
+<div class="table-responsive">
+
+<table class="table">
+
+<thead>
+<tr>
+<th>Learning Area</th>
+<th>Assessment</th>
+<th>Score</th>
+<th>%</th>
+<th>Teacher Report</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for assessment in report.assessments.all %}
+
+<tr>
+
+<td>
+<strong>
+{{ assessment.learning_area.name }}
+</strong>
+</td>
+
+<td>
+{{ assessment.assessment_title|default:"Weekly Assessment" }}
+</td>
+
+<td class="score">
+{% if assessment.score != None %}
+{{ assessment.score }}/{{ assessment.maximum_score }}
+{% else %}
+—
+{% endif %}
+</td>
+
+<td>
+{% if assessment.percentage != None %}
+{{ assessment.percentage }}%
+{% else %}
+—
+{% endif %}
+</td>
+
+<td>
+{{ assessment.teacher_report|default:"No report entered." }}
+</td>
+
+<td>
+
+{% if can_edit %}
+
+<a href="{% url 'weekly_reports:edit_assessment' assessment.id %}"
+   class="btn btn-sm btn-outline-primary">
+Edit
+</a>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% empty %}
+
+<tr>
+<td colspan="6"
+    class="text-center text-muted py-4">
+No learning-area assessments have been entered yet.
+</td>
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+
+<div class="card p-4 mb-4">
+
+<h4>Overall Class Teacher Report</h4>
+
+<div class="report-comment mb-3">
+{{ report.overall_comment|default:"No overall comment entered." }}
+</div>
+
+<h5>Strengths</h5>
+<div class="report-comment mb-3">
+{{ report.strengths|default:"—" }}
+</div>
+
+<h5>Areas for Improvement</h5>
+<div class="report-comment mb-3">
+{{ report.areas_for_improvement|default:"—" }}
+</div>
+
+<h5>Recommendation</h5>
+<div class="report-comment">
+{{ report.recommendation|default:"—" }}
+</div>
+
+</div>
+
+
+{% if report.status == "PUBLISHED" %}
+
+<div class="card p-4">
+
+<h4>Parent / Student Responses</h4>
+
+{% for reply in report.replies.all %}
+
+<div class="reply">
+
+<strong>
+{% if reply.author_type == "PARENT" %}
+Parent
+{% else %}
+Student
+{% endif %}
+</strong>
+
+<small class="text-muted">
+{{ reply.created_at }}
+</small>
+
+<p class="mb-0 mt-2">
+{{ reply.message }}
+</p>
+
+</div>
+
+{% empty %}
+
+<p class="text-muted">
+No replies yet.
+</p>
+
+{% endfor %}
+
+{% if request.user.userprofile.role == "PARENT" or request.user.userprofile.role == "STUDENT" %}
+
+<form method="post"
+      action="{% url 'weekly_reports:reply' report.id %}">
+
+{% csrf_token %}
+
+<textarea name="message"
+          class="form-control mb-2"
+          rows="3"
+          placeholder="Write your response..."
+          required></textarea>
+
+<button class="btn btn-primary">
+Send Reply
+</button>
+
+</form>
+
+{% endif %}
+
+</div>
+
+{% endif %}
+
+{% endblock %}

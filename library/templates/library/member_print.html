@@ -1,0 +1,397 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<title>{{ report_title }}</title>
+
+<style>
+
+@page {
+    size: A4 portrait;
+    margin: 12mm;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    color: #111827;
+    font-size: 11px;
+}
+
+.print-page {
+    width: 100%;
+}
+
+.school-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    border-bottom: 3px solid #1e3a8a;
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+.school-logo {
+    width: 78px;
+    height: 78px;
+    object-fit: contain;
+}
+
+.school-info {
+    text-align: center;
+}
+
+.school-name {
+    font-size: 24px;
+    font-weight: 800;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.school-motto {
+    font-size: 12px;
+    font-style: italic;
+    margin-bottom: 5px;
+}
+
+.school-contact {
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.report-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 800;
+    margin: 14px 0 6px;
+    text-transform: uppercase;
+}
+
+.report-meta {
+    text-align: center;
+    font-size: 10px;
+    color: #4b5563;
+    margin-bottom: 14px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+}
+
+th {
+    background: #1e3a8a;
+    color: white;
+    padding: 8px 6px;
+    border: 1px solid #1e3a8a;
+    font-size: 10px;
+    text-align: left;
+}
+
+td {
+    padding: 7px 6px;
+    border: 1px solid #cbd5e1;
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.number {
+    width: 30px;
+    text-align: center;
+}
+
+.status {
+    font-weight: bold;
+}
+
+.footer {
+    margin-top: 28px;
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.signature {
+    width: 45%;
+    border-top: 1px solid #111827;
+    padding-top: 5px;
+    text-align: center;
+    font-size: 10px;
+}
+
+.generated {
+    margin-top: 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 9px;
+}
+
+@media print {
+
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="print-page">
+
+    <div class="school-header">
+
+        {% if branding and branding.logo %}
+            <img
+                src="{{ branding.logo.url }}"
+                class="school-logo"
+                alt="School Logo"
+            >
+        {% endif %}
+
+        <div class="school-info">
+
+            <div class="school-name">
+                {% if branding %}
+                    {{ branding.school_name }}
+                {% else %}
+                    Luhan School
+                {% endif %}
+            </div>
+
+            {% if branding and branding.motto %}
+                <div class="school-motto">
+                    {{ branding.motto }}
+                </div>
+            {% endif %}
+
+            <div class="school-contact">
+
+                {% if branding and branding.physical_address %}
+                    {{ branding.physical_address }}
+                {% endif %}
+
+                {% if branding and branding.phone %}
+                    &nbsp; | &nbsp; {{ branding.phone }}
+                {% endif %}
+
+                {% if branding and branding.alternative_phone %}
+                    &nbsp; | &nbsp; {{ branding.alternative_phone }}
+                {% endif %}
+
+                {% if branding and branding.email %}
+                    <br>{{ branding.email }}
+                {% endif %}
+
+                {% if branding and branding.website %}
+                    &nbsp; | &nbsp; {{ branding.website }}
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="report-title">
+        {{ report_title }}
+    </div>
+
+    <div class="report-meta">
+
+        {% if class_name %}
+            Class: <strong>{{ class_name }}</strong>
+        {% endif %}
+
+        {% if stream %}
+            &nbsp; | &nbsp;
+            Stream: <strong>{{ stream }}</strong>
+        {% endif %}
+
+        {% if member_type == "staff" %}
+            &nbsp; | &nbsp;
+            Staff Members
+        {% endif %}
+
+        <br>
+
+        Total Members:
+        <strong>{{ members|length }}</strong>
+
+        &nbsp; | &nbsp;
+
+        Printed:
+        <strong>{% now "d M Y, H:i" %}</strong>
+
+    </div>
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th class="number">#</th>
+
+                <th>Name</th>
+
+                {% if member_type == "staff" %}
+                    <th>Employee No.</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                {% else %}
+                    <th>Admission No.</th>
+                    <th>Class</th>
+                    <th>Stream</th>
+                    <th>Gender</th>
+                {% endif %}
+
+                <th>Library Status</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for member in members %}
+
+            <tr>
+
+                <td class="number">
+                    {{ forloop.counter }}
+                </td>
+
+                <td>
+                    <strong>
+                        {% if member.student %}
+                            {{ member.student.get_full_name }}
+                        {% elif member.employee %}
+                            {{ member.employee.first_name }}
+                            {{ member.employee.last_name }}
+                        {% else %}
+                            {{ member.name }}
+                        {% endif %}
+                    </strong>
+                </td>
+
+                {% if member_type == "staff" %}
+
+                    <td>
+                        {{ member.employee.employee_number|default:member.admission_number }}
+                    </td>
+
+                    <td>
+                        {{ member.phone|default:"—" }}
+                    </td>
+
+                    <td>
+                        {{ member.email|default:"—" }}
+                    </td>
+
+                {% else %}
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.admission_no }}
+                        {% else %}
+                            {{ member.admission_number|default:"—" }}
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.class_name|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.stream|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if member.student %}
+                            {{ member.student.gender|default:"—" }}
+                        {% else %}
+                            —
+                        {% endif %}
+                    </td>
+
+                {% endif %}
+
+                <td class="status">
+                    {% if member.active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+                </td>
+
+            </tr>
+
+            {% empty %}
+
+            <tr>
+                <td
+                    colspan="7"
+                    style="text-align:center; padding:25px;"
+                >
+                    No library members found.
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <div class="footer">
+
+        <div class="signature">
+            Librarian / Library Officer
+        </div>
+
+        <div class="signature">
+            School Administration
+        </div>
+
+    </div>
+
+    <div class="generated">
+        Official Library Members Register
+    </div>
+
+</div>
+
+<script>
+window.onload = function () {
+    window.print();
+};
+</script>
+
+</body>
+</html>

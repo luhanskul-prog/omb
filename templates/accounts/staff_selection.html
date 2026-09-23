@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Staff Access | Luhan ERP</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(30,111,230,.14), transparent 35%),
+        linear-gradient(135deg,#edf5ff,#f8fbff,#e8f0fb);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+}
+
+.container {
+    width:100%;
+    max-width:1050px;
+    background:#fff;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 25px 70px rgba(20,45,80,.18);
+    display:grid;
+    grid-template-columns:40% 60%;
+}
+
+.brand {
+    background:linear-gradient(145deg,#0a459b,#1474dc);
+    color:#fff;
+    padding:50px 42px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+}
+
+.logo {
+    width:90px;
+    height:90px;
+    border-radius:22px;
+    background:#fff;
+    padding:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:25px;
+}
+
+.logo img {
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+}
+
+.brand h1 {
+    font-size:32px;
+    margin-bottom:8px;
+}
+
+.brand .subtitle {
+    opacity:.9;
+    font-size:15px;
+}
+
+.brand p {
+    margin-top:40px;
+    line-height:1.8;
+    font-size:15px;
+    opacity:.9;
+}
+
+.selection {
+    padding:55px 65px;
+}
+
+.selection h2 {
+    font-size:30px;
+    color:#172033;
+    margin-bottom:8px;
+}
+
+.description {
+    color:#718096;
+    margin-bottom:32px;
+}
+
+.cards {
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+.card {
+    text-decoration:none;
+    color:#172033;
+    border:1px solid #e1e7ef;
+    border-radius:20px;
+    padding:28px 22px;
+    transition:.25s;
+    background:#fbfdff;
+}
+
+.card:hover {
+    transform:translateY(-5px);
+    box-shadow:0 15px 35px rgba(20,45,80,.12);
+    border-color:#287eea;
+}
+
+.icon {
+    width:62px;
+    height:62px;
+    border-radius:17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:21px;
+    font-weight:800;
+    margin-bottom:20px;
+}
+
+.teaching {
+    background:linear-gradient(135deg,#1557b0,#287eea);
+}
+
+.support {
+    background:linear-gradient(135deg,#087f5b,#20a874);
+}
+
+.card h3 {
+    font-size:19px;
+    margin-bottom:8px;
+}
+
+.card p {
+    font-size:13px;
+    line-height:1.6;
+    color:#718096;
+}
+
+.arrow {
+    display:block;
+    margin-top:20px;
+    color:#1769d2;
+    font-size:13px;
+    font-weight:700;
+}
+
+.back {
+    display:block;
+    text-align:center;
+    margin-top:30px;
+    color:#1769d2;
+    text-decoration:none;
+    font-size:14px;
+    font-weight:600;
+}
+
+@media(max-width:800px) {
+
+    .container {
+        grid-template-columns:1fr;
+        max-width:600px;
+    }
+
+    .brand {
+        padding:35px;
+    }
+
+    .brand p {
+        margin-top:20px;
+    }
+
+    .selection {
+        padding:40px 25px;
+    }
+}
+
+@media(max-width:500px) {
+
+    .cards {
+        grid-template-columns:1fr;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <section class="brand">
+
+        <div class="logo">
+
+            {% if branding and branding.logo %}
+                <img src="{{ branding.logo.url }}" alt="Luhan School Logo">
+            {% else %}
+                <span style="color:#1557b0;font-weight:800;">LUHAN</span>
+            {% endif %}
+
+        </div>
+
+        <h1>LUHAN SCHOOL</h1>
+
+        <div class="subtitle">
+            School Management Portal
+        </div>
+
+        <p>
+            Welcome to the Staff Portal. Please select the
+            category that matches your role in the school
+            before proceeding to login.
+        </p>
+
+    </section>
+
+
+    <section class="selection">
+
+        <h2>Staff Access</h2>
+
+        <p class="description">
+            Select your staff category to continue.
+        </p>
+
+
+        <div class="cards">
+
+            <a
+                href="{% url 'accounts:teaching_staff_login' %}"
+                class="card"
+            >
+
+                <div class="icon teaching">
+                    T
+                </div>
+
+                <h3>Teaching Staff</h3>
+
+                <p>
+                    For teachers responsible for teaching,
+                    assessment, attendance, assignments,
+                    classes and academic activities.
+                </p>
+
+                <span class="arrow">
+                    Continue to Teaching Login →
+                </span>
+
+            </a>
+
+
+            <a
+                href="{% url 'accounts:support_staff_login' %}"
+                class="card"
+            >
+
+                <div class="icon support">
+                    S
+                </div>
+
+                <h3>Support Staff</h3>
+
+                <p>
+                    For non-teaching staff responsible for
+                    administrative, operational and support
+                    functions within the school.
+                </p>
+
+                <span class="arrow">
+                    Continue to Support Login →
+                </span>
+
+            </a>
+
+        </div>
+
+
+        <a
+            href="{% url 'accounts:login' %}"
+            class="back"
+        >
+            ← Back to account selection
+        </a>
+
+    </section>
+
+</div>
+
+</body>
+</html>

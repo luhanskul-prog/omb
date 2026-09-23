@@ -1,0 +1,144 @@
+{% extends "hr_payroll/staff_self_service_base.html" %}
+
+{% block title %}My Loans{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-1">
+            <i class="bi bi-wallet2 text-primary me-2"></i>
+            My Loans
+        </h2>
+        <div class="text-muted">
+            View your staff loans and outstanding balances
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-label">Total Principal</div>
+            <div class="stat-value">
+                {{ total_principal|floatformat:2 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-label">Total Paid</div>
+            <div class="stat-value text-success">
+                {{ total_paid|floatformat:2 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-label">Outstanding Balance</div>
+            <div class="stat-value text-danger">
+                {{ outstanding_balance|floatformat:2 }}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="card">
+    <div class="card-body p-0">
+
+        {% if loans %}
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Loan</th>
+                        <th>Principal</th>
+                        <th>Installment</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Start Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for loan in loans %}
+
+                    <tr>
+
+                        <td>
+                            <strong>{{ loan.loan_name }}</strong>
+
+                            {% if loan.notes %}
+                                <div class="small text-muted">
+                                    {{ loan.notes }}
+                                </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ loan.principal_amount|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ loan.monthly_installment|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ loan.amount_paid|floatformat:2 }}
+                        </td>
+
+                        <td class="fw-bold">
+                            {{ loan.balance|floatformat:2 }}
+                        </td>
+
+                        <td>
+                            {{ loan.start_date|date:"d M Y" }}
+                        </td>
+
+                        <td>
+                            {% if loan.status == "ACTIVE" %}
+                                <span class="badge bg-primary">Active</span>
+                            {% elif loan.status == "COMPLETED" %}
+                                <span class="badge bg-success">Completed</span>
+                            {% else %}
+                                <span class="badge bg-secondary">
+                                    {{ loan.status }}
+                                </span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="text-center py-5">
+            <i class="bi bi-wallet2 fs-1 text-muted"></i>
+            <h5 class="mt-3">No loans recorded</h5>
+            <p class="text-muted mb-0">
+                Your staff loans will appear here when recorded by HR.
+            </p>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,253 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 25px;
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 22px;
+    }
+
+    .page-header h1 {
+        margin: 0;
+    }
+
+    .actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: 0;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .btn-primary {
+        background: #1769e0;
+        color: #fff;
+    }
+
+    .btn-success {
+        background: #198754;
+        color: #fff;
+    }
+
+    .btn-warning {
+        background: #f0ad00;
+        color: #111;
+    }
+
+    .btn-danger {
+        background: #dc3545;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: #fff;
+    }
+
+    .btn-info {
+        background: #0d6efd;
+        color: #fff;
+    }
+
+    .table-wrap {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.08);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 850px;
+    }
+
+    th, td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #e8e8e8;
+        text-align: left;
+        vertical-align: middle;
+    }
+
+    th {
+        background: #f5f7fa;
+        font-weight: 700;
+    }
+
+    tr:hover td {
+        background: #fafafa;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 999px;
+        background: #eef2f7;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .inline-form {
+        display: inline;
+        margin: 0;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 40px;
+        color: #777;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 16px rgba(0,0,0,.07);
+    }
+
+    .stat-card .label {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+
+    .stat-card .value {
+        font-size: 28px;
+        font-weight: 800;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="page-header">
+
+        <div>
+            <h1>Staff Attendance</h1>
+        </div>
+
+        <div class="actions">
+            <a class="btn btn-primary"
+               href="{% url 'hr_payroll:attendance_add' %}">
+                + Record Attendance
+            </a>
+
+            <a class="btn btn-secondary"
+               href="{% url 'hr_payroll:dashboard' %}">
+                Dashboard
+            </a>
+        </div>
+
+    </div>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Remarks</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            {% for record in attendance_records %}
+
+                <tr>
+
+                    <td>{{ record.employee.full_name }}</td>
+
+                    <td>{{ record.date }}</td>
+
+                    <td>
+                        <span class="badge">
+                            {{ record.get_status_display }}
+                        </span>
+                    </td>
+
+                    <td>{{ record.check_in|default:"—" }}</td>
+
+                    <td>{{ record.check_out|default:"—" }}</td>
+
+                    <td>{{ record.remarks|default:"—" }}</td>
+
+                    <td>
+
+                        <div class="actions">
+
+                            <a class="btn btn-warning"
+                               href="{% url 'hr_payroll:attendance_edit' record.pk %}">
+                                Edit
+                            </a>
+
+                            <form method="post"
+                                  action="{% url 'hr_payroll:attendance_delete' record.pk %}"
+                                  class="inline-form">
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="btn btn-danger"
+                                        onclick="return confirm('Delete this attendance record?');">
+                                    Delete
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="7" class="empty">
+                        No staff attendance records found.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

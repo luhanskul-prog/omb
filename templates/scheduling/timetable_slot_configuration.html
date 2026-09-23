@@ -1,0 +1,444 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.page {
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+.panel {
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.06);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+}
+
+.form-row {
+    margin-bottom: 5px;
+}
+
+.form-row label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.form-row input,
+.form-row select {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    font-size: 15px;
+}
+
+.form-row input[type="time"] {
+    min-height: 44px;
+}
+
+.duration-box {
+    padding: 11px;
+    min-height: 44px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    background: #f7f7f7;
+    font-weight: 600;
+}
+
+.notes-row {
+    grid-column: 1 / -1;
+}
+
+.notes-row input {
+    width: 100%;
+}
+
+.enabled-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.enabled-row input {
+    width: auto;
+}
+
+.btn {
+    border: 0;
+    border-radius: 7px;
+    padding: 12px 20px;
+    background: #0d6efd;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+.btn:hover {
+    opacity: .9;
+}
+
+.back {
+    display: inline-block;
+    margin-top: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 11px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    font-weight: 700;
+}
+
+.remove-btn {
+    background: #dc3545;
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    padding: 9px 13px;
+    cursor: pointer;
+}
+
+.info {
+    padding: 12px 15px;
+    border-radius: 8px;
+    background: #eef6ff;
+    border: 1px solid #cfe2ff;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 900px) {
+    .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+
+<div class="page">
+
+    <div class="panel">
+
+        <h1>Period / Slot Configuration</h1>
+
+        <div class="info">
+            <strong>Flexible timetable times:</strong>
+            enter any starting and ending minute.
+            For example, 12:01 PM to 12:41 PM is valid.
+            There is no 15-minute restriction.
+        </div>
+
+        <h2>Add Period / Slot</h2>
+
+        <form method="post"
+              action="{% url 'scheduling:timetable_slot_add' configuration_id=configuration.id %}">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <div class="form-row">
+
+                    <label for="start_time">
+                        Starting Time
+                    </label>
+
+                    <input
+                        id="start_time"
+                        name="start_time"
+                        type="time"
+                        step="60"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-row">
+
+                    <label for="end_time">
+                        Ending Time
+                    </label>
+
+                    <input
+                        id="end_time"
+                        name="end_time"
+                        type="time"
+                        step="60"
+                        required
+                    >
+
+                </div>
+
+                <div class="form-row">
+
+                    <label>
+                        Duration
+                    </label>
+
+                    <div id="durationDisplay"
+                         class="duration-box">
+                        Select starting and ending time
+                    </div>
+
+                </div>
+
+                <div class="form-row">
+
+                    <label for="slot_type">
+                        Slot Type
+                    </label>
+
+                    <select id="slot_type"
+                            name="slot_type"
+                            required>
+
+                        {% for value, label in slot_types %}
+
+                            <option value="{{ value }}">
+                                {{ label }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="form-row notes-row">
+
+                    <label for="notes">
+                        Notes
+                    </label>
+
+                    <input
+                        id="notes"
+                        name="notes"
+                        type="text"
+                        placeholder="Optional"
+                    >
+
+                </div>
+
+            </div>
+
+            <div class="enabled-row">
+
+                <input
+                    id="is_enabled"
+                    name="is_enabled"
+                    type="checkbox"
+                    checked
+                >
+
+                <label for="is_enabled">
+                    Enabled
+                </label>
+
+            </div>
+
+            <button
+                class="btn"
+                type="submit">
+                SAVE PERIOD / SLOT CONFIGURATION
+            </button>
+
+        </form>
+
+        <a class="back"
+           href="{% url 'scheduling:timetable_assign_lessons' configuration_id=configuration.id %}">
+            Proceed to Assign Lessons →
+        </a>
+
+    </div>
+
+
+    <div class="panel">
+
+        <h2>Saved Period / Slot Configuration</h2>
+
+        {% if slots %}
+
+            <table>
+
+                <thead>
+
+                    <tr>
+          
+                        <th>No.</th>
+                        <th>Start</th>
+                        <th>End</th>
+                        <th>Duration</th>
+                        <th>Type</th>
+                        <th>Enabled</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for slot in slots %}
+
+                        <tr>
+
+                            <td>
+                                {{ slot.period_number }}
+                            </td>
+
+                            <td>
+                                {{ slot.start_time|time:"g:i A" }}
+                            </td>
+
+                            <td>
+                                {{ slot.end_time|time:"g:i A" }}
+                            </td>
+
+                            <td>
+                                {{ slot.duration_minutes }} minutes
+                            </td>
+
+                            <td>
+                                {{ slot.get_slot_type_display }}
+                            </td>
+
+                            <td>
+                                {% if slot.is_enabled %}
+                                    Yes
+                                {% else %}
+                                    No
+                                {% endif %}
+                            </td>
+
+                            <td>
+
+                                <form method="post"
+                                      action="{% url 'scheduling:timetable_slot_delete' slot_id=slot.id %}">
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        class="remove-btn"
+                                        type="submit"
+                                        onclick="return confirm('Remove this timetable slot?');">
+                                        Remove
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        {% else %}
+
+            <p>
+                No period or slot configuration has been saved yet.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+
+<script>
+
+function calculateDuration() {
+
+    const start = document.getElementById("start_time").value;
+    const end = document.getElementById("end_time").value;
+    const display = document.getElementById("durationDisplay");
+
+    if (!start || !end) {
+        display.textContent = "Select starting and ending time";
+        return;
+    }
+
+    const startParts = start.split(":").map(Number);
+    const endParts = end.split(":").map(Number);
+
+    const startMinutes =
+        (startParts[0] * 60) +
+        startParts[1];
+
+    const endMinutes =
+        (endParts[0] * 60) +
+        endParts[1];
+
+    const difference = endMinutes - startMinutes;
+
+    if (difference <= 0) {
+        display.textContent =
+            "Ending time must be later than starting time";
+        return;
+    }
+
+    const hours = Math.floor(difference / 60);
+    const minutes = difference % 60;
+
+    if (hours > 0 && minutes > 0) {
+        display.textContent =
+            hours + " hour " +
+            minutes + " minutes";
+    }
+    else if (hours > 0) {
+        display.textContent =
+            hours + (hours === 1 ? " hour" : " hours");
+    }
+    else {
+        display.textContent =
+            minutes + " minutes";
+    }
+}
+
+document
+    .getElementById("start_time")
+    .addEventListener("input", calculateDuration);
+
+document
+    .getElementById("end_time")
+    .addEventListener("input", calculateDuration);
+
+</script>
+
+{% endblock %}
+
+
+

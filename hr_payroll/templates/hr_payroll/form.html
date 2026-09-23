@@ -1,0 +1,159 @@
+﻿{% extends "hr_payroll/base.html" %}
+
+{% block content %}
+
+<style>
+    .form-page {
+        max-width: 950px;
+        margin: 30px auto;
+        padding: 25px;
+    }
+
+    .form-card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 30px;
+        box-shadow: 0 4px 18px rgba(0,0,0,.08);
+    }
+
+    .form-card h1 {
+        margin-top: 0;
+        margin-bottom: 25px;
+    }
+
+    .form-card p {
+        margin-bottom: 18px;
+    }
+
+    .form-card label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+
+    .form-card input,
+    .form-card select,
+    .form-card textarea {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 11px 12px;
+        border: 1px solid #d5dbe3;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #fff;
+    }
+
+    .form-card input[type="date"],
+    .form-card input[type="datetime-local"] {
+        cursor: pointer;
+    }
+
+    .form-card input[type="checkbox"] {
+        width: auto;
+    }
+
+    .form-card textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .helptext {
+        display: block;
+        margin-top: 5px;
+        color: #777;
+        font-size: 12px;
+    }
+
+    .errorlist {
+        color: #b42318;
+        margin: 5px 0;
+        padding-left: 20px;
+    }
+
+    .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    .btn {
+        display: inline-block;
+        border: 0;
+        border-radius: 8px;
+        padding: 11px 18px;
+        text-decoration: none;
+        cursor: pointer;
+        font-weight: 700;
+    }
+
+    .btn-primary {
+        background: #1769e0;
+        color: white;
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .year-notice {
+        margin-bottom: 20px;
+        padding: 12px 15px;
+        border-radius: 8px;
+        background: #eef6ff;
+        color: #174a7a;
+        font-size: 13px;
+    }
+</style>
+
+<div class="form-page">
+
+    <div class="form-card">
+
+        <h1>{{ title }}</h1>
+
+        {% if "Payroll" in title %}
+        <div class="year-notice">
+            Payroll years are selected from the active school years
+            configured by the administrator.
+        </div>
+        {% endif %}
+
+        <form method="post"
+              enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <div class="actions">
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Save
+                </button>
+
+                {% if cancel_url_kwargs %}
+                    <a href="{% url cancel_url pk=cancel_url_kwargs.pk %}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+                {% else %}
+                    <a href="{% url cancel_url %}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+

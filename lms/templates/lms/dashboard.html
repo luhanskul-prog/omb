@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>LMS Dashboard | Luhan School ERP</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #f5f7fb;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #202938;
+        }
+
+        /* =====================================================
+           TOPBAR
+        ===================================================== */
+
+        .topbar {
+            height: 65px;
+            background: #111827;
+            color: white;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 25px;
+        }
+
+        .brand {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand-subtitle {
+            display: block;
+            font-size: 10px;
+            color: #9ca3af;
+            margin-top: 2px;
+            font-weight: normal;
+        }
+
+        .user-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-name {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            color: #fca5a5;
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =====================================================
+           CONTENT
+        ===================================================== */
+
+        .content {
+            padding: 25px;
+        }
+
+        .page-heading {
+            font-size: 21px;
+            font-weight: 700;
+            color: #172033;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 11px;
+            color: #667085;
+            margin-bottom: 25px;
+        }
+
+
+        /* =====================================================
+           LMS CARDS
+        ===================================================== */
+
+        .lms-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            height: 100%;
+        }
+
+        .lms-card {
+            background: #ffffff;
+
+            border: 1px solid #d9e1ec;
+            border-radius: 10px;
+
+            padding: 18px;
+            min-height: 165px;
+
+            box-shadow: 0 2px 5px rgba(15, 23, 42, .04);
+
+            transition:
+                transform .2s ease,
+                border-color .2s ease,
+                box-shadow .2s ease;
+
+            position: relative;
+        }
+
+        .lms-link:hover .lms-card {
+            transform: translateY(-4px);
+
+            border-color: #2563eb;
+
+            box-shadow:
+                0 8px 20px rgba(37, 99, 235, .12);
+        }
+
+        .lms-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 9px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 19px;
+
+            margin-bottom: 12px;
+
+            border: 1px solid rgba(0, 0, 0, .04);
+        }
+
+        .icon-purple {
+            background: #f1eaff;
+            color: #7048c8;
+        }
+
+        .icon-blue {
+            background: #eaf2ff;
+            color: #2563eb;
+        }
+
+        .icon-green {
+            background: #eaf8f0;
+            color: #16834b;
+        }
+
+        .icon-orange {
+            background: #fff4df;
+            color: #d98200;
+        }
+
+
+        /* =====================================================
+           CARD CONTENT
+        ===================================================== */
+
+        .card-title {
+            font-size: 13px;
+            font-weight: 700;
+
+            color: #172033;
+
+            margin-bottom: 5px;
+        }
+
+        .card-description {
+            font-size: 10px;
+
+            line-height: 1.5;
+
+            color: #667085;
+
+            max-width: 260px;
+        }
+
+
+        /* =====================================================
+           CARD ARROW
+        ===================================================== */
+
+        .card-arrow {
+            position: absolute;
+
+            right: 13px;
+            top: 13px;
+
+            width: 25px;
+            height: 25px;
+
+            border-radius: 50%;
+
+            background: #f0f5ff;
+            color: #2563eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+        .lms-link:hover .card-arrow {
+            background: #2563eb;
+            color: #ffffff;
+
+            transform: translateX(3px);
+        }
+
+
+        /* =====================================================
+           SECTION
+        ===================================================== */
+
+        .section {
+            margin-top: 30px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+
+            color: #172033;
+
+            margin-bottom: 4px;
+        }
+
+        .section-description {
+            font-size: 10px;
+            color: #667085;
+
+            margin-bottom: 14px;
+        }
+
+
+        /* =====================================================
+           BACK BUTTON
+        ===================================================== */
+
+        .back-button {
+            display: inline-block;
+
+            margin-top: 28px;
+
+            padding: 9px 15px;
+
+            background: #2563eb;
+            color: #ffffff;
+
+            border-radius: 7px;
+
+            text-decoration: none;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            transition: .2s ease;
+        }
+
+        .back-button:hover {
+            background: #1d4ed8;
+            color: #ffffff;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+            text-align: center;
+
+            margin-top: 40px;
+            padding-bottom: 15px;
+
+            font-size: 10px;
+
+            color: #8a94a6;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 576px) {
+
+            .topbar {
+                padding: 0 15px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+            .user-name {
+                display: none;
+            }
+
+            .page-heading {
+                font-size: 18px;
+            }
+
+            .lms-card {
+                min-height: 145px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     TOPBAR
+========================================================= -->
+
+<header class="topbar">
+
+    <div>
+
+        <div class="brand">
+            Luhan ERP
+        </div>
+
+        <span class="brand-subtitle">
+            Learning Management System
+        </span>
+
+    </div>
+
+
+    <div class="user-area">
+
+        <div class="user-name">
+            {{ request.user.get_full_name|default:request.user.username }}
+        </div>
+
+        <a href="{% url 'logout' %}"
+           class="logout-btn">
+
+            Sign out
+
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     MAIN CONTENT
+========================================================= -->
+
+<main class="content">
+
+
+    <h1 class="page-heading">
+        LMS Dashboard
+    </h1>
+
+
+    <div class="page-subtitle">
+        Digital learning resources and online learning management
+    </div>
+
+
+
+    <!-- =====================================================
+         LEARNING RESOURCES
+    ====================================================== -->
+
+    <section class="section mt-0">
+
+        <div class="section-title">
+            📚 Learning Resources
+        </div>
+
+        <div class="section-description">
+            Access and manage digital learning materials, assignments and courses.
+        </div>
+
+
+        <div class="row g-3">
+
+
+            <!-- =================================================
+                 LEARNING RESOURCES
+            ================================================== -->
+
+            {% if erp_permission.view_learningresource %}
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <a href="{% url 'lms:resources' %}"
+                   class="lms-link">
+
+                    <div class="lms-card">
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                        <div class="lms-icon icon-purple">
+                            📚
+                        </div>
+
+                        <div class="card-title">
+                            Learning Resources
+                        </div>
+
+                        <div class="card-description">
+                            Manage digital notes, documents and learning materials.
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            {% endif %}
+
+            <!-- =================================================
+                 DIGITAL LESSONS
+            ================================================== -->
+
+            {% if erp_permission.view_digitallesson %}
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <a href="{% url 'lms:lessons' %}"
+                   class="lms-link">
+
+                    <div class="lms-card">
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                        <div class="lms-icon icon-blue">
+                            🎥
+                        </div>
+
+                        <div class="card-title">
+                            Digital Lessons
+                        </div>
+
+                        <div class="card-description">
+                            Create, manage and access digital lessons for learners.
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            {% endif %}
+
+            <!-- =================================================
+                 ASSIGNMENTS
+            ================================================== -->
+
+            {% if erp_permission.view_assignment %}
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <a href="{% url 'lms:assignments' %}"
+                   class="lms-link">
+
+                    <div class="lms-card">
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                        <div class="lms-icon icon-green">
+                            📝
+                        </div>
+
+                        <div class="card-title">
+                            Assignments
+                        </div>
+
+                        <div class="card-description">
+                            Create assignments, submissions and monitor learner activities.
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+            {% endif %}
+
+            <!-- =================================================
+                 COURSES
+            ================================================== -->
+
+            {% if erp_permission.view_course %}
+
+            <div class="col-xl-3 col-lg-4 col-md-6">
+
+                <a href="{% url 'lms:courses' %}"
+                   class="lms-link">
+
+                    <div class="lms-card">
+
+                        <span class="card-arrow">
+                            →
+                        </span>
+
+                        <div class="lms-icon icon-orange">
+                            🎓
+
+            {% endif %}
+
+        </div>
+
+                        <div class="card-title">
+                            Courses
+                        </div>
+
+                        <div class="card-description">
+                            Organize subjects, courses and structured digital learning content.
+                        </div>
+
+                    </div>
+
+                </a>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         QUICK LMS INFORMATION
+    ====================================================== -->
+
+    <section class="section">
+
+        <div class="section-title">
+            🚀 LMS Platform
+        </div>
+
+        <div class="section-description">
+            Everything learners and teachers need for digital learning.
+        </div>
+
+
+        <div class="row g-3">
+
+
+            <div class="col-lg-4">
+
+                <div class="lms-card">
+
+                    <div class="lms-icon icon-blue">
+                        👨‍🏫
+                    </div>
+
+                    <div class="card-title">
+                        Teacher Learning Tools
+                    </div>
+
+                    <div class="card-description">
+                        Teachers can prepare lessons, create assignments
+                        and organize course materials.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-4">
+
+                <div class="lms-card">
+
+                    <div class="lms-icon icon-green">
+                        👨‍🎓
+                    </div>
+
+                    <div class="card-title">
+                        Learner Access
+                    </div>
+
+                    <div class="card-description">
+                        Learners can access lessons, courses and assignments
+                        from the LMS.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-4">
+
+                <div class="lms-card">
+
+                    <div class="lms-icon icon-purple">
+                        📊
+                    </div>
+
+                    <div class="card-title">
+                        Learning Progress
+                    </div>
+
+                    <div class="card-description">
+                        Monitor assignments, learning activities and
+                        learner progress.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         BACK TO ADMIN
+    ====================================================== -->
+
+    <a href="{% url 'admin_dashboard' %}"
+       class="back-button">
+
+        ← Back to Admin Dashboard
+
+    </a>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <div class="footer">
+
+        Luhan School ERP · Learning Management System
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>
