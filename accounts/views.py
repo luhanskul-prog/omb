@@ -5573,7 +5573,7 @@ def staff_role_assignment(request):
 
             messages.success(
                 request,
-                "Support staff account created successfully."
+                f"Added successfully\nEmployee Number: {result['employee_number']}\nPassword: {result['password']}"
             )
 
             return redirect(
@@ -5712,7 +5712,7 @@ def staff_subject_assignment(request):
 
             messages.success(
                 request,
-                "Teaching staff account and subject assignments created successfully."
+                f"Added successfully\nEmployee Number: {result['employee_number']}\nPassword: {result['password']}"
             )
 
             return redirect(
@@ -6333,6 +6333,8 @@ def staff_my_timetable(request):
         "accounts/staff_my_timetable.html",
         context,
     )
+
+
 
 
 

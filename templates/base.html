@@ -20,9 +20,77 @@
 </nav>
 
 <div class="container mt-4">
-    {% block content %}
+    <style>
+.erp-success-message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99999;
+    min-width: 380px;
+    max-width: 90%;
+    padding: 25px 35px;
+    border-radius: 16px;
+    background: #198754;
+    color: #fff;
+    text-align: center;
+    font-size: 20px;
+    font-weight: 600;
+    box-shadow: 0 12px 35px rgba(0,0,0,.25);
+    animation: erpSuccessIn .35s ease-out;
+}
+
+.erp-success-message .success-icon {
+    display: block;
+    font-size: 48px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.erp-success-message .success-close {
+    position: absolute;
+    top: 8px;
+    right: 14px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+@keyframes erpSuccessIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -45%) scale(.95);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+</style>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == "success" %}
+            <div class="erp-success-message" role="alert">
+                <button type="button"
+                        class="success-close"
+                        onclick="this.parentElement.remove()">
+                    &times;
+                </button>
+
+                <span class="success-icon">✓</span>
+                {{ message }}
+            </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+{% block content %}
     {% endblock %}
 </div>
 
 </body>
 </html>
+

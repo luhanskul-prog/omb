@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, get_object_or_404
+﻿from django.shortcuts import render, redirect, get_object_or_404
 import csv
 import io
 from datetime import datetime
@@ -1000,7 +1000,8 @@ def apply_admission_fee_structure(student):
 
     return True, fee_record
 
-@role_permission_required("add_student", "students")
+@role_permission_required("add_student",
+"students")
 def add_student(request):
 
     if request.method == "POST":
@@ -1014,22 +1015,39 @@ def add_student(request):
 
             student = form.save()
 
-            # Automatically apply the configured fee structure
-            fee_ok, fee_result = apply_admission_fee_structure(student)
+            try:
+                fee_ok, fee_result = apply_admission_fee_structure(student)
 
-            if fee_ok:
-                messages.success(
-                    request,
-                    f"Fee structure applied: KSh {fee_result.amount_charged:,.2f}"
-                )
-            else:
+                if fee_ok:
+                    messages.success(
+                        request,
+                        f"Fee structure applied: KSh {fee_result.amount_charged:,.2f}"
+                    )
+                else:
+                    messages.warning(
+                        request,
+                        f"Learner admitted, but fee structure was not applied: {fee_result}"
+                    )
+
+            except Exception as exc:
                 messages.warning(
                     request,
-                    f"Learner admitted, but fee structure was not applied: {fee_result}"
+                    f"Learner admitted, but fee setup was not completed: {exc}"
                 )
 
-            # Automatically create parent account
-            create_parent_account(student)
+            try:
+                create_parent_account(student)
+
+            except Exception as exc:
+                messages.warning(
+                    request,
+                    f"Learner admitted, but parent account setup was not completed: {exc}"
+                )
+
+            messages.success(
+                request,
+                f"Learner added successfully — Admission Number: {student.admission_no}"
+            )
 
             return redirect("student_list")
 
@@ -1179,6 +1197,8 @@ def edit_student(request, id):
 
             # Make sure parent account remains linked
             create_parent_account(student)
+
+            messages.success(request, "Details updated successfully")
 
             return redirect("student_list")
 
@@ -1870,3 +1890,6 @@ def student_promotion_history(request, id):
             "history": history,
         }
     )
+
+
+

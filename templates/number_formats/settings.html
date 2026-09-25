@@ -1,117 +1,267 @@
-
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block content %}
-<div style="max-width:1100px;margin:30px auto;padding:25px;">
 
-    <h1>Number Formats</h1>
-    <p style="color:#666;">
-        Configure how automatically generated student admission numbers
-        and employee numbers should look.
-    </p>
+<div class="container-fluid py-4">
 
-    <form method="post">
-        {% csrf_token %}
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-hash text-primary me-2"></i>
+                Number Formats
+            </h2>
+            <p class="text-muted mb-0">
+                Configure automatically generated learner and employee numbers.
+            </p>
+        </div>
+    </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:25px;">
-
-            <div style="border:1px solid #ddd;border-radius:12px;padding:25px;">
-                <h2>Student Admission Numbers</h2>
-
-                <p>
-                    <label>Prefix</label><br>
-                    {{ form.student_prefix }}
-                </p>
-
-                <p>
-                    <label>Separator</label><br>
-                    {{ form.student_separator }}
-                </p>
-
-                <p>
-                    <label>Number of digits</label><br>
-                    {{ form.student_digits }}
-                </p>
-
-                <p>
-                    <label>Starting number</label><br>
-                    {{ form.student_start_number }}
-                </p>
-
-                <p>
-                    <label>
-                        {{ form.student_include_year }}
-                        Include academic/calendar year
-                    </label>
-                </p>
-
-                <p>
-                    <label>Year digits</label><br>
-                    {{ form.student_year_digits }}
-                </p>
-
-                <div style="padding:15px;border-radius:8px;background:#f5f7fa;">
-                    <strong>Example:</strong>
-                    <div style="font-size:22px;margin-top:8px;">
-                        {{ student_example }}
-                    </div>
-                </div>
-            </div>
-
-
-            <div style="border:1px solid #ddd;border-radius:12px;padding:25px;">
-                <h2>Employee Numbers</h2>
-
-                <p>
-                    <label>Prefix</label><br>
-                    {{ form.employee_prefix }}
-                </p>
-
-                <p>
-                    <label>Separator</label><br>
-                    {{ form.employee_separator }}
-                </p>
-
-                <p>
-                    <label>Number of digits</label><br>
-                    {{ form.employee_digits }}
-                </p>
-
-                <p>
-                    <label>Starting number</label><br>
-                    {{ form.employee_start_number }}
-                </p>
-
-                <p>
-                    <label>
-                        {{ form.employee_include_year }}
-                        Include year
-                    </label>
-                </p>
-
-                <p>
-                    <label>Year digits</label><br>
-                    {{ form.employee_year_digits }}
-                </p>
-
-                <div style="padding:15px;border-radius:8px;background:#f5f7fa;">
-                    <strong>Example:</strong>
-                    <div style="font-size:22px;margin-top:8px;">
-                        {{ employee_example }}
-                    </div>
-                </div>
-            </div>
-
+    <!-- CURRENT FORMAT -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-primary text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-check-circle-fill me-2"></i>
+                Current Format
+            </h5>
         </div>
 
-        <div style="margin-top:25px;">
-            <button type="submit"
-                    style="padding:12px 25px;border:0;border-radius:8px;
-                           background:#174ea6;color:white;font-size:16px;">
-                Save Number Formats
-            </button>
+        <div class="card-body">
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">
+                            Learner Admission Number
+                        </div>
+
+                        <div class="fs-3 fw-bold text-primary">
+                            {{ student_example }}
+                        </div>
+
+                        <div class="small text-muted mt-2">
+                            Example of the next generated number
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted small mb-1">
+                            Employee Number
+                        </div>
+
+                        <div class="fs-3 fw-bold text-success">
+                            {{ employee_example }}
+                        </div>
+
+                        <div class="small text-muted mt-2">
+                            Example of the configured employee number
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="mt-4">
+                <button type="button"
+                        class="btn btn-primary"
+                        onclick="document.getElementById('numberFormatEditor').classList.toggle('d-none')">
+                    <i class="bi bi-pencil-square me-2"></i>
+                    Change Number Format
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- FORMAT EDITOR -->
+    <div id="numberFormatEditor" class="card shadow-sm border-0 d-none">
+
+        <div class="card-header bg-dark text-white py-3">
+            <h5 class="mb-0">
+                <i class="bi bi-sliders me-2"></i>
+                Change Number Format
+            </h5>
         </div>
 
-    </form>
+        <div class="card-body">
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <div class="row g-4">
+
+                    <!-- STUDENTS -->
+                    <div class="col-lg-6">
+
+                        <div class="card border-primary h-100">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-mortarboard-fill me-2"></i>
+                                    Learner Admission Numbers
+                                </h5>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Prefix
+                                    </label>
+                                    {{ form.student_prefix }}
+                                    {{ form.student_prefix.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Separator
+                                    </label>
+                                    {{ form.student_separator }}
+                                    {{ form.student_separator.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Number of digits
+                                    </label>
+                                    {{ form.student_digits }}
+                                    {{ form.student_digits.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Starting number
+                                    </label>
+                                    {{ form.student_start_number }}
+                                    {{ form.student_start_number.errors }}
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    {{ form.student_include_year }}
+                                    <label class="form-check-label fw-semibold">
+                                        Include year
+                                    </label>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Year digits
+                                    </label>
+                                    {{ form.student_year_digits }}
+                                    {{ form.student_year_digits.errors }}
+                                </div>
+
+                                <div class="alert alert-primary mb-0">
+                                    <strong>Preview:</strong>
+                                    <span class="fs-5 ms-2">
+                                        {{ student_example }}
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <!-- EMPLOYEES -->
+                    <div class="col-lg-6">
+
+                        <div class="card border-success h-100">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-person-badge-fill me-2"></i>
+                                    Employee Numbers
+                                </h5>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Prefix
+                                    </label>
+                                    {{ form.employee_prefix }}
+                                    {{ form.employee_prefix.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Separator
+                                    </label>
+                                    {{ form.employee_separator }}
+                                    {{ form.employee_separator.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Number of digits
+                                    </label>
+                                    {{ form.employee_digits }}
+                                    {{ form.employee_digits.errors }}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Starting number
+                                    </label>
+                                    {{ form.employee_start_number }}
+                                    {{ form.employee_start_number.errors }}
+                                </div>
+
+                                <div class="form-check mb-3">
+                                    {{ form.employee_include_year }}
+                                    <label class="form-check-label fw-semibold">
+                                        Include year
+                                    </label>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-semibold">
+                                        Year digits
+                                    </label>
+                                    {{ form.employee_year_digits }}
+                                    {{ form.employee_year_digits.errors }}
+                                </div>
+
+                                <div class="alert alert-success mb-0">
+                                    <strong>Preview:</strong>
+                                    <span class="fs-5 ms-2">
+                                        {{ employee_example }}
+                                    </span>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-check-circle-fill me-2"></i>
+                        Save Number Format
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-outline-secondary btn-lg"
+                            onclick="document.getElementById('numberFormatEditor').classList.add('d-none')">
+                        Cancel
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
 </div>
+
 {% endblock %}

@@ -866,10 +866,7 @@ def _create_staff_account(
                     "last_name",
                     ""
                 ),
-                phone=data.get(
-                    "phone",
-                    ""
-                ),
+
                 email=data.get(
                     "email",
                     ""
@@ -883,10 +880,7 @@ def _create_staff_account(
                 custom_role=custom_role,
                 employee=employee,
                 employee_number=employee_number,
-                phone=data.get(
-                    "phone",
-                    ""
-                ),
+
                 job_title=data.get(
                     "job_title",
                     ""
@@ -909,10 +903,7 @@ def _create_staff_account(
                         f"{data.get('last_name', '')}"
                     ).strip(),
                     employee_no=employee_number,
-                    phone=data.get(
-                        "phone",
-                        ""
-                    ),
+
                     email=data.get(
                         "email",
                         ""
@@ -1182,4 +1173,6 @@ def success(request):
             "staff": staff,
         }
     )
+
+
 

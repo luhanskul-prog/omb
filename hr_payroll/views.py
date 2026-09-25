@@ -1,4 +1,4 @@
-from datetime import date
+﻿from datetime import date
 from django.db.models import Q
 from decimal import Decimal
 import calendar
@@ -713,7 +713,7 @@ def form_page(
 
             messages.success(
                 request,
-                f"{title} saved successfully.",
+                success_message or f"{title} saved successfully.",
             )
 
             return redirect(
@@ -4246,23 +4246,23 @@ def staff_payslip_pdf(request, pk):
     employee_rows = [
         (
             "Employee Number",
-            employee.employee_number or "—",
+            employee.employee_number or "â€”",
         ),
         (
             "Employee Name",
-            employee.full_name or "—",
+            employee.full_name or "â€”",
         ),
         (
             "Department",
             str(employee.department)
             if employee.department
-            else "—",
+            else "â€”",
         ),
         (
             "Position",
             str(employee.position)
             if employee.position
-            else "—",
+            else "â€”",
         ),
         (
             "Payroll Period",
@@ -4872,23 +4872,23 @@ def payslip_print(request, pk):
     employee_data = [
         (
             "Employee Number",
-            str(employee.employee_number or "—"),
+            str(employee.employee_number or "â€”"),
         ),
         (
             "Employee Name",
-            str(employee.full_name or "—"),
+            str(employee.full_name or "â€”"),
         ),
         (
             "Department",
-            str(employee.department or "—"),
+            str(employee.department or "â€”"),
         ),
         (
             "Position",
-            str(employee.position or "—"),
+            str(employee.position or "â€”"),
         ),
         (
             "Payroll Period",
-            str(period.name or "—"),
+            str(period.name or "â€”"),
         ),
         (
             "Generated",
@@ -5211,6 +5211,7 @@ def hr_reports(request):
         "hr_payroll/reports.html",
         context,
     )
+
 
 
 
