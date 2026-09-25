@@ -256,13 +256,22 @@ def fee_payments_page(request):
             if not payment_method:
                 payment_method = "Cash"
 
-            payment = FeePayment.objects.create(
-                fee_record=fee_record,
-                amount=amount,
-                payment_date=payment_date,
-                payment_method=payment_method,
-                reference=reference,
-            )
+            try:
+                payment = FeePayment.objects.create(
+                    fee_record=fee_record,
+                    amount=amount,
+                    payment_date=payment_date,
+                    payment_method=payment_method,
+                    reference=reference,
+                )
+            except Exception as exc:
+                import traceback
+                traceback.print_exc()
+                messages.error(request, f"Payment failed: {exc}")
+                return redirect(
+                    f"/fees/payments/?student={fee_record.student_id}"
+                    f"&record={fee_record.id}"
+                )
 
             messages.success(
                 request,
