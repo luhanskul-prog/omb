@@ -2,6 +2,9 @@ from django.db import migrations
 
 
 def reset_student_id_sequence(apps, schema_editor):
+    if schema_editor.connection.vendor != "postgresql":
+        return
+
     with schema_editor.connection.cursor() as cursor:
         cursor.execute("""
             SELECT setval(
