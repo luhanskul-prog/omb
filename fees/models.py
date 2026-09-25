@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from django.db.models import Sum
 from django.contrib.auth.models import User
@@ -406,52 +407,29 @@ class FeePayment(models.Model):
 
         if not self.receipt_number:
 
-            last_payment = (
+            existing_receipts = set(
                 FeePayment.objects
-                .filter(
-                    receipt_number__startswith="LUH"
-                )
-                .order_by(
-                    "-id"
-                )
-                .first()
+                .filter(receipt_number__startswith="LUH")
+                .exclude(receipt_number="")
+                .values_list("receipt_number", flat=True)
             )
 
-            if last_payment and last_payment.receipt_number:
+            highest_number = 0
 
-                try:
-
-                    number_part = (
-                        last_payment
-                        .receipt_number
-                        .replace(
-                            "LUH",
-                            ""
-                        )
-                        .replace(
-                            "RCP",
-                            ""
-                        )
+            for receipt in existing_receipts:
+                match = re.fullmatch(r"LUH(\d+)RCP", receipt or "")
+                if match:
+                    highest_number = max(
+                        highest_number,
+                        int(match.group(1)),
                     )
 
-                    next_number = (
-                        int(number_part) + 1
-                    )
+            next_number = highest_number + 1
 
-                except (
-                    ValueError,
-                    TypeError
-                ):
+            while f"LUH{next_number:03d}RCP" in existing_receipts:
+                next_number += 1
 
-                    next_number = 1
-
-            else:
-
-                next_number = 1
-
-            self.receipt_number = (
-                f"LUH{next_number:03d}RCP"
-            )
+            self.receipt_number = f"LUH{next_number:03d}RCP"
 
         super().save(
             *args,
