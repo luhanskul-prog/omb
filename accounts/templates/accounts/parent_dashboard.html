@@ -549,13 +549,13 @@ body {
 <a href="{% url 'accounts:parent_library' child.id %}" class="nav-link">
                 &#128214; Library � {{ child.first_name }}
             </a>
-{% endif %}
             {% if portal_capabilities.portal_view_hostel %}
-            <a href="{% url 'accounts:parent_hostel_incident' child.id %}" class="nav-link">
+<a href="{% url 'accounts:parent_hostel_incident' child.id %}" class="nav-link">
                 <i class="bi bi-exclamation-triangle me-2"></i>
                 Report Incident - {{ child.first_name }}
             </a>
-            {% endif %}
+{% endif %}
+{% endif %}
         {% endfor %}
     {% endif %}
 
@@ -583,7 +583,6 @@ body {
     Hostel &amp; Room
 </a>
 {% endif %}
-
 
 <a href="{% url 'accounts:profile_settings' %}" class="nav-link">
         &#128100; My Profile
@@ -1725,5 +1724,6 @@ html, body {
     }
 }
 </style>
+
 
 

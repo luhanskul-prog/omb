@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -165,7 +165,7 @@
                             >
                                 {{ teacher.name }}
                                 {% if teacher.employee_no %}
-                                    â€” {{ teacher.employee_no }}
+                                    — {{ teacher.employee_no }}
                                 {% endif %}
                             </option>
 
@@ -212,7 +212,7 @@
                             >
                                 {{ subject.name }}
                                 {% if subject.code %}
-                                    â€” {{ subject.code }}
+                                    — {{ subject.code }}
                                 {% endif %}
                             </option>
 
@@ -360,7 +360,7 @@
                         href="{% url 'scheduling:teacher_teaching_assignment_list' %}"
                         class="btn btn-outline-secondary btn-lg"
                     >
-                        â† Back to Assignments
+                        ← Back to Assignments
                     </a>
 
                     {% if assignment %}

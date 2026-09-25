@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -339,7 +339,7 @@
 
             details.textContent =
                 data.academic_year +
-                " Ã¢â‚¬Â¢ " +
+                " � " +
                 data.term;
 
             status.textContent = data.status;
@@ -758,7 +758,7 @@
                                         {% if latest_payroll %}
                                             {{ latest_payroll.net_salary|floatformat:2 }}
                                         {% else %}
-                                            ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â
+                                            —
                                         {% endif %}
                                     </div>
                                 </div>
@@ -1022,15 +1022,15 @@
                                         </td>
 
                                         <td>
-                                            {{ item.check_in|default:"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" }}
+                                            {{ item.check_in|default:"—" }}
                                         </td>
 
                                         <td>
-                                            {{ item.check_out|default:"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" }}
+                                            {{ item.check_out|default:"—" }}
                                         </td>
 
                                         <td>
-                                            {{ item.remarks|default:"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" }}
+                                            {{ item.remarks|default:"—" }}
                                         </td>
 
                                     </tr>
@@ -1569,7 +1569,7 @@
                                 </small>
 
                                 <div class="fw-semibold">
-                                    {{ latest_appraisal.overall_rating|default:"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" }}
+                                    {{ latest_appraisal.overall_rating|default:"—" }}
                                 </div>
 
                             </div>
@@ -1661,7 +1661,7 @@
 
                                     <div class="small muted">
                                         Stream:
-                                        {{ assignment.stream|default:"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" }}
+                                        {{ assignment.stream|default:"—" }}
                                     </div>
 
                                     {% if assignment.is_class_teacher %}
@@ -1720,7 +1720,7 @@
                                         </td>
 
                                         <td>
-                                            {{ assignment.stream|default:"ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â" }}
+                                            {{ assignment.stream|default:"—" }}
                                         </td>
 
                                     </tr>
@@ -1755,10 +1755,10 @@
                     Luhan School Staff Portal
 
                     {% if branding %}
-                        Ãƒâ€šÃ‚Â· {{ branding.school_name|default:"" }}
+                        · {{ branding.school_name|default:"" }}
                     {% endif %}
 
-                    Ãƒâ€šÃ‚Â· {{ today|date:"Y" }}
+                    · {{ today|date:"Y" }}
 
                 </div>
 

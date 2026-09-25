@@ -4246,23 +4246,23 @@ def staff_payslip_pdf(request, pk):
     employee_rows = [
         (
             "Employee Number",
-            employee.employee_number or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â",
+            employee.employee_number or "—",
         ),
         (
             "Employee Name",
-            employee.full_name or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â",
+            employee.full_name or "—",
         ),
         (
             "Department",
             str(employee.department)
             if employee.department
-            else "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â",
+            else "—",
         ),
         (
             "Position",
             str(employee.position)
             if employee.position
-            else "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â",
+            else "—",
         ),
         (
             "Payroll Period",
@@ -4872,23 +4872,23 @@ def payslip_print(request, pk):
     employee_data = [
         (
             "Employee Number",
-            str(employee.employee_number or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"),
+            str(employee.employee_number or "—"),
         ),
         (
             "Employee Name",
-            str(employee.full_name or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"),
+            str(employee.full_name or "—"),
         ),
         (
             "Department",
-            str(employee.department or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"),
+            str(employee.department or "—"),
         ),
         (
             "Position",
-            str(employee.position or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"),
+            str(employee.position or "—"),
         ),
         (
             "Payroll Period",
-            str(period.name or "ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â"),
+            str(period.name or "—"),
         ),
         (
             "Generated",

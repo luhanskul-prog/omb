@@ -1,4 +1,4 @@
-﻿{% load scheduling_tags %}
+{% load scheduling_tags %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -491,7 +491,7 @@
                 </h2>
 
                 <div class="page-subtitle">
-                    Luhan School ERP Â· Timetable &amp; Scheduling
+                    Luhan School ERP · Timetable &amp; Scheduling
                 </div>
 
             </div>
@@ -503,7 +503,7 @@
                     href="{% url 'scheduling:scheduling_dashboard' %}"
                     class="btn btn-light action-btn"
                 >
-                    â† Scheduling Dashboard
+                    ← Scheduling Dashboard
                 </a>
 
                 {% if erp_permission.add_timetableentry %}
@@ -695,7 +695,7 @@
                         type="submit"
                         class="btn btn-primary action-btn flex-grow-1"
                     >
-                        ðŸ” Filter
+                        🔍 Filter
                     </button>
 
                     <a
@@ -723,15 +723,15 @@
                 {% endif %}
 
                 {% if selected_stream %}
-                    Â· Stream: {{ selected_stream }}
+                    · Stream: {{ selected_stream }}
                 {% endif %}
 
                 {% if selected_teacher %}
-                    Â· Teacher selected
+                    · Teacher selected
                 {% endif %}
 
                 {% if selected_room %}
-                    Â· Room selected
+                    · Room selected
                 {% endif %}
 
             </div>
@@ -828,7 +828,7 @@
                                     <div class="break-cell">
 
                                         <span class="break-icon">
-                                            â˜•
+                                            ☕
                                         </span>
 
                                         {{ period.name }}
@@ -863,7 +863,7 @@
 
                                                                 <div class="lesson-class">
 
-                                                                    ðŸŽ“
+                                                                    🎓
 
                                                                     {{ entry.class_name }}
 
@@ -883,7 +883,7 @@
 
                                                                     <div class="lesson-teacher">
 
-                                                                        ðŸ‘¨â€ðŸ«
+                                                                        👨‍🏫
 
                                                                         {{ entry.teacher.name }}
 
@@ -898,7 +898,7 @@
 
                                                                     <div class="lesson-room">
 
-                                                                        ðŸ“
+                                                                        📍
 
                                                                         {{ entry.room.name }}
 
@@ -992,7 +992,7 @@
                                         margin-bottom:10px;
                                     "
                                 >
-                                    ðŸ—“
+                                    🗓
                                 </div>
 
                                 <h5>

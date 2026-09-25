@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -287,7 +287,7 @@ textarea:focus{
             id="studentSearch"
             autocomplete="off"
             placeholder="Search learner by name or admission number..."
-            value="{% if form.student.value %}{% for student in form.student.field.queryset %}{% if student.pk|stringformat:'s' == form.student.value|stringformat:'s' %}{{ student.first_name }} {% if student.middle_name %}{{ student.middle_name }} {% endif %}{{ student.last_name }} â€” {{ student.admission_no }}{% endif %}{% endfor %}{% endif %}"
+            value="{% if form.student.value %}{% for student in form.student.field.queryset %}{% if student.pk|stringformat:'s' == form.student.value|stringformat:'s' %}{{ student.first_name }} {% if student.middle_name %}{{ student.middle_name }} {% endif %}{{ student.last_name }} — {{ student.admission_no }}{% endif %}{% endfor %}{% endif %}"
         >
 
         <div
@@ -639,7 +639,7 @@ textarea:focus{
                 text:
                     name.trim() +
                     (admission.trim()
-                        ? " — " + admission.trim()
+                        ? " � " + admission.trim()
                         : "")
             });
 
@@ -717,7 +717,7 @@ textarea:focus{
                 "</strong>" +
                 (
                     student.admission
-                        ? "<span> — " +
+                        ? "<span> � " +
                           escapeHtml(student.admission) +
                           "</span>"
                         : ""
@@ -728,7 +728,7 @@ textarea:focus{
                           escapeHtml(student.className) +
                           (
                               student.stream
-                                  ? " • " +
+                                  ? " � " +
                                     escapeHtml(student.stream)
                                   : ""
                           ) +

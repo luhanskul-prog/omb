@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -94,7 +94,7 @@
                 href="{% url 'scheduling:timetable' %}"
                 class="btn btn-light"
             >
-                â† Back to Timetable
+                ← Back to Timetable
             </a>
 
         </div>
@@ -303,7 +303,7 @@
 
                                 {{ period.name }}
 
-                                â€”
+                                —
                                 {{ period.start_time|time:"H:i" }}
                                 -
                                 {{ period.end_time|time:"H:i" }}
@@ -344,7 +344,7 @@
                                 {{ room.name }}
 
                                 {% if room.room_type %}
-                                    â€” {{ room.room_type }}
+                                    — {{ room.room_type }}
                                 {% endif %}
 
                             </option>

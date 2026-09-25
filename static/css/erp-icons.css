@@ -1,0 +1,50 @@
+﻿/* Luhan School ERP - Global Icon System */
+.erp-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    line-height: 1;
+}
+
+.erp-icon-blue { color: #2563eb; }
+.erp-icon-cyan { color: #0891b2; }
+.erp-icon-green { color: #16a34a; }
+.erp-icon-emerald { color: #059669; }
+.erp-icon-orange { color: #ea580c; }
+.erp-icon-amber { color: #d97706; }
+.erp-icon-red { color: #dc2626; }
+.erp-icon-pink { color: #db2777; }
+.erp-icon-purple { color: #9333ea; }
+.erp-icon-indigo { color: #4f46e5; }
+.erp-icon-teal { color: #0d9488; }
+.erp-icon-slate { color: #475569; }
+
+.erp-icon-lg {
+    font-size: 1.35rem;
+}
+
+.erp-icon-xl {
+    font-size: 1.75rem;
+}
+
+.erp-icon-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+}
+
+.erp-icon-bg-blue { background: #dbeafe; color: #2563eb; }
+.erp-icon-bg-green { background: #dcfce7; color: #16a34a; }
+.erp-icon-bg-orange { background: #ffedd5; color: #ea580c; }
+.erp-icon-bg-purple { background: #f3e8ff; color: #9333ea; }
+.erp-icon-bg-cyan { background: #cffafe; color: #0891b2; }
+.erp-icon-bg-red { background: #fee2e2; color: #dc2626; }
+.erp-icon-bg-amber { background: #fef3c7; color: #d97706; }
+.erp-icon-bg-teal { background: #ccfbf1; color: #0d9488; }
+
+.erp-action-icon {
+    margin-right: .4rem;
+    font-size: 1rem;
+    vertical-align: -0.08em;
+}

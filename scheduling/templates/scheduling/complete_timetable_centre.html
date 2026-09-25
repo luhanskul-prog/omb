@@ -1,4 +1,4 @@
-﻿{% extends "base.html" %}
+{% extends "base.html" %}
 
 {% block content %}
 
@@ -156,7 +156,7 @@ label {
     <div class="timetable-header">
         <h1>Timetable Management Centre</h1>
         <p>
-            Assign â†’ Check â†’ Generate Draft â†’ Review â†’ Publish
+            Assign → Check → Generate Draft → Review → Publish
         </p>
     </div>
 
@@ -188,7 +188,7 @@ label {
             <div>
                 {% if draft %}
                     Version {{ draft.id }}
-                    â€” {{ draft.status }}
+                    — {{ draft.status }}
                 {% else %}
                     No draft
                 {% endif %}
@@ -476,7 +476,7 @@ label {
         {% else %}
 
             <p class="ok">
-                âœ“ No timetable validation problems detected.
+                ✓ No timetable validation problems detected.
             </p>
 
         {% endif %}

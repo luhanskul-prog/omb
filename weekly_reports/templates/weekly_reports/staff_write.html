@@ -1,4 +1,4 @@
-﻿
+
 {% extends "base.html" %}
 
 {% block content %}
@@ -121,7 +121,7 @@
                                 selected
                                 {% endif %}>
                                 Week {{ week.week_number }}
-                                â€” {{ week.week_start }}
+                                — {{ week.week_start }}
                                 to {{ week.week_end }}
                             </option>
                             {% endfor %}
@@ -172,7 +172,7 @@
                                 {{ student.middle_name }}
                                 {% endif %}
                                 {{ student.last_name }}
-                                â€” {{ student.admission_no }}
+                                — {{ student.admission_no }}
                             </option>
                             {% endfor %}
 
@@ -310,7 +310,7 @@
                                 selected
                                 {% endif %}>
                                 Week {{ week.week_number }}
-                                â€” {{ week.week_start }}
+                                — {{ week.week_start }}
                                 to {{ week.week_end }}
                             </option>
                             {% endfor %}

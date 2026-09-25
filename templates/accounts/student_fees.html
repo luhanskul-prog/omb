@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -118,7 +118,7 @@
 
                 <div class="small opacity-75">
                     {{ student.get_full_name }}
-                    â€”
+                    —
                     {{ student.admission_no }}
                 </div>
 
@@ -128,7 +128,7 @@
                 href="{% url 'accounts:student_dashboard' %}"
                 class="btn btn-light no-print"
             >
-                â† Dashboard
+                ← Dashboard
             </a>
 
         </div>
@@ -255,12 +255,12 @@
         </strong>
 
         {% if selected_term %}
-            â€”
+            —
             <strong>
                 {{ selected_term.name }}
             </strong>
         {% else %}
-            â€”
+            —
             <strong>Whole Year</strong>
         {% endif %}
 
@@ -360,7 +360,7 @@
                         target="_self"
                         class="btn btn-outline-primary no-print"
                     >
-                        ðŸ–¨ Print Fee Statement
+                        🖨 Print Fee Statement
                     </a>
 
                 {% endif %}
@@ -624,7 +624,7 @@
                     <small class="text-muted">
 
                         {{ selected_year.year }}
-                        â€”
+                        —
                         {{ selected_term.name }}
 
                     </small>

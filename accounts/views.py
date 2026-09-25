@@ -5396,7 +5396,7 @@ def _create_staff_from_wizard(data, custom_role, subject_ids=None):
                     )
 
                 assigned_class_names.append(
-                    f"{subject.name} ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ {display_class}"
+                    f"{subject.name} -> {display_class}"
                 )
 
                 # ----------------------------------------
@@ -6333,6 +6333,7 @@ def staff_my_timetable(request):
         "accounts/staff_my_timetable.html",
         context,
     )
+
 
 
 
