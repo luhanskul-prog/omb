@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -468,7 +468,7 @@
 
     {% if branding and branding.logo %}
         <img
-            src="{{ branding.logo.url }}"
+            src="{{ branding_logo_url }}"
             alt="{{ branding.school_name }}"
             class="print-logo"
         >
@@ -509,7 +509,7 @@
                 <div>
 
                     <h2>
-                        📈 Performance Analysis
+                        ðŸ“ˆ Performance Analysis
                     </h2>
 
                     <p class="text-muted mb-0">
@@ -522,7 +522,7 @@
                     href="{% url 'academic:dashboard' %}"
                     class="btn btn-outline-secondary"
                 >
-                    ← Dashboard
+                    â† Dashboard
                 </a>
 
             </div>
@@ -949,7 +949,7 @@
                 onclick="window.print()"
                 class="btn btn-secondary btn-sm no-print"
             >
-                🖨 Print
+                ðŸ–¨ Print
             </button>
 
         </div>
@@ -1059,7 +1059,7 @@
 
                 {{ best_subject.subject.name }}
 
-                —
+                â€”
                 {{ best_subject.average|floatformat:2 }}%
 
             </div>
@@ -1077,7 +1077,7 @@
 
                 {{ weakest_subject.subject.name }}
 
-                —
+                â€”
                 {{ weakest_subject.average|floatformat:2 }}%
 
             </div>
@@ -1095,7 +1095,7 @@
 
     <div class="print-footer">
 
-        Luhan School — Academic Performance Analysis
+        Luhan School â€” Academic Performance Analysis
 
     </div>
 

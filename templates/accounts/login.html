@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -351,7 +351,7 @@
 
             <div class="text-center">
                 {% if branding and branding.logo %}
-                    <img src="{{ branding.logo.url }}" class="mini-logo" alt="School Logo">
+                    <img src="{{ branding_logo_url }}" class="mini-logo" alt="School Logo">
                 {% endif %}
 
                 <div class="brand-name">
@@ -420,13 +420,13 @@
                 <button type="button"
                         class="staff-option"
                         onclick="selectStaffType('Teaching Staff', this)">
-                    👨‍🏫 Teaching Staff
+                    ðŸ‘¨â€ðŸ« Teaching Staff
                 </button>
 
                 <button type="button"
                         class="staff-option"
                         onclick="selectStaffType('Support Staff', this)">
-                    👥 Support Staff
+                    ðŸ‘¥ Support Staff
                 </button>
 
             </div>
@@ -455,7 +455,7 @@
 
                     {% if branding.logo %}
                         <img
-                            src="{{ branding.logo.url }}"
+                            src="{{ branding_logo_url }}"
                             class="slide-logo"
                             alt="{{ branding.school_name }}"
                         >
@@ -576,5 +576,3 @@
 
 </body>
 </html>
-
-

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -511,43 +511,43 @@ body {
         {% for child in children %}
             {% if portal_capabilities.portal_view_academic %}
 <a href="{% url 'accounts:parent_academic_results' child.id %}" class="nav-link">
-                &#128202; Results � {{ child.first_name }}
+                &#128202; Results ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
 
             {% if portal_capabilities.portal_view_fees %}
 <a href="{% url 'accounts:parent_fees' child.id %}" class="nav-link">
-                &#128176; Fees � {{ child.first_name }}
+                &#128176; Fees ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
 
             {% if portal_capabilities.portal_view_timetable %}
 <a href="{% url 'accounts:parent_timetable' child.id %}" class="nav-link">
-                &#128467; Timetable � {{ child.first_name }}
+                &#128467; Timetable ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
 
             {% if portal_capabilities.portal_view_assignments %}
 <a href="{% url 'accounts:parent_assignments' child.id %}" class="nav-link">
-                &#128221; Assignments � {{ child.first_name }}
+                &#128221; Assignments ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
 
             {% if portal_capabilities.portal_view_learning %}
 <a href="{% url 'accounts:parent_learning' child.id %}" class="nav-link">
-                &#128218; Learning � {{ child.first_name }}
+                &#128218; Learning ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
 
             {% if portal_capabilities.portal_view_attendance %}
 <a href="{% url 'accounts:parent_attendance' child.id %}" class="nav-link">
-                &#128197; Attendance � {{ child.first_name }}
+                &#128197; Attendance ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
 
             {% if portal_capabilities.portal_view_library %}
 <a href="{% url 'accounts:parent_library' child.id %}" class="nav-link">
-                &#128214; Library � {{ child.first_name }}
+                &#128214; Library ï¿½ {{ child.first_name }}
             </a>
 {% endif %}
             {% if portal_capabilities.portal_view_hostel %}
@@ -602,7 +602,7 @@ body {
     <div class="welcome-slide active">
         <div class="welcome-logo">
             {% if branding and branding.logo %}
-                <img src="{{ branding.logo.url }}" alt="{{ branding.school_name }}">
+                <img src="{{ branding_logo_url }}" alt="{{ branding.school_name }}">
             {% else %}
                 <div class="logo-placeholder">??</div>
             {% endif %}
@@ -613,7 +613,7 @@ body {
             <h1>{{ branding.school_name|default:"Luhan School" }}</h1>
 
             {% if branding.motto %}
-                <p class="school-motto">�{{ branding.motto }}�</p>
+                <p class="school-motto">ï¿½{{ branding.motto }}ï¿½</p>
             {% endif %}
 
             <p class="welcome-message">
@@ -1123,7 +1123,7 @@ body {
 
                                     {% if child.stream %}
 
-                                        · Stream:
+                                        Â· Stream:
                                         <strong>
                                             {{ child.stream }}
                                         </strong>
@@ -1725,5 +1725,3 @@ html, body {
     }
 }
 </style>
-
-

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -316,7 +316,7 @@
         {% if branding and branding.logo %}
             <img
                 class="logo"
-                src="{{ branding.logo.url }}"
+                src="{{ branding_logo_url }}"
                 alt="{{ branding.school_name }}"
             >
         {% endif %}
@@ -510,7 +510,7 @@
         </strong>
 
         {% if branding and branding.motto %}
-            — {{ branding.motto }}
+            â€” {{ branding.motto }}
         {% endif %}
 
     </div>

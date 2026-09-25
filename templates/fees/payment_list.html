@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -227,7 +227,7 @@ body{background:white!important;color:#000!important}
 
 <div class="print-branding">
     {% if branding.logo %}
-        <img src="{{ branding.logo.url }}" class="print-logo" alt="School Logo">
+        <img src="{{ branding_logo_url }}" class="print-logo" alt="School Logo">
     {% endif %}
     <h1 class="print-school-name">{{ branding.school_name|default:"Luhan School" }}</h1>
     {% if branding.motto %}<div class="print-motto">{{ branding.motto }}</div>{% endif %}

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -204,14 +204,14 @@
 <div class="topbar">
 
     <h1>
-        🏫 School Branding
+        ðŸ« School Branding
     </h1>
 
     <a
         href="{% url 'accounts:admin_dashboard' %}"
         class="back-button"
     >
-        ← Admin Dashboard
+        â† Admin Dashboard
     </a>
 
 </div>
@@ -275,7 +275,7 @@
                     {% if branding.logo %}
 
                         <img
-                            src="{{ branding.logo.url }}"
+                            src="{{ branding_logo_url }}"
                             alt="School Logo"
                         >
 
@@ -494,7 +494,7 @@
                     type="submit"
                     class="save-button"
                 >
-                    💾 Save School Branding
+                    ðŸ’¾ Save School Branding
                 </button>
 
             </div>

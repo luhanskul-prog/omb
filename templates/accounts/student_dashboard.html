@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -387,9 +387,9 @@
     <div class="student-welcome-slide active">
         <div class="student-welcome-logo">
             {% if branding and branding.logo %}
-                <img src="{{ branding.logo.url }}" alt="{{ branding.school_name }}">
+                <img src="{{ branding_logo_url }}" alt="{{ branding.school_name }}">
             {% else %}
-                <div class="student-logo-placeholder">🏫</div>
+                <div class="student-logo-placeholder">ðŸ«</div>
             {% endif %}
         </div>
 
@@ -400,7 +400,7 @@
 
             {% if branding.motto %}
                 <p class="student-school-motto">
-                    “{{ branding.motto }}”
+                    â€œ{{ branding.motto }}â€
                 </p>
             {% endif %}
 
@@ -413,7 +413,7 @@
 
 
     <div class="student-welcome-slide">
-        <div class="student-contact-icon">📞</div>
+        <div class="student-contact-icon">ðŸ“ž</div>
 
         <div class="student-welcome-text">
             <div class="student-welcome-small">CONTACT US</div>
@@ -437,7 +437,7 @@
 
 
     <div class="student-welcome-slide">
-        <div class="student-contact-icon">✉️</div>
+        <div class="student-contact-icon">âœ‰ï¸</div>
 
         <div class="student-welcome-text">
             <div class="student-welcome-small">GET IN TOUCH</div>
@@ -460,7 +460,7 @@
 
 
     <div class="student-welcome-slide">
-        <div class="student-contact-icon">📍</div>
+        <div class="student-contact-icon">ðŸ“</div>
 
         <div class="student-welcome-text">
             <div class="student-welcome-small">FIND OUR SCHOOL</div>
@@ -1572,7 +1572,3 @@
 </body>
 
 </html>
-
-
-
-

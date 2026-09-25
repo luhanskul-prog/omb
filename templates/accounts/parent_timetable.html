@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -334,7 +334,7 @@ body {
     <div class="header">
 
         {% if branding and branding.logo %}
-            <img src="{{ branding.logo.url }}"
+            <img src="{{ branding_logo_url }}"
                  class="logo"
                  alt="{{ branding.school_name }}">
         {% endif %}

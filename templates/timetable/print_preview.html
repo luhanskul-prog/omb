@@ -735,7 +735,7 @@ body {
 <div class="school-branding-print global-print-branding">
 
     {% if branding.logo %}
-        <img src="{{ branding.logo.url }}"
+        <img src="{{ branding_logo_url }}"
              alt="{{ branding.school_name|default:'School Logo' }}"
              class="school-logo-print">
     {% endif %}
@@ -904,7 +904,7 @@ body {
         <div class="teacher-page-branding">
 
             {% if branding.logo %}
-                <img src="{{ branding.logo.url }}"
+                <img src="{{ branding_logo_url }}"
                      alt="{{ branding.school_name|default:'School Logo' }}"
                      class="school-logo-print">
             {% endif %}
@@ -1248,9 +1248,3 @@ body {
 
 </body>
 </html>
-
-
-
-
-
-

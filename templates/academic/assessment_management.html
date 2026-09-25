@@ -1,4 +1,4 @@
-
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -463,19 +463,19 @@ select {
 
 <div class="assessment-actionbar">
     <a href="{% url 'academic:class_list' %}" class="directory-btn">
-        📁 Directory
+        ðŸ“ Directory
     </a>
 
     <a href="#upload-marks" class="marks-btn">
-        📝 Enter Marks
+        ðŸ“ Enter Marks
     </a>
 
     <a href="{% url 'academic:assessment_marks_template' %}" class="template-btn">
-        📊 Excel Template
+        ðŸ“Š Excel Template
     </a>
 
     <a href="{% url 'academic:dashboard' %}" class="dashboard-btn">
-        🏠 Academic Dashboard
+        ðŸ  Academic Dashboard
     </a>
 </div>
 
@@ -530,7 +530,7 @@ select {
 
         {% if branding and branding.logo %}
             <img
-                src="{{ branding.logo.url }}"
+                src="{{ branding_logo_url }}"
                 class="logo"
                 alt="School Logo"
             >
@@ -792,7 +792,7 @@ select {
                     <div class="meta">
 
                         {{ item.window.academic_year }}
-                        •
+                        â€¢
                         {{ item.window.term }}
 
                     </div>
@@ -868,7 +868,7 @@ select {
                 <div class="meta">
 
                     {{ item.recorded }} recorded
-                    •
+                    â€¢
                     {{ item.missing }} missing
 
                 </div>

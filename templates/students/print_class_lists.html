@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 
 {% block content %}
 
@@ -156,7 +156,7 @@
 
                 <div>
                     <h4 class="fw-bold mb-1">
-                        🖨️ Print Class Lists
+                        ðŸ–¨ï¸ Print Class Lists
                     </h4>
 
                     <p class="text-muted mb-0">
@@ -166,7 +166,7 @@
 
                 <a href="{% url 'student_management' %}"
                    class="btn btn-outline-secondary">
-                    ← Student Management
+                    â† Student Management
                 </a>
 
             </div>
@@ -254,7 +254,7 @@
         <div class="school-header">
 
             {% if branding and branding.logo %}
-                <img src="{{ branding.logo.url }}"
+                <img src="{{ branding_logo_url }}"
                      class="school-logo"
                      alt="School Logo">
             {% endif %}
@@ -364,7 +364,7 @@
 
         <button onclick="window.print()"
                 class="btn btn-success btn-lg px-5">
-            🖨️ Print Class List
+            ðŸ–¨ï¸ Print Class List
         </button>
 
     </div>
