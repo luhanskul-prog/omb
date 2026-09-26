@@ -12,12 +12,90 @@
         button,a{display:inline-block;padding:11px 18px;margin-top:20px;border:0;border-radius:7px;text-decoration:none;cursor:pointer}
         button{background:#1646a0;color:white}
         a{background:#e9eef8;color:#173b78}
-        .error{color:#a00;margin-top:5px}
+        .error{
+    color:#a00;
+    margin-top:12px;
+    padding:10px;
+    background:#fff0f0;
+    border-radius:8px;
+}
+
+.success-message{
+    position:fixed;
+    top:25px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    min-width:320px;
+    max-width:90%;
+    padding:14px 22px;
+    border-radius:50px;
+    background:#198754;
+    color:#fff;
+    text-align:center;
+    font-weight:bold;
+    box-shadow:0 8px 25px rgba(0,0,0,.20);
+    animation:successIn .35s ease-out;
+}
+
+.success-message .check{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;
+    height:26px;
+    margin-right:8px;
+    border-radius:50%;
+    background:#fff;
+    color:#198754;
+    font-weight:bold;
+}
+
+.success-message.hide{
+    animation:successOut .5s ease-in forwards;
+}
+
+@keyframes successIn{
+    from{
+        opacity:0;
+        transform:translate(-50%,-15px);
+    }
+    to{
+        opacity:1;
+        transform:translate(-50%,0);
+    }
+}
+
+@keyframes successOut{
+    from{
+        opacity:1;
+        transform:translate(-50%,0);
+    }
+    to{
+        opacity:0;
+        transform:translate(-50%,-15px);
+    }
+}
     </style>
 </head>
 <body>
 <div class="box">
     <h1>{{ portal_title }}</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if "success" in message.tags %}
+                <div class="success-message" id="successMessage">
+                    <span class="check">✓</span>
+                    {{ message }}
+                </div>
+            {% else %}
+                <div class="error">
+                    {{ message }}
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 
     <form method="post">
         {% csrf_token %}
@@ -61,5 +139,20 @@
         <a href="{% url 'weekly_reports:manage_weeks' %}">Cancel</a>
     </form>
 </div>
+
+<script>
+    setTimeout(function () {
+        const message = document.getElementById("successMessage");
+
+        if (message) {
+            message.classList.add("hide");
+
+            setTimeout(function () {
+                message.remove();
+            }, 500);
+        }
+    }, 4000);
+</script>
+
 </body>
 </html>
