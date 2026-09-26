@@ -1,4 +1,4 @@
-﻿from accounts.views import user_has_role_permission
+from accounts.views import user_has_role_permission
 from datetime import date
 
 from django.contrib import messages
@@ -281,12 +281,38 @@ def _subjects_for_staff(user):
 
 
 def _apply_common_filters(request, queryset):
+    """
+    Apply filters shared by Admin, Teaching Staff,
+    Student and Parent report-list views.
+
+    Assessment Week is authoritative when supplied.
+    The legacy `week` parameter remains supported as
+    a fallback for older links/forms.
+    """
+
     student_id = request.GET.get("student", "").strip()
     subject_id = request.GET.get("subject", "").strip()
     class_name = request.GET.get("class", "").strip()
-    week = request.GET.get("week", "").strip()
-    date_from = request.GET.get("date_from", "").strip()
-    date_to = request.GET.get("date_to", "").strip()
+
+    assessment_week_id = request.GET.get(
+        "assessment_week",
+        "",
+    ).strip()
+
+    legacy_week = request.GET.get(
+        "week",
+        "",
+    ).strip()
+
+    date_from = request.GET.get(
+        "date_from",
+        "",
+    ).strip()
+
+    date_to = request.GET.get(
+        "date_to",
+        "",
+    ).strip()
 
     if student_id.isdigit():
         queryset = queryset.filter(
@@ -300,12 +326,20 @@ def _apply_common_filters(request, queryset):
 
     if class_name:
         queryset = queryset.filter(
-            class_name=class_name
+            class_name__iexact=class_name
         )
 
-    if week.isdigit():
+    # Assessment Week is the authoritative week filter.
+    if assessment_week_id.isdigit():
         queryset = queryset.filter(
-            week_number=int(week)
+            week_id=int(assessment_week_id)
+        )
+
+    # Backward compatibility for older links/forms
+    # that still send `week=<week_number>`.
+    elif legacy_week.isdigit():
+        queryset = queryset.filter(
+            week_number=int(legacy_week)
         )
 
     if date_from:
@@ -333,7 +367,481 @@ def _decorate_reports(reports):
     return reports
 
 
+from django.db.models import Avg
 
+
+
+def _build_weekly_expected_matrix(
+    week,
+    user=None,
+    students=None,
+    include_all_admin=False,
+):
+    """
+    Authoritative weekly assessment expectation matrix.
+
+    One expected report:
+        active learner + subject assigned to the learner's
+        class/stream.
+
+    Permissions:
+        Admin:
+            All active class/stream subject assignments.
+
+        Class Teacher:
+            All subjects assigned to the class/stream they are
+            class teacher for.
+
+        Ordinary Teaching Staff:
+            Only their own active teaching assignments.
+
+    The same matrix is used for dashboard completion and the
+    weekly assessment writing workspace.
+    """
+
+    from timetable.legacy_compat import TeacherTeachingAssignment
+
+    if not week:
+        return {
+            "expected": 0,
+            "completed": 0,
+            "pending": 0,
+            "completion_percentage": 0,
+            "rows": [],
+        }
+
+    if students is None:
+        students_qs = Student.objects.filter(
+            is_active=True,
+        )
+    else:
+        students_qs = students
+
+    students_list = list(
+        students_qs.order_by(
+            "class_name",
+            "stream",
+            "last_name",
+            "first_name",
+        )
+    )
+
+    assignments = list(
+        TeacherTeachingAssignment.objects
+        .filter(is_active=True)
+        .select_related(
+            "subject",
+            "teacher",
+        )
+        .order_by(
+            "class_name",
+            "stream",
+            "subject__name",
+        )
+    )
+
+    is_admin = bool(
+        user is not None and _is_admin(user)
+    )
+
+    teacher = None
+
+    if user is not None and not is_admin:
+        teacher = get_staff_teacher(user)
+
+    # ---------------------------------------------------------
+    # Build the permitted class/stream + subject map.
+    # ---------------------------------------------------------
+    assignment_map = {}
+
+    for assignment in assignments:
+
+        assignment_class = (
+            assignment.class_name or ""
+        ).strip()
+
+        assignment_stream = (
+            assignment.stream or ""
+        ).strip()
+
+        if not assignment_class:
+            continue
+
+        allowed = False
+
+        if is_admin and include_all_admin:
+            allowed = True
+
+        elif teacher is not None:
+
+            # Class teachers may enter all subjects actually
+            # assigned to their class/stream.
+            try:
+                if is_class_teacher_for(
+                    user,
+                    assignment_class,
+                    assignment_stream,
+                ):
+                    allowed = True
+            except Exception:
+                pass
+
+            # Ordinary teachers may enter only their own
+            # active assignment.
+            if assignment.teacher_id == teacher.pk:
+                allowed = True
+
+        if not allowed:
+            continue
+
+        class_key = (
+            assignment_class.lower(),
+            assignment_stream.lower(),
+        )
+
+        assignment_map.setdefault(
+            class_key,
+            {},
+        )
+
+        # One subject per class/stream is one expected
+        # weekly assessment slot, regardless of lessons_per_week.
+        assignment_map[class_key][
+            assignment.subject_id
+        ] = assignment
+
+    # ---------------------------------------------------------
+    # Existing reports for this week.
+    # ---------------------------------------------------------
+    completed_keys = set(
+        WeeklyAssessmentReport.objects
+        .filter(
+            week=week,
+            student__is_active=True,
+        )
+        .values_list(
+            "student_id",
+            "subject_id",
+        )
+    )
+
+    rows = []
+
+    for student in students_list:
+
+        class_key = (
+            (student.class_name or "").strip().lower(),
+            (student.stream or "").strip().lower(),
+        )
+
+        subject_assignments = assignment_map.get(
+            class_key,
+            {},
+        )
+
+        for assignment in subject_assignments.values():
+
+            key = (
+                student.pk,
+                assignment.subject_id,
+            )
+
+            completed = key in completed_keys
+
+            rows.append({
+                "student": student,
+                "subject": assignment.subject,
+                "assignment": assignment,
+                "completed": completed,
+                "pending": not completed,
+            })
+
+    expected = len(rows)
+
+    completed = sum(
+        1
+        for row in rows
+        if row["completed"]
+    )
+
+    pending = expected - completed
+
+    completion_percentage = (
+        round(
+            (completed / expected) * 100,
+            1,
+        )
+        if expected
+        else 0
+    )
+
+    return {
+        "expected": expected,
+        "completed": completed,
+        "pending": pending,
+        "completion_percentage": completion_percentage,
+        "rows": rows,
+    }
+
+
+def _build_weekly_analysis(
+    reports,
+    trend_reports=None,
+    expected_total=None,
+):
+    """
+    Build dashboard-ready analysis data from WeeklyAssessmentReport records.
+
+    This function does not change permissions or database structure.
+    """
+
+    reports = list(reports or [])
+    trend_reports = list(
+        trend_reports if trend_reports is not None else reports
+    )
+
+    scored_reports = [
+        report
+        for report in reports
+        if report.percentage is not None
+    ]
+
+    percentages = [
+        float(report.percentage)
+        for report in scored_reports
+    ]
+
+    total_reports = len(reports)
+
+    learners = {
+        report.student_id
+        for report in reports
+        if report.student_id
+    }
+
+    subjects = {
+        report.subject_id
+        for report in reports
+        if report.subject_id
+    }
+
+    classes = {
+        (report.class_name or "").strip()
+        for report in reports
+        if (report.class_name or "").strip()
+    }
+
+    average_score = (
+        round(sum(percentages) / len(percentages), 1)
+        if percentages
+        else 0
+    )
+
+    highest_score = max(percentages) if percentages else 0
+    lowest_score = min(percentages) if percentages else 0
+
+    completion_percentage = (
+        round((total_reports / expected_total) * 100, 1)
+        if expected_total
+        else 0
+    )
+
+    if completion_percentage > 100:
+        completion_percentage = 100
+
+    # ---------------------------------------------------------
+    # PERFORMANCE BY SUBJECT
+    # ---------------------------------------------------------
+
+    subject_groups = {}
+
+    for report in scored_reports:
+        subject_name = getattr(
+            report.subject,
+            "name",
+            str(report.subject),
+        )
+
+        subject_groups.setdefault(
+            subject_name,
+            [],
+        ).append(float(report.percentage))
+
+    subject_performance = []
+
+    for subject_name, values in subject_groups.items():
+        subject_performance.append({
+            "name": subject_name,
+            "average": round(
+                sum(values) / len(values),
+                1,
+            ),
+            "count": len(values),
+        })
+
+    subject_performance.sort(
+        key=lambda item: item["average"],
+        reverse=True,
+    )
+
+    # ---------------------------------------------------------
+    # PERFORMANCE BY CLASS
+    # ---------------------------------------------------------
+
+    class_groups = {}
+
+    for report in scored_reports:
+        class_name = (
+            report.class_name
+            or getattr(report.student, "class_name", "")
+            or "Unassigned"
+        )
+
+        class_groups.setdefault(
+            class_name,
+            [],
+        ).append(float(report.percentage))
+
+    class_performance = []
+
+    for class_name, values in class_groups.items():
+        class_performance.append({
+            "name": class_name,
+            "average": round(
+                sum(values) / len(values),
+                1,
+            ),
+            "count": len(values),
+        })
+
+    class_performance.sort(
+        key=lambda item: item["average"],
+        reverse=True,
+    )
+
+    # ---------------------------------------------------------
+    # WEEKLY PERFORMANCE TREND
+    # ---------------------------------------------------------
+
+    week_groups = {}
+
+    for report in trend_reports:
+        if report.percentage is None:
+            continue
+
+        week_key = (
+            report.week_number,
+            report.week_start,
+            report.week_end,
+        )
+
+        week_groups.setdefault(
+            week_key,
+            [],
+        ).append(float(report.percentage))
+
+    weekly_trend = []
+
+    for (
+        week_number,
+        week_start,
+        week_end,
+    ), values in sorted(
+        week_groups.items(),
+        key=lambda item: item[0][1],
+    ):
+        weekly_trend.append({
+            "label": f"Week {week_number}",
+            "week_number": week_number,
+            "start": week_start.strftime("%d %b %Y"),
+            "end": week_end.strftime("%d %b %Y"),
+            "average": round(
+                sum(values) / len(values),
+                1,
+            ),
+            "count": len(values),
+        })
+
+    # ---------------------------------------------------------
+    # SCORE DISTRIBUTION
+    # ---------------------------------------------------------
+
+    score_bands = [
+        {
+            "label": "80–100%",
+            "min": 80,
+            "max": 100,
+            "count": 0,
+        },
+        {
+            "label": "60–79%",
+            "min": 60,
+            "max": 79.99,
+            "count": 0,
+        },
+        {
+            "label": "40–59%",
+            "min": 40,
+            "max": 59.99,
+            "count": 0,
+        },
+        {
+            "label": "0–39%",
+            "min": 0,
+            "max": 39.99,
+            "count": 0,
+        },
+    ]
+
+    for percentage in percentages:
+        for band in score_bands:
+            if band["min"] <= percentage <= band["max"]:
+                band["count"] += 1
+                break
+
+    # ---------------------------------------------------------
+    # SUBMISSION STATUS
+    # ---------------------------------------------------------
+
+    submitted = total_reports
+
+    if expected_total is None:
+        expected_total = submitted
+
+    pending = max(
+        int(expected_total) - submitted,
+        0,
+    )
+
+    submission_status = [
+        {
+            "label": "Submitted",
+            "value": submitted,
+        },
+        {
+            "label": "Pending",
+            "value": pending,
+        },
+    ]
+
+    return {
+        "total_reports": total_reports,
+        "learners_assessed": len(learners),
+        "subjects_assessed": len(subjects),
+        "classes_assessed": len(classes),
+        "average_score": average_score,
+        "highest_score": round(highest_score, 1),
+        "lowest_score": round(lowest_score, 1),
+        "completion_percentage": completion_percentage,
+        "expected_total": int(expected_total or 0),
+        "submitted_total": submitted,
+        "pending_total": pending,
+        "subject_performance": subject_performance,
+        "class_performance": class_performance,
+        "weekly_trend": weekly_trend,
+        "score_bands": score_bands,
+        "submission_status": submission_status,
+    }
 
 
 # ============================================================
@@ -611,6 +1119,27 @@ def admin_reports(request):
         list(queryset)
     )
 
+    # ---------------------------------------------------------
+    # Dashboard analysis data
+    # ---------------------------------------------------------
+    admin_trend_queryset = (
+        WeeklyAssessmentReport.objects
+        .select_related(
+            "student",
+            "subject",
+            "week",
+        )
+    )
+
+    admin_trend_queryset = _apply_common_filters(
+        request,
+        admin_trend_queryset,
+    )
+
+    trend_reports = _decorate_reports(
+        list(admin_trend_queryset)
+    )
+
     students = (
         Student.objects
         .filter(is_active=True)
@@ -646,34 +1175,61 @@ def admin_reports(request):
     submission_stats = []
 
     if selected_week:
+        matrix = _build_weekly_expected_matrix(
+            selected_week,
+            user=request.user,
+            students=Student.objects.filter(
+                is_active=True,
+            ),
+            include_all_admin=True,
+        )
 
-        for class_name in classes:
+        grouped = {}
 
-            learner_count = (
-                Student.objects
-                .filter(
-                    is_active=True,
-                    class_name=class_name,
-                )
-                .count()
+        for row in matrix["rows"]:
+            student = row["student"]
+
+            class_name = (
+                student.class_name or "Unassigned"
+            ).strip()
+
+            stream = (
+                student.stream or ""
+            ).strip()
+
+            key = (
+                class_name.lower(),
+                stream.lower(),
             )
 
-            subject_count = subjects.count()
+            if key not in grouped:
+                grouped[key] = {
+                    "class_name": class_name,
+                    "stream": stream,
+                    "learners": set(),
+                    "expected": 0,
+                    "submitted": 0,
+                }
 
-            expected = (
-                learner_count *
-                subject_count
+            grouped[key]["learners"].add(
+                student.pk
             )
 
-            submitted = (
-                WeeklyAssessmentReport.objects
-                .filter(
-                    week=selected_week,
-                    student__is_active=True,
-                    student__class_name=class_name,
-                )
-                .count()
-            )
+            grouped[key]["expected"] += 1
+
+            if row["completed"]:
+                grouped[key]["submitted"] += 1
+
+        for item in sorted(
+            grouped.values(),
+            key=lambda x: (
+                x["class_name"],
+                x["stream"],
+            ),
+        ):
+            expected = item["expected"]
+            submitted = item["submitted"]
+            pending = expected - submitted
 
             percentage = (
                 round(
@@ -685,10 +1241,12 @@ def admin_reports(request):
             )
 
             submission_stats.append({
-                "class_name": class_name,
-                "learners": learner_count,
+                "class_name": item["class_name"],
+                "stream": item["stream"],
+                "learners": len(item["learners"]),
                 "expected": expected,
                 "submitted": submitted,
+                "pending": pending,
                 "percentage": percentage,
             })
 
@@ -709,6 +1267,19 @@ def admin_reports(request):
 
             "submission_stats": submission_stats,
 
+            "analysis": _build_weekly_analysis(
+                reports,
+                trend_reports=trend_reports,
+                expected_total=(
+                    sum(
+                        item["expected"]
+                        for item in submission_stats
+                    )
+                    if selected_week
+                    else None
+                ),
+            ),
+
             "portal": "admin",
             "portal_title": "Weekly Assessment Reports",
             "can_create": True,
@@ -721,14 +1292,6 @@ def admin_reports(request):
 def staff_reports(request):
     if not _is_staff(request.user):
         return HttpResponseForbidden("Teaching staff access required.")
-
-    if not _has_weekly_report_permission(
-        request.user,
-        "view_weeklyassessmentreport",
-    ):
-        return HttpResponseForbidden(
-            "You do not have permission to view weekly assessment reports."
-        )
 
     # Only assessment weeks created by Admin are used.
     weeks = (
@@ -806,6 +1369,32 @@ def staff_reports(request):
     ]
 
     reports = _decorate_reports(reports)
+
+    # ---------------------------------------------------------
+    # Permission-safe historical trend data.
+    # ---------------------------------------------------------
+    staff_trend_queryset = (
+        WeeklyAssessmentReport.objects
+        .select_related(
+            "student",
+            "subject",
+            "week",
+        )
+    )
+
+    staff_trend_queryset = _apply_common_filters(
+        request,
+        staff_trend_queryset,
+    )
+
+    staff_trend_reports = [
+        report
+        for report in staff_trend_queryset
+        if _staff_can_view_report(
+            request.user,
+            report,
+        )
+    ]
 
     # ---------------------------------------------------------
     # Submission statistics by subject and class.
@@ -904,6 +1493,19 @@ def staff_reports(request):
             "submission_stats": submission_stats,
             "class_subject_stats": class_subject_stats,
 
+            "analysis": _build_weekly_analysis(
+                reports,
+                trend_reports=staff_trend_reports,
+                expected_total=(
+                    sum(
+                        item["expected"]
+                        for item in submission_stats
+                    )
+                    if selected_week
+                    else None
+                ),
+            ),
+
             "selected_class": selected_class,
             "selected_subject_id": selected_subject_id,
 
@@ -969,6 +1571,39 @@ def student_reports(request):
         weekly_assessment_reports__is_published=True,
     ).distinct().order_by("name")
 
+    # ---------------------------------------------------------
+    # Student historical analysis.
+    # Only this learner's published reports from unlocked
+    # assessment weeks are included.
+    # ---------------------------------------------------------
+    student_trend_queryset = (
+        WeeklyAssessmentReport.objects
+        .filter(
+            student_id=profile.student_id,
+            is_published=True,
+            week__is_locked=False,
+        )
+        .select_related(
+            "student",
+            "subject",
+            "week",
+        )
+    )
+
+    student_trend_reports = _decorate_reports(
+        list(student_trend_queryset)
+    )
+
+    analysis = _build_weekly_analysis(
+        reports,
+        trend_reports=student_trend_reports,
+        expected_total=(
+            subjects.count()
+            if selected_week
+            else None
+        ),
+    )
+
     return render(
         request,
         "weekly_reports/report_list.html",
@@ -984,6 +1619,8 @@ def student_reports(request):
                 "subject",
                 ""
             ),
+            "analysis": analysis,
+
             "portal": "student",
             "portal_title": "My Weekly Assessment Reports",
             "can_create": False,
@@ -1073,6 +1710,39 @@ def parent_reports(request):
         weekly_assessment_reports__is_published=True,
     ).distinct().order_by("name")
 
+    # ---------------------------------------------------------
+    # Parent historical analysis.
+    # Only published reports belonging to the parent's
+    # active children from unlocked weeks are included.
+    # ---------------------------------------------------------
+    parent_trend_queryset = (
+        WeeklyAssessmentReport.objects
+        .filter(
+            student_id__in=child_ids,
+            is_published=True,
+            week__is_locked=False,
+        )
+        .select_related(
+            "student",
+            "subject",
+            "week",
+        )
+    )
+
+    parent_trend_reports = _decorate_reports(
+        list(parent_trend_queryset)
+    )
+
+    analysis = _build_weekly_analysis(
+        reports,
+        trend_reports=parent_trend_reports,
+        expected_total=(
+            subjects.count() * len(children)
+            if selected_week
+            else None
+        ),
+    )
+
     return render(
         request,
         "weekly_reports/report_list.html",
@@ -1088,6 +1758,8 @@ def parent_reports(request):
                 "subject",
                 ""
             ),
+            "analysis": analysis,
+
             "portal": "parent",
             "portal_title": "Weekly Assessment Reports",
             "can_create": False,

@@ -127,6 +127,74 @@ class GradingScale(models.Model):
 
 
 # ============================================================
+# ASSESSMENT WEEK
+# ============================================================
+
+class AssessmentWeek(models.Model):
+
+    academic_year = models.ForeignKey(
+        AcademicYear,
+        on_delete=models.PROTECT,
+        related_name="assessment_weeks"
+    )
+
+    term = models.ForeignKey(
+        Term,
+        on_delete=models.PROTECT,
+        related_name="assessment_weeks"
+    )
+
+    week_number = models.PositiveIntegerField()
+
+    name = models.CharField(
+        max_length=100
+    )
+
+    start_date = models.DateField()
+
+    end_date = models.DateField()
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+
+        ordering = [
+            "academic_year",
+            "term",
+            "week_number",
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "academic_year",
+                    "term",
+                    "week_number",
+                ],
+                name="unique_assessment_week"
+            )
+        ]
+
+    def __str__(self):
+
+        return (
+            f"{self.name} | "
+            f"{self.start_date} - "
+            f"{self.end_date}"
+        )
+
+
+# ============================================================
 # ASSESSMENT / MARK
 # ============================================================
 
@@ -160,6 +228,14 @@ class Assessment(models.Model):
         AssessmentType,
         on_delete=models.PROTECT,
         related_name="assessments"
+    )
+
+    assessment_week = models.ForeignKey(
+        AssessmentWeek,
+        on_delete=models.PROTECT,
+        related_name="assessments",
+        null=True,
+        blank=True,
     )
 
     # ========================================================
@@ -201,9 +277,10 @@ class Assessment(models.Model):
                     "academic_year",
                     "term",
                     "subject",
+                    "assessment_week",
                     "assessment_type",
                 ],
-                name="unique_student_term_subject_assessment",
+                name="unique_student_term_week_subject_assessment",
             )
         ]
 
@@ -350,3 +427,4 @@ class AssessmentWindow(models.Model):
             self.is_active
             and not self.deadline_passed()
         )
+
