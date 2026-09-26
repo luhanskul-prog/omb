@@ -540,23 +540,33 @@ def admin_write_individual(request):
                 except (TypeError, ValueError):
                     continue
 
-                WeeklyAssessmentReport.objects.update_or_create(
-                    student=student,
-                    subject=subject,
-                    week_start=week.week_start,
-                    week_end=week.week_end,
-                    defaults={
-                        "week": week,
-                        "class_name": student.class_name or "",
-                        "stream": student.stream or "",
-                        "week_number": week.week_number,
-                        "score": score,
-                        "max_score": max_score,
-                        "teacher_report": teacher_report,
-                        "created_by": request.user,
-                        "updated_by": request.user,
-                    },
-                )
+                try:
+                    WeeklyAssessmentReport.objects.update_or_create(
+                        student=student,
+                        subject=subject,
+                        week_start=week.week_start,
+                        week_end=week.week_end,
+                        defaults={
+                            "week": week,
+                            "class_name": student.class_name or "",
+                            "stream": student.stream or "",
+                            "week_number": week.week_number,
+                            "score": score,
+                            "max_score": max_score,
+                            "teacher_report": teacher_report,
+                            "created_by": request.user,
+                            "updated_by": request.user,
+                        },
+                    )
+                except Exception as exc:
+                    print("\n=== INDIVIDUAL ADMIN ALL SUBJECTS ERROR ===")
+                    print("Student ID:", student.pk)
+                    print("Week ID:", week.pk)
+                    print("Subject ID:", subject.pk)
+                    print("Subject:", getattr(subject, "name", ""))
+                    print("Exception type:", type(exc).__name__)
+                    print("Exception:", repr(exc))
+                    raise
 
                 saved += 1
 
