@@ -785,6 +785,16 @@ def import_students(request):
 
                     student.save()
 
+                    fee_ok, fee_result = apply_admission_fee_structure(
+                        student
+                    )
+
+                    if not fee_ok:
+                        raise Exception(
+                            f"Fee structure could not be applied for "
+                            f"{student.admission_no}: {fee_result}"
+                        )
+
                     create_parent_account(
                         student
                     )
