@@ -754,7 +754,15 @@
 
                         <select name="class"
                                 class="form-select"
-                                required>
+                                required
+                                onchange="
+                                    const params = new URLSearchParams();
+                                    params.set('mode', 'class');
+                                    params.set('class', this.value);
+                                    params.set('week', '{{ selected_week }}');
+                                    params.set('subject', '{{ selected_subject }}');
+                                    window.location.href = '{% if portal == 'admin' %}{% url 'weekly_reports:admin_write' %}{% else %}{% url 'weekly_reports:staff_write' %}{% endif %}?' + params.toString();
+                                ">
 
                             <option value="">
                                 Select class / stream
@@ -780,7 +788,15 @@
 
                         <select name="week"
                                 class="form-select"
-                                required>
+                                required
+                                onchange="
+                                    const params = new URLSearchParams();
+                                    params.set('mode', 'class');
+                                    params.set('class', '{{ selected_class }}||{{ selected_stream }}');
+                                    params.set('week', this.value);
+                                    params.set('subject', '{{ selected_subject }}');
+                                    window.location.href = '{% if portal == 'admin' %}{% url 'weekly_reports:admin_write' %}{% else %}{% url 'weekly_reports:staff_write' %}{% endif %}?' + params.toString();
+                                ">
 
                             <option value="">
                                 Select assessment week

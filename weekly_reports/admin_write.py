@@ -496,10 +496,6 @@ def admin_write_individual(request):
 
     if all_subjects:
 
-        print("\n=== ALL SUBJECTS STAGE 1 ===")
-        print("About to load admin subjects")
-        print("Class:", class_name)
-        print("Stream:", stream)
 
         subjects = list(
             _admin_subjects(
@@ -508,35 +504,23 @@ def admin_write_individual(request):
             )
         )
 
-        print("=== ALL SUBJECTS STAGE 2 ===")
-        print("Subject IDs:", [subject.pk for subject in subjects])
-        print("Subject names:", [getattr(subject, "name", "") for subject in subjects])
 
         saved = 0
 
-        print("=== ALL SUBJECTS STAGE 3 ===")
-        print("About to enter transaction")
 
         with transaction.atomic():
 
-            print("=== ALL SUBJECTS STAGE 4 ===")
-            print("Transaction entered")
-            print("Number of subjects:", len(subjects))
 
             for subject in subjects:
 
-                print("=== ALL SUBJECTS STAGE 5 ===")
-                print("Processing subject:", subject.pk, getattr(subject, "name", ""))
 
                 score_text = request.POST.get(
                     f"score_{subject.pk}",
                     "",
                 ).strip()
 
-                print("Score text:", repr(score_text))
 
                 if score_text == "":
-                    print("Skipping subject because score is empty:", subject.pk)
                     continue
 
                 max_score_text = request.POST.get(
@@ -549,7 +533,6 @@ def admin_write_individual(request):
                     "",
                 ).strip()
 
-                print("Max score text:", repr(max_score_text))
 
                 try:
                     score = float(score_text)
@@ -567,8 +550,6 @@ def admin_write_individual(request):
                 except (TypeError, ValueError):
                     continue
 
-                print("=== ALL SUBJECTS STAGE 6 ===")
-                print("About to save subject:", subject.pk)
 
                 try:
                     WeeklyAssessmentReport.objects.update_or_create(

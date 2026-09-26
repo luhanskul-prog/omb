@@ -473,6 +473,18 @@ def staff_write(request):
         "",
     )
 
+    selected_is_class_teacher = False
+
+    if class_name:
+        try:
+            selected_is_class_teacher = is_class_teacher_for(
+                request.user,
+                class_name,
+                stream,
+            )
+        except Exception:
+            selected_is_class_teacher = False
+
     all_subjects = subject_id.lower() == "all"
 
     context["selected_class"] = class_name
@@ -888,6 +900,8 @@ def staff_write_class(request):
         "subject",
         "",
     )
+
+    all_subjects = subject_id.lower() == "all"
 
     class_name, stream = _parse_class(
         class_value
