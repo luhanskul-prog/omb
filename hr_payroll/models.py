@@ -1099,7 +1099,11 @@ class PayrollPeriod(models.Model):
                 "Month must be between 1 and 12."
             )
 
-        if self.end_date < self.start_date:
+        if (
+            self.start_date
+            and self.end_date
+            and self.end_date < self.start_date
+        ):
             raise ValidationError(
                 "Payroll end date cannot be before start date."
             )
