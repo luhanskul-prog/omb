@@ -1,0 +1,58 @@
+{% extends 'inventory/layout.html' %}
+{% block title %}Import Inventory Items{% endblock %}
+{% block page_heading %}Import Inventory Items{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <div style="padding: 24px;">
+        <h2>Import Items from CSV</h2>
+
+        <p>
+            Upload a CSV file using the same format as the Inventory Export.
+            Existing items are updated using their SKU. New SKUs are added as new items.
+        </p>
+
+        <div style="margin: 20px 0;">
+            <a href="{% url 'inventory:download_items_csv_template' %}" class="btn btn-soft">
+                <i class="bi bi-file-earmark-spreadsheet"></i> Download Empty CSV Template
+            </a>
+        </div>
+
+        <div style="margin: 20px 0; padding: 16px; background: #f5f7fa; border-radius: 8px;">
+            <strong>CSV columns:</strong>
+            <br>
+            SKU, Item, Category, Unit, Location, Stock, Reorder Level,
+            Purchase Price, Stock Value, Status
+        </div>
+
+        <p>
+            <strong>Note:</strong> Stock Value and Status are calculated automatically
+            by the system and do not need to be edited.
+        </p>
+
+        <form method="post" enctype="multipart/form-data" style="margin-top: 24px;">
+            {% csrf_token %}
+
+            <div style="margin-bottom: 20px;">
+                <label for="csv_file"><strong>Select CSV file</strong></label>
+                <br><br>
+                <input
+                    type="file"
+                    id="csv_file"
+                    name="csv_file"
+                    accept=".csv"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-upload"></i> Import CSV
+            </button>
+
+            <a href="{% url 'inventory:item_list' %}" class="btn btn-soft">
+                Cancel
+            </a>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,350 +1,202 @@
+from decimal import Decimal
+
+from django.conf import settings
+from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 
-# =========================================================
-# INVENTORY CATEGORY
-# =========================================================
-
-class InventoryCategory(models.Model):
-
-    name = models.CharField(
-        max_length=100,
-        unique=True,
-    )
-
-    description = models.TextField(
-        blank=True,
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
+class TimeStampedModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        verbose_name = "Inventory Category"
-        verbose_name_plural = "Inventory Categories"
+        abstract = True
+
+
+class Category(TimeStampedModel):
+    name = models.CharField(max_length=120, unique=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
         ordering = ["name"]
+        verbose_name_plural = "Categories"
 
     def __str__(self):
         return self.name
 
 
-# =========================================================
-# SUPPLIER
-# =========================================================
-
-class Supplier(models.Model):
-
-    name = models.CharField(
-        max_length=150,
-    )
-
-    contact_person = models.CharField(
-        max_length=150,
-        blank=True,
-    )
-
-    phone = models.CharField(
-        max_length=30,
-        blank=True,
-    )
-
-    email = models.EmailField(
-        blank=True,
-    )
-
-    address = models.TextField(
-        blank=True,
-    )
-
-    is_active = models.BooleanField(
-        default=True,
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
+class Supplier(TimeStampedModel):
+    name = models.CharField(max_length=180)
+    contact_person = models.CharField(max_length=150, blank=True)
+    phone = models.CharField(max_length=50, blank=True)
+    email = models.EmailField(blank=True)
+    address = models.TextField(blank=True)
+    kra_pin = models.CharField(max_length=50, blank=True)
+    notes = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["name"]
+        constraints = [
+            models.UniqueConstraint(fields=["name", "phone"], name="unique_supplier_name_phone")
+        ]
 
     def __str__(self):
         return self.name
 
 
-# =========================================================
-# INVENTORY ITEM
-# =========================================================
-
-class InventoryItem(models.Model):
-
+class Item(TimeStampedModel):
     UNIT_CHOICES = [
         ("piece", "Piece"),
-        ("box", "Box"),
         ("pack", "Pack"),
+        ("box", "Box"),
         ("ream", "Ream"),
+        ("set", "Set"),
+        ("bottle", "Bottle"),
         ("kg", "Kilogram"),
         ("litre", "Litre"),
-        ("set", "Set"),
-        ("pair", "Pair"),
-        ("dozen", "Dozen"),
         ("other", "Other"),
     ]
 
-    category = models.ForeignKey(
-        InventoryCategory,
-        on_delete=models.PROTECT,
-        related_name="items",
-    )
-
-    name = models.CharField(
-        max_length=200,
-    )
-
-    item_code = models.CharField(
-        max_length=50,
-        unique=True,
-    )
-
-    description = models.TextField(
-        blank=True,
-    )
-
-    unit = models.CharField(
-        max_length=20,
-        choices=UNIT_CHOICES,
-        default="piece",
-    )
-
-    quantity = models.PositiveIntegerField(
-        default=0,
-    )
-
-    minimum_stock = models.PositiveIntegerField(
-        default=0,
-    )
-
-    unit_cost = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0,
-    )
-
-    supplier = models.ForeignKey(
-        Supplier,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="items",
-    )
-
-    location = models.CharField(
-        max_length=150,
-        blank=True,
-    )
-
-    is_active = models.BooleanField(
-        default=True,
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    updated_at = models.DateTimeField(
-        auto_now=True,
-    )
+    sku = models.CharField(max_length=40, unique=True)
+    name = models.CharField(max_length=180)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="items")
+    description = models.TextField(blank=True)
+    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default="piece")
+    location = models.CharField(max_length=120, blank=True, help_text="Store room, lab, office, etc.")
+    reorder_level = models.DecimalField(max_digits=12, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    purchase_price = models.DecimalField(max_digits=14, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    current_stock = models.DecimalField(max_digits=14, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         ordering = ["name"]
+        indexes = [
+            models.Index(fields=["name"]),
+            models.Index(fields=["sku"]),
+            models.Index(fields=["category"]),
+        ]
 
     def __str__(self):
-        return f"{self.name} ({self.item_code})"
+        return f"{self.name} ({self.sku})"
 
     @property
     def stock_value(self):
-        return self.quantity * self.unit_cost
+        return (self.current_stock or Decimal("0")) * (self.purchase_price or Decimal("0"))
 
     @property
     def is_low_stock(self):
-        return self.quantity <= self.minimum_stock
+        return self.current_stock <= self.reorder_level
+
+    @property
+    def stock_status(self):
+        if self.current_stock <= 0:
+            return "out"
+        if self.is_low_stock:
+            return "low"
+        return "ok"
 
 
-# =========================================================
-# STOCK MOVEMENT
-# =========================================================
-
-class StockMovement(models.Model):
-
+class StockMovement(TimeStampedModel):
+    IN = "IN"
+    OUT = "OUT"
+    ADJUSTMENT = "ADJUSTMENT"
     MOVEMENT_CHOICES = [
-        ("received", "Stock Received"),
-        ("issued", "Stock Issued"),
-        ("adjustment", "Stock Adjustment"),
-        ("returned", "Stock Returned"),
+        (IN, "Stock In"),
+        (OUT, "Stock Out"),
+        (ADJUSTMENT, "Adjustment"),
     ]
 
-    item = models.ForeignKey(
-        InventoryItem,
-        on_delete=models.CASCADE,
-        related_name="movements",
-    )
-
-    movement_type = models.CharField(
-        max_length=20,
-        choices=MOVEMENT_CHOICES,
-    )
-
-    quantity = models.PositiveIntegerField()
-
-    reference_number = models.CharField(
-        max_length=100,
-        blank=True,
-    )
-
-    issued_to = models.CharField(
-        max_length=150,
-        blank=True,
-    )
-
-    department = models.CharField(
-        max_length=150,
-        blank=True,
-    )
-
-    notes = models.TextField(
-        blank=True,
-    )
-
-    movement_date = models.DateTimeField(
-        auto_now_add=True,
-    )
+    item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name="movements")
+    movement_type = models.CharField(max_length=20, choices=MOVEMENT_CHOICES)
+    quantity = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
+    unit_cost = models.DecimalField(max_digits=14, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    reference = models.CharField(max_length=120, blank=True)
+    reason = models.CharField(max_length=255, blank=True)
+    balance_after = models.DecimalField(max_digits=14, decimal_places=2, default=0)
+    moved_at = models.DateTimeField(default=timezone.now)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL)
 
     class Meta:
-        ordering = ["-movement_date"]
+        ordering = ["-moved_at", "-id"]
+        indexes = [
+            models.Index(fields=["item", "-moved_at"]),
+            models.Index(fields=["movement_type", "-moved_at"]),
+        ]
 
     def __str__(self):
-        return (
-            f"{self.item.name} - "
-            f"{self.get_movement_type_display()} - "
-            f"{self.quantity}"
-        )
+        return f"{self.get_movement_type_display()} - {self.item.name} - {self.quantity}"
 
 
-# =========================================================
-# PURCHASE RECORD
-# =========================================================
-
-class PurchaseRecord(models.Model):
-
-    supplier = models.ForeignKey(
-        Supplier,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name="purchases",
-    )
-
-    invoice_number = models.CharField(
-        max_length=100,
-        blank=True,
-    )
-
-    purchase_date = models.DateField()
-
-    total_amount = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0,
-    )
-
-    notes = models.TextField(
-        blank=True,
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    class Meta:
-        ordering = ["-purchase_date"]
-
-    def __str__(self):
-        return (
-            f"Purchase {self.invoice_number or self.id}"
-        )
-
-
-# =========================================================
-# ASSET
-# =========================================================
-
-class Asset(models.Model):
-
+class Purchase(TimeStampedModel):
+    DRAFT = "DRAFT"
+    RECEIVED = "RECEIVED"
+    CANCELLED = "CANCELLED"
     STATUS_CHOICES = [
-        ("active", "Active"),
-        ("maintenance", "Under Maintenance"),
-        ("disposed", "Disposed"),
-        ("lost", "Lost"),
+        (DRAFT, "Draft"),
+        (RECEIVED, "Received"),
+        (CANCELLED, "Cancelled"),
     ]
 
-    name = models.CharField(
-        max_length=200,
-    )
+    number = models.CharField(max_length=40, unique=True)
+    supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT, related_name="purchases")
+    purchase_date = models.DateField(default=timezone.localdate)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=DRAFT)
+    invoice_number = models.CharField(max_length=100, blank=True)
+    notes = models.TextField(blank=True)
+    received_at = models.DateTimeField(null=True, blank=True)
+    received_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="received_purchases")
 
-    asset_code = models.CharField(
-        max_length=50,
-        unique=True,
-    )
+    class Meta:
+        ordering = ["-purchase_date", "-id"]
 
-    category = models.CharField(
-        max_length=100,
-    )
+    def __str__(self):
+        return self.number
 
-    description = models.TextField(
-        blank=True,
-    )
+    @property
+    def total_amount(self):
+        return sum((line.total for line in self.lines.all()), Decimal("0"))
 
-    purchase_date = models.DateField(
-        null=True,
-        blank=True,
-    )
 
-    purchase_cost = models.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        default=0,
-    )
+class PurchaseLine(models.Model):
+    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE, related_name="lines")
+    item = models.ForeignKey(Item, on_delete=models.PROTECT, related_name="purchase_lines")
+    quantity = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(Decimal("0.01"))])
+    unit_cost = models.DecimalField(max_digits=14, decimal_places=2, validators=[MinValueValidator(0)])
 
-    location = models.CharField(
-        max_length=150,
-        blank=True,
-    )
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["purchase", "item"], name="unique_purchase_item")
+        ]
 
-    assigned_to = models.CharField(
-        max_length=150,
-        blank=True,
-    )
+    @property
+    def total(self):
+        return self.quantity * self.unit_cost
 
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default="active",
-    )
 
-    notes = models.TextField(
-        blank=True,
-    )
+class Asset(TimeStampedModel):
+    STATUS_CHOICES = [
+        ("ACTIVE", "Active"),
+        ("MAINTENANCE", "Under Maintenance"),
+        ("DISPOSED", "Disposed"),
+        ("LOST", "Lost"),
+    ]
 
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-    )
-
-    updated_at = models.DateTimeField(
-        auto_now=True,
-    )
+    asset_tag = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=180)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT, related_name="assets")
+    serial_number = models.CharField(max_length=120, blank=True)
+    location = models.CharField(max_length=150, blank=True)
+    assigned_to = models.CharField(max_length=150, blank=True)
+    acquisition_date = models.DateField(null=True, blank=True)
+    acquisition_cost = models.DecimalField(max_digits=14, decimal_places=2, default=0, validators=[MinValueValidator(0)])
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="ACTIVE")
+    notes = models.TextField(blank=True)
 
     class Meta:
         ordering = ["name"]
 
     def __str__(self):
-        return f"{self.name} ({self.asset_code})"
+        return f"{self.asset_tag} - {self.name}"
