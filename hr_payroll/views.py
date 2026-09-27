@@ -696,6 +696,7 @@ def form_page(
     template="hr_payroll/form.html",
     form_kwargs=None,
     success_url_kwargs=None,
+    success_message=None,
 ):
     form_kwargs = form_kwargs or {}
     success_url_kwargs = success_url_kwargs or {}
@@ -5211,6 +5212,7 @@ def hr_reports(request):
         "hr_payroll/reports.html",
         context,
     )
+
 
 
 
