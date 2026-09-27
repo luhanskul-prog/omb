@@ -348,6 +348,32 @@ ALTERNATE_BANK_ACCOUNT_NAME = os.getenv("ALTERNATE_BANK_ACCOUNT_NAME", "")
 # PRODUCTION SECURITY
 # =========================================================
 
+
+# =========================================================
+# TEMPORARY PRODUCTION ERROR LOGGING
+# =========================================================
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["console"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+    },
+}
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 if DEBUG:
@@ -363,4 +389,5 @@ else:
 SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "0"))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = False
 SECURE_HSTS_PRELOAD = False
+
 
