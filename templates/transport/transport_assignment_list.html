@@ -1,0 +1,63 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Vehicle / Driver Assignments</h2>
+<a class="btn btn-primary"
+href="{% url 'transport:assignment_add' %}">
+New Assignment
+</a>
+</div>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover">
+<thead>
+<tr>
+<th>Route</th>
+<th>Vehicle</th>
+<th>Driver</th>
+<th>Start</th>
+<th>End</th>
+<th>Status</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for assignment in assignments %}
+<tr>
+<td>{{ assignment.route }}</td>
+<td>{{ assignment.vehicle }}</td>
+<td>{{ assignment.driver|default:"-" }}</td>
+<td>{{ assignment.start_date }}</td>
+<td>{{ assignment.end_date|default:"-" }}</td>
+<td>{{ assignment.get_status_display }}</td>
+<td>
+<a class="btn btn-sm btn-outline-secondary"
+href="{% url 'transport:assignment_edit' assignment.pk %}">
+Edit
+</a>
+<a class="btn btn-sm btn-outline-danger"
+href="{% url 'transport:assignment_delete' assignment.pk %}">
+Delete
+</a>
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="7" class="text-center py-4">
+No vehicle/driver assignments found.
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+
+

@@ -1,0 +1,70 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+
+<div class="d-flex justify-content-between mb-4">
+<h2>{{ driver.full_name }}</h2>
+
+<div>
+<a class="btn btn-secondary"
+   href="{% url 'transport:driver_edit' driver.pk %}">
+Edit
+</a>
+
+<a class="btn btn-outline-danger"
+   href="{% url 'transport:driver_delete' driver.pk %}">
+Delete
+</a>
+</div>
+</div>
+
+<div class="card shadow-sm">
+<div class="card-body">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<strong>First name:</strong> {{ driver.first_name }}
+</div>
+
+<div class="col-md-6">
+<strong>Last name:</strong> {{ driver.last_name }}
+</div>
+
+<div class="col-md-6">
+<strong>Phone:</strong> {{ driver.phone|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>National ID:</strong> {{ driver.national_id|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Licence:</strong> {{ driver.licence_number }}
+</div>
+
+<div class="col-md-6">
+<strong>Licence expiry:</strong> {{ driver.licence_expiry|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Status:</strong> {{ driver.get_status_display }}
+</div>
+
+<div class="col-md-6">
+<strong>Address:</strong> {{ driver.address|default:"-" }}
+</div>
+
+<div class="col-12">
+<strong>Notes:</strong>
+<p>{{ driver.notes|default:"-" }}</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+{% endblock %}
+

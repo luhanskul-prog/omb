@@ -1,0 +1,212 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.transport-page {
+    padding: 24px;
+}
+
+.transport-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.transport-header h1 {
+    margin: 0;
+}
+
+.transport-button {
+    display: inline-block;
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #173f5f;
+    color: white;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+}
+
+.transport-button-danger {
+    background: #a33;
+}
+
+.transport-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.transport-search input {
+    flex: 1;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.transport-table-wrap {
+    overflow-x: auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 3px 14px rgba(0,0,0,.08);
+}
+
+.transport-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.transport-table th,
+.transport-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    white-space: nowrap;
+    text-align: left;
+}
+
+.transport-table th {
+    background: #f5f7fa;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.transport-actions a {
+    margin-right: 7px;
+}
+</style>
+
+<div class="transport-page">
+
+    <div class="transport-header">
+
+        <div>
+            <h1>{{ title }}</h1>
+        </div>
+
+        <div>
+            <a
+                class="transport-button"
+                href="{% url config.add_url %}"
+            >
+                + Add {{ singular }}
+            </a>
+
+            <a
+                class="transport-button"
+                href="{% url 'transport:dashboard' %}"
+            >
+                Dashboard
+            </a>
+        </div>
+
+    </div>
+
+    <form method="get" class="transport-search">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ search }}"
+            placeholder="Search {{ title|lower }}..."
+        >
+
+        <button
+            type="submit"
+            class="transport-button"
+        >
+            Search
+        </button>
+
+        {% if search %}
+            <a
+                href="{% url config.list_url %}"
+                class="transport-button"
+            >
+                Clear
+            </a>
+        {% endif %}
+
+    </form>
+
+    <div class="transport-table-wrap">
+
+        <table class="transport-table">
+
+            <thead>
+
+                <tr>
+
+                    {% for column in columns %}
+                        <th>
+                            {{ column|title|cut:"_" }}
+                        </th>
+                    {% endfor %}
+
+                    <th>Actions</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+            {% for row in rows %}
+
+                <tr>
+
+                    {% for value in row.values %}
+
+                        <td>
+
+                            {% if value == True %}
+                                Yes
+                            {% elif value == False %}
+                                No
+                            {% else %}
+                                {{ value|default:"—" }}
+                            {% endif %}
+
+                        </td>
+
+                    {% endfor %}
+
+                    <td class="transport-actions">
+
+                        <a
+                            href="{% url config.edit_url row.object.pk %}"
+                        >
+                            Edit
+                        </a>
+
+                        <a
+                            href="{% url config.delete_url row.object.pk %}"
+                        >
+                            Delete
+                        </a>
+
+                    </td>
+
+                </tr>
+
+            {% empty %}
+
+                <tr>
+                    <td colspan="20">
+                        No records found.
+                    </td>
+                </tr>
+
+            {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

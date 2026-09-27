@@ -1,0 +1,86 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+
+<div class="d-flex justify-content-between mb-4">
+    <h2>{{ vehicle.registration_number }}</h2>
+    <div>
+        <a class="btn btn-secondary"
+           href="{% url 'transport:vehicle_edit' vehicle.pk %}">
+            Edit
+        </a>
+        <a class="btn btn-outline-danger"
+           href="{% url 'transport:vehicle_delete' vehicle.pk %}">
+            Delete
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+<div class="card-body">
+
+<div class="row g-3">
+
+<div class="col-md-6">
+<strong>Registration:</strong>
+{{ vehicle.registration_number }}
+</div>
+
+<div class="col-md-6">
+<strong>Name:</strong>
+{{ vehicle.vehicle_name|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Type:</strong>
+{{ vehicle.get_vehicle_type_display }}
+</div>
+
+<div class="col-md-6">
+<strong>Make:</strong>
+{{ vehicle.make|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Model:</strong>
+{{ vehicle.model|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Year:</strong>
+{{ vehicle.year|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Capacity:</strong>
+{{ vehicle.capacity }}
+</div>
+
+<div class="col-md-6">
+<strong>Status:</strong>
+{{ vehicle.get_status_display }}
+</div>
+
+<div class="col-md-6">
+<strong>Insurance expiry:</strong>
+{{ vehicle.insurance_expiry|default:"-" }}
+</div>
+
+<div class="col-md-6">
+<strong>Inspection expiry:</strong>
+{{ vehicle.inspection_expiry|default:"-" }}
+</div>
+
+<div class="col-12">
+<strong>Notes:</strong>
+<p>{{ vehicle.notes|default:"-" }}</p>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+{% endblock %}
+

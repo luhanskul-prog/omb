@@ -1,0 +1,75 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Route Stops</h2>
+<a class="btn btn-primary"
+   href="{% url 'transport:routestop_add' %}">
+Add Stop
+</a>
+</div>
+
+<form method="get" class="mb-3">
+<select name="route" class="form-select" onchange="this.form.submit()">
+<option value="">All Routes</option>
+{% for route in routes %}
+<option value="{{ route.id }}"
+{% if selected_route == route.id|stringformat:"s" %}selected{% endif %}>
+{{ route.code }} - {{ route.name }}
+</option>
+{% endfor %}
+</select>
+</form>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover">
+<thead>
+<tr>
+<th>Route</th>
+<th>Order</th>
+<th>Stop</th>
+<th>Location</th>
+<th>Pickup</th>
+<th>Drop-off</th>
+<th>Status</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for stop in stops %}
+<tr>
+<td>{{ stop.route }}</td>
+<td>{{ stop.stop_order }}</td>
+<td>{{ stop.name }}</td>
+<td>{{ stop.location|default:"-" }}</td>
+<td>{{ stop.pickup_time|default:"-" }}</td>
+<td>{{ stop.dropoff_time|default:"-" }}</td>
+<td>
+{% if stop.is_active %}Active{% else %}Inactive{% endif %}
+</td>
+<td>
+<a class="btn btn-sm btn-outline-secondary"
+href="{% url 'transport:routestop_edit' stop.pk %}">
+Edit
+</a>
+<a class="btn btn-sm btn-outline-danger"
+href="{% url 'transport:routestop_delete' stop.pk %}">
+Delete
+</a>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="8" class="text-center py-4">No route stops found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+
+

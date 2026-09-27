@@ -1,0 +1,115 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-4">
+<div>
+<h2>{{ route.name }}</h2>
+<p class="text-muted">{{ route.code }}</p>
+</div>
+
+<div>
+<a class="btn btn-secondary"
+   href="{% url 'transport:route_edit' route.pk %}">
+Edit
+</a>
+
+<a class="btn btn-outline-danger"
+   href="{% url 'transport:route_delete' route.pk %}">
+Delete
+</a>
+</div>
+</div>
+
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+
+<div class="row">
+
+<div class="col-md-3">
+<strong>Status</strong>
+<br>{{ route.get_status_display }}
+</div>
+
+<div class="col-md-3">
+<strong>Morning Departure</strong>
+<br>{{ route.morning_departure|default:"-" }}
+</div>
+
+<div class="col-md-3">
+<strong>Afternoon Departure</strong>
+<br>{{ route.afternoon_departure|default:"-" }}
+</div>
+
+<div class="col-md-3">
+<strong>Stops</strong>
+<br>{{ stops|length }}
+</div>
+
+</div>
+
+<hr>
+
+<p>{{ route.description|default:"No description." }}</p>
+
+</div>
+</div>
+
+
+<div class="card shadow-sm mb-4">
+<div class="card-body">
+
+<div class="d-flex justify-content-between">
+<h4>Route Stops</h4>
+
+<a class="btn btn-sm btn-primary"
+   href="{% url 'transport:routestop_add' %}">
+Add Stop
+</a>
+</div>
+
+<div class="table-responsive mt-3">
+<table class="table">
+<thead>
+<tr>
+<th>Order</th>
+<th>Stop</th>
+<th>Location</th>
+<th>Pickup</th>
+<th>Drop-off</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+{% for stop in stops %}
+<tr>
+<td>{{ stop.stop_order }}</td>
+<td>{{ stop.name }}</td>
+<td>{{ stop.location|default:"-" }}</td>
+<td>{{ stop.pickup_time|default:"-" }}</td>
+<td>{{ stop.dropoff_time|default:"-" }}</td>
+<td>
+{% if stop.is_active %}
+Active
+{% else %}
+Inactive
+{% endif %}
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="6">No stops configured.</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+
+</div>
+</div>
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,166 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.transport-form-page {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+}
+
+.transport-form-card {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.08);
+}
+
+.transport-form-card h1 {
+    margin-top: 0;
+}
+
+.transport-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.transport-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.transport-field-full {
+    grid-column: 1 / -1;
+}
+
+.transport-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.transport-textarea {
+    min-height: 120px;
+}
+
+.transport-checkbox {
+    width: auto;
+}
+
+.transport-errors {
+    color: #a00;
+    margin-bottom: 15px;
+}
+
+.transport-buttons {
+    margin-top: 25px;
+    display: flex;
+    gap: 10px;
+}
+
+.transport-button {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 0;
+    text-decoration: none;
+    cursor: pointer;
+    background: #173f5f;
+    color: white;
+}
+
+.transport-cancel {
+    background: #777;
+}
+
+@media(max-width: 700px) {
+    .transport-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .transport-field-full {
+        grid-column: auto;
+    }
+}
+</style>
+
+<div class="transport-form-page">
+
+    <div class="transport-form-card">
+
+        <h1>{{ title }}</h1>
+
+        {% if form.non_field_errors %}
+            <div class="transport-errors">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="transport-form-grid">
+
+                {% for field in form %}
+
+                    <div class="
+                        transport-field
+                        {% if field.field.widget.input_type == 'textarea' %}
+                            transport-field-full
+                        {% endif %}
+                    ">
+
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+
+                        {{ field }}
+
+                        {% if field.help_text %}
+                            <small>
+                                {{ field.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% if field.errors %}
+                            <div class="transport-errors">
+                                {{ field.errors }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="transport-buttons">
+
+                <button
+                    type="submit"
+                    class="transport-button"
+                >
+                    Save {{ singular }}
+                </button>
+
+                <a
+                    href="{% url config.list_url %}"
+                    class="transport-button transport-cancel"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

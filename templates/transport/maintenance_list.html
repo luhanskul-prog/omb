@@ -1,0 +1,64 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Vehicle Maintenance</h2>
+<a class="btn btn-primary"
+href="{% url 'transport:maintenance_add' %}">
+Add Maintenance
+</a>
+</div>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover">
+<thead>
+<tr>
+<th>Vehicle</th>
+<th>Type</th>
+<th>Date</th>
+<th>Description</th>
+<th>Provider</th>
+<th>Cost</th>
+<th>Next Service</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for record in records %}
+<tr>
+<td>{{ record.vehicle }}</td>
+<td>{{ record.get_maintenance_type_display }}</td>
+<td>{{ record.date }}</td>
+<td>{{ record.description }}</td>
+<td>{{ record.service_provider|default:"-" }}</td>
+<td>{{ record.cost }}</td>
+<td>{{ record.next_service_date|default:"-" }}</td>
+<td>
+<a class="btn btn-sm btn-outline-secondary"
+href="{% url 'transport:maintenance_edit' record.pk %}">
+Edit
+</a>
+<a class="btn btn-sm btn-outline-danger"
+href="{% url 'transport:maintenance_delete' record.pk %}">
+Delete
+</a>
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="8" class="text-center py-4">
+No maintenance records found.
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+

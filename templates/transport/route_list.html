@@ -1,0 +1,70 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Routes</h2>
+<a class="btn btn-primary"
+   href="{% url 'transport:route_add' %}">
+Add Route
+</a>
+</div>
+
+<form method="get" class="mb-3">
+<input name="q"
+       value="{{ query }}"
+       class="form-control"
+       placeholder="Search route name or code">
+</form>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover mb-0">
+<thead>
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Morning</th>
+<th>Afternoon</th>
+<th>Status</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for route in routes %}
+<tr>
+<td>{{ route.code }}</td>
+<td>{{ route.name }}</td>
+<td>{{ route.morning_departure|default:"-" }}</td>
+<td>{{ route.afternoon_departure|default:"-" }}</td>
+<td>{{ route.get_status_display }}</td>
+<td>
+<a class="btn btn-sm btn-outline-primary"
+   href="{% url 'transport:route_edit' route.pk %}">
+View
+</a>
+
+<a class="btn btn-sm btn-outline-secondary"
+   href="{% url 'transport:route_edit' route.pk %}">
+Edit
+</a>
+
+<a class="btn btn-sm btn-outline-danger"
+   href="{% url 'transport:route_delete' route.pk %}">
+Delete
+</a>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="6" class="text-center py-4">No routes found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+
+

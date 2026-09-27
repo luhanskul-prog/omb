@@ -1,0 +1,62 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Fuel Records</h2>
+<a class="btn btn-primary"
+href="{% url 'transport:fuel_add' %}">
+Add Fuel Record
+</a>
+</div>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover">
+<thead>
+<tr>
+<th>Vehicle</th>
+<th>Date</th>
+<th>Litres</th>
+<th>Cost</th>
+<th>Odometer</th>
+<th>Station</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody>
+{% for record in records %}
+<tr>
+<td>{{ record.vehicle }}</td>
+<td>{{ record.date }}</td>
+<td>{{ record.litres }}</td>
+<td>{{ record.cost }}</td>
+<td>{{ record.odometer_reading|default:"-" }}</td>
+<td>{{ record.fuel_station|default:"-" }}</td>
+<td>
+<a class="btn btn-sm btn-outline-secondary"
+href="{% url 'transport:fuel_edit' record.pk %}">
+Edit
+</a>
+<a class="btn btn-sm btn-outline-danger"
+href="{% url 'transport:fuel_delete' record.pk %}">
+Delete
+</a>
+</td>
+</tr>
+{% empty %}
+<tr>
+<td colspan="7" class="text-center py-4">
+No fuel records found.
+</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+

@@ -1,0 +1,69 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+<h2>Drivers</h2>
+<a class="btn btn-primary"
+   href="{% url 'transport:driver_add' %}">
+Add Driver
+</a>
+</div>
+
+<form method="get" class="mb-3">
+<input name="q"
+       value="{{ query }}"
+       class="form-control"
+       placeholder="Search driver, phone, ID or licence">
+</form>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover mb-0">
+<thead>
+<tr>
+<th>Name</th>
+<th>Phone</th>
+<th>National ID</th>
+<th>Licence</th>
+<th>Licence Expiry</th>
+<th>Status</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+{% for driver in drivers %}
+<tr>
+<td>{{ driver.full_name }}</td>
+<td>{{ driver.phone|default:"-" }}</td>
+<td>{{ driver.national_id|default:"-" }}</td>
+<td>{{ driver.licence_number }}</td>
+<td>{{ driver.licence_expiry|default:"-" }}</td>
+<td>{{ driver.get_status_display }}</td>
+<td>
+<a class="btn btn-sm btn-outline-primary"
+   href="{% url 'transport:driver_edit' driver.pk %}">
+View
+</a>
+<a class="btn btn-sm btn-outline-secondary"
+   href="{% url 'transport:driver_edit' driver.pk %}">
+Edit
+</a>
+<a class="btn btn-sm btn-outline-danger"
+   href="{% url 'transport:driver_delete' driver.pk %}">
+Delete
+</a>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="7" class="text-center py-4">No drivers found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+
+

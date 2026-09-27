@@ -1,4 +1,4 @@
-from django.contrib import admin
+﻿from django.contrib import admin
 
 from .models import (
     Vehicle,
@@ -51,8 +51,7 @@ class VehicleAdmin(admin.ModelAdmin):
 class DriverAdmin(admin.ModelAdmin):
 
     list_display = (
-        "full_name",
-        "phone",
+        "employee",
         "licence_number",
         "licence_expiry",
         "status",
@@ -63,38 +62,14 @@ class DriverAdmin(admin.ModelAdmin):
     )
 
     search_fields = (
-        "first_name",
-        "last_name",
-        "phone",
-        "national_id",
+        "employee__first_name",
+        "employee__last_name",
+        "employee__phone",
+        "employee__phone_number",
+        "employee__national_id",
+        "employee__id_number",
         "licence_number",
     )
-
-
-# =========================================================
-# ROUTES
-# =========================================================
-
-@admin.register(Route)
-class RouteAdmin(admin.ModelAdmin):
-
-    list_display = (
-        "code",
-        "name",
-        "morning_departure",
-        "afternoon_departure",
-        "status",
-    )
-
-    list_filter = (
-        "status",
-    )
-
-    search_fields = (
-        "name",
-        "code",
-    )
-
 
 # =========================================================
 # ROUTE STOPS
@@ -281,3 +256,4 @@ class FuelRecordAdmin(admin.ModelAdmin):
         "vehicle__registration_number",
         "fuel_station",
     )
+

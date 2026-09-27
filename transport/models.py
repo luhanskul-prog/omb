@@ -1,4 +1,4 @@
-from django.db import models
+﻿from django.db import models
 from django.utils import timezone
 
 from students.models import Student
@@ -108,24 +108,17 @@ class Driver(models.Model):
         ("INACTIVE", "Inactive"),
     ]
 
-    first_name = models.CharField(
-        max_length=100,
-    )
-
-    last_name = models.CharField(
-        max_length=100,
-    )
-
-    phone = models.CharField(
-        max_length=30,
+    # The driver is an existing HR Payroll employee.
+    # No employee identity information is duplicated in Transport.
+    employee = models.OneToOneField(
+        "hr_payroll.Employee",
+        on_delete=models.PROTECT,
+        related_name="transport_driver",
+        null=True,
         blank=True,
     )
 
-    national_id = models.CharField(
-        max_length=30,
-        blank=True,
-    )
-
+    # Transport-specific information.
     licence_number = models.CharField(
         max_length=50,
         unique=True,
@@ -160,19 +153,35 @@ class Driver(models.Model):
     )
 
     class Meta:
-        ordering = ["first_name", "last_name"]
-
-    @property
-    def full_name(self):
-        return f"{self.first_name} {self.last_name}".strip()
+        ordering = ["employee"]
 
     def __str__(self):
-        return self.full_name
+        return str(self.employee)
 
+    @property
+    def first_name(self):
+        return getattr(self.employee, "first_name", "")
 
-# =========================================================
-# ROUTES
-# =========================================================
+    @property
+    def last_name(self):
+        return getattr(self.employee, "last_name", "")
+
+    @property
+    def phone(self):
+        return (
+            getattr(self.employee, "phone", None)
+            or getattr(self.employee, "phone_number", None)
+            or ""
+        )
+
+    @property
+    def national_id(self):
+        return (
+            getattr(self.employee, "national_id", None)
+            or getattr(self.employee, "id_number", None)
+            or getattr(self.employee, "national_id_number", None)
+            or ""
+        )
 
 class Route(models.Model):
 
@@ -614,3 +623,6 @@ class FuelRecord(models.Model):
 
     def __str__(self):
         return f"{self.vehicle.registration_number} - {self.date}"
+
+
+

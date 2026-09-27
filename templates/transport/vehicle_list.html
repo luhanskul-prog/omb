@@ -1,0 +1,64 @@
+﻿{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid py-4">
+
+<div class="d-flex justify-content-between mb-3">
+    <h2>Vehicles</h2>
+    <a class="btn btn-primary" href="{% url 'transport:vehicle_add' %}">
+        Add Vehicle
+    </a>
+</div>
+
+<form method="get" class="mb-3">
+    <input name="q"
+           value="{{ query }}"
+           class="form-control"
+           placeholder="Search registration, name, make or model">
+</form>
+
+<div class="card shadow-sm">
+<div class="table-responsive">
+<table class="table table-hover mb-0">
+<thead>
+<tr>
+<th>Registration</th>
+<th>Name</th>
+<th>Type</th>
+<th>Capacity</th>
+<th>Status</th>
+<th>Insurance</th>
+<th>Inspection</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+{% for vehicle in vehicles %}
+<tr>
+<td>{{ vehicle.registration_number }}</td>
+<td>{{ vehicle.vehicle_name|default:"-" }}</td>
+<td>{{ vehicle.get_vehicle_type_display }}</td>
+<td>{{ vehicle.capacity }}</td>
+<td>{{ vehicle.get_status_display }}</td>
+<td>{{ vehicle.insurance_expiry|default:"-" }}</td>
+<td>{{ vehicle.inspection_expiry|default:"-" }}</td>
+<td>
+<a href="{% url 'transport:vehicle_edit' vehicle.pk %}"
+   class="btn btn-sm btn-outline-primary">View</a>
+<a href="{% url 'transport:vehicle_edit' vehicle.pk %}"
+   class="btn btn-sm btn-outline-secondary">Edit</a>
+<a href="{% url 'transport:vehicle_delete' vehicle.pk %}"
+   class="btn btn-sm btn-outline-danger">Delete</a>
+</td>
+</tr>
+{% empty %}
+<tr><td colspan="8" class="text-center py-4">No vehicles found.</td></tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</div>
+
+</div>
+{% endblock %}
+
+
